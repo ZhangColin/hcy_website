@@ -2,6 +2,9 @@ import Link from "next/link";
 import { loadData } from "@/lib/data";
 import { HeroCarousel, CounterStrip, RevealSection } from "@/components/HomeClient";
 
+// Force dynamic rendering - this page fetches data from the database at request time
+export const dynamic = 'force-dynamic';
+
 /* ─── Business Cards (static) ─── */
 const eduCards = [
   {
