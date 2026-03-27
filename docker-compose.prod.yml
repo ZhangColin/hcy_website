@@ -31,3 +31,9 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+# 连接到外部 Docker 网络
+networks:
+  default:
+    external: true
+    name: webnet
