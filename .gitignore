@@ -62,3 +62,5 @@ logs/
 # temporary
 .tmp/
 temp/
+
+/src/generated/prisma
