@@ -1,7 +1,21 @@
-// scripts/migrate-data.ts
+/**
+ * Data Migration Script
+ *
+ * This script migrates initial data from JSON files in the /data directory
+ * into the PostgreSQL database. It is idempotent-safe and will abort if
+ * data already exists to prevent accidental data loss.
+ *
+ * Usage: npm run migrate:data
+ *
+ * Default admin credentials:
+ *   Username: admin
+ *   Password: haichuangyuan2026
+ */
+
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { readFile } from 'fs/promises'
+import { existsSync } from 'fs'
 import path from 'path'
 import { config } from 'dotenv'
 
@@ -15,146 +29,192 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter })
 
+// Data files to migrate
+const DATA_FILES = ['home.json', 'news.json', 'about.json', 'cases.json', 'contact.json', 'join.json', 'site.json'] as const
+
+/**
+ * Validate that all required data files exist
+ */
+function validateDataFiles(dataDir: string): void {
+  const missing = DATA_FILES.filter(file => !existsSync(path.join(dataDir, file)))
+  if (missing.length > 0) {
+    throw new Error(`Missing required data files: ${missing.join(', ')}`)
+  }
+}
+
+/**
+ * Read and parse a JSON file with error context
+ */
+async function readJsonFile<T>(filePath: string, fileName: string): Promise<T> {
+  try {
+    const content = await readFile(filePath, 'utf-8')
+    return JSON.parse(content) as T
+  } catch (error) {
+    throw new Error(`Failed to parse ${fileName}: ${error instanceof Error ? error.message : String(error)}`)
+  }
+}
+
 async function migrate() {
-  console.log('开始迁移数据...')
+  console.log('Starting data migration...\n')
 
-  // 读取 JSON 文件
+  // Idempotency check: abort if data already exists
+  const existingCount = await prisma.homeContent.count()
+  if (existingCount > 0) {
+    console.error('Database already contains data. Aborting migration to prevent data loss.')
+    console.error('If you want to re-migrate, please clear the database first.')
+    process.exit(1)
+  }
+
+  // Validate data files exist before proceeding
   const dataDir = path.join(process.cwd(), 'data')
-  const home = JSON.parse(await readFile(path.join(dataDir, 'home.json'), 'utf-8'))
-  const news = JSON.parse(await readFile(path.join(dataDir, 'news.json'), 'utf-8'))
-  const about = JSON.parse(await readFile(path.join(dataDir, 'about.json'), 'utf-8'))
-  const cases = JSON.parse(await readFile(path.join(dataDir, 'cases.json'), 'utf-8'))
-  const contact = JSON.parse(await readFile(path.join(dataDir, 'contact.json'), 'utf-8'))
-  const join = JSON.parse(await readFile(path.join(dataDir, 'join.json'), 'utf-8'))
-  const site = JSON.parse(await readFile(path.join(dataDir, 'site.json'), 'utf-8'))
+  validateDataFiles(dataDir)
+  console.log('✓ All required data files found')
 
-  // 清空现有数据
-  await prisma.homeContent.deleteMany()
-  await prisma.newsArticle.deleteMany()
-  await prisma.aboutContent.deleteMany()
-  await prisma.schoolCase.deleteMany()
-  await prisma.competitionHonor.deleteMany()
-  await prisma.contactInfo.deleteMany()
-  await prisma.jobPosition.deleteMany()
-  await prisma.siteConfig.deleteMany()
+  // Read all JSON files
+  const home = await readJsonFile(path.join(dataDir, 'home.json'), 'home.json')
+  const news = await readJsonFile(path.join(dataDir, 'news.json'), 'news.json')
+  const about = await readJsonFile(path.join(dataDir, 'about.json'), 'about.json')
+  const cases = await readJsonFile(path.join(dataDir, 'cases.json'), 'cases.json')
+  const contact = await readJsonFile(path.join(dataDir, 'contact.json'), 'contact.json')
+  const join = await readJsonFile(path.join(dataDir, 'join.json'), 'join.json')
+  const site = await readJsonFile(path.join(dataDir, 'site.json'), 'site.json')
+  console.log('✓ Data files parsed successfully')
 
-  // 迁移首页内容
-  await prisma.homeContent.create({
-    data: {
-      heroSlides: home.heroSlides,
-      dataStrip: home.dataStrip,
-      highlights: home.highlights,
-      partners: home.partners,
-    },
-  })
-  console.log('首页内容')
+  // Wrap entire migration in a transaction for atomicity
+  await prisma.$transaction(async (tx) => {
+    // Clear existing data (should be empty due to idempotency check)
+    await tx.homeContent.deleteMany()
+    await tx.newsArticle.deleteMany()
+    await tx.aboutContent.deleteMany()
+    await tx.schoolCase.deleteMany()
+    await tx.competitionHonor.deleteMany()
+    await tx.contactInfo.deleteMany()
+    await tx.jobPosition.deleteMany()
+    await tx.siteConfig.deleteMany()
+    await tx.adminUser.deleteMany()
 
-  // 迁移新闻
-  for (const article of news.articles) {
-    await prisma.newsArticle.create({
+    // Migrate home content
+    await tx.homeContent.create({
       data: {
-        title: article.title,
-        excerpt: article.excerpt,
-        content: article.content,
-        category: article.category,
-        date: new Date(article.date),
-        image: article.image,
+        heroSlides: home.heroSlides,
+        dataStrip: home.dataStrip,
+        highlights: home.highlights,
+        partners: home.partners,
       },
     })
-  }
-  console.log(`新闻文章 (${news.articles.length}条)`)
+    console.log('✓ Home content migrated')
 
-  // 迁移关于我们
-  await prisma.aboutContent.create({
-    data: {
-      intro: about.intro,
-      culture: about.culture,
-      timeline: about.timeline,
-      honors: about.honors,
-      partners: about.partners,
-    },
-  })
-  console.log('关于我们')
+    // Migrate news articles
+    for (const article of news.articles) {
+      await tx.newsArticle.create({
+        data: {
+          title: article.title,
+          excerpt: article.excerpt,
+          content: article.content,
+          category: article.category,
+          date: new Date(article.date),
+          image: article.image,
+        },
+      })
+    }
+    console.log(`✓ News articles migrated (${news.articles.length} records)`)
 
-  // 迁移案例
-  for (const item of cases.schoolCases) {
-    await prisma.schoolCase.create({
+    // Migrate about content
+    await tx.aboutContent.create({
       data: {
-        name: item.name,
-        type: item.type,
-        region: item.region,
-        stage: item.stage,
-        summary: item.summary,
+        intro: about.intro,
+        culture: about.culture,
+        timeline: about.timeline,
+        honors: about.honors,
+        partners: about.partners,
       },
     })
-  }
-  console.log(`学校案例 (${cases.schoolCases.length}条)`)
+    console.log('✓ About content migrated')
 
-  for (const item of cases.competitionHonors) {
-    await prisma.competitionHonor.create({
+    // Migrate school cases
+    for (const item of cases.schoolCases) {
+      await tx.schoolCase.create({
+        data: {
+          name: item.name,
+          type: item.type,
+          region: item.region,
+          stage: item.stage,
+          summary: item.summary,
+        },
+      })
+    }
+    console.log(`✓ School cases migrated (${cases.schoolCases.length} records)`)
+
+    // Migrate competition honors
+    for (const item of cases.competitionHonors) {
+      await tx.competitionHonor.create({
+        data: {
+          title: item.title,
+          level: item.level,
+          year: item.year,
+        },
+      })
+    }
+    console.log(`✓ Competition honors migrated (${cases.competitionHonors.length} records)`)
+
+    // Migrate contact info
+    await tx.contactInfo.create({
       data: {
-        title: item.title,
-        level: item.level,
-        year: item.year,
+        address: contact.address,
+        contacts: contact.contacts,
       },
     })
-  }
-  console.log(`竞赛荣誉 (${cases.competitionHonors.length}条)`)
+    console.log('✓ Contact info migrated')
 
-  // 迁移联系方式
-  await prisma.contactInfo.create({
-    data: {
-      address: contact.address,
-      contacts: contact.contacts,
-    },
-  })
-  console.log('联系方式')
+    // Migrate job positions
+    for (const item of join.jobPositions) {
+      await tx.jobPosition.create({
+        data: {
+          title: item.title,
+          department: item.department,
+          location: item.location,
+          type: item.type,
+          description: item.description,
+          requirements: item.requirements,
+        },
+      })
+    }
+    console.log(`✓ Job positions migrated (${join.jobPositions.length} records)`)
 
-  // 迁移招聘
-  for (const item of join.jobPositions) {
-    await prisma.jobPosition.create({
+    // Migrate site config
+    await tx.siteConfig.create({
       data: {
-        title: item.title,
-        department: item.department,
-        location: item.location,
-        type: item.type,
-        description: item.description,
-        requirements: item.requirements,
+        companyName: site.companyName,
+        shortName: site.shortName,
+        address: site.address,
+        icp: site.icp,
+        copyright: site.copyright,
+        friendlyLinks: site.friendlyLinks,
+        socialLinks: site.socialLinks,
       },
     })
-  }
-  console.log(`招聘岗位 (${join.jobPositions.length}条)`)
+    console.log('✓ Site config migrated')
 
-  // 迁移站点配置
-  await prisma.siteConfig.create({
-    data: {
-      companyName: site.companyName,
-      shortName: site.shortName,
-      address: site.address,
-      icp: site.icp,
-      copyright: site.copyright,
-      friendlyLinks: site.friendlyLinks,
-      socialLinks: site.socialLinks,
-    },
+    // Create default admin user
+    const bcrypt = await import('bcryptjs')
+    const hashedPassword = await bcrypt.hash('haichuangyuan2026', 10)
+    await tx.adminUser.create({
+      data: {
+        username: 'admin',
+        password: hashedPassword,
+        name: '管理员',
+        role: 'ADMIN',
+      },
+    })
+    console.log('✓ Default admin user created (username: admin, password: haichuangyuan2026)')
   })
-  console.log('站点配置')
 
-  // 创建默认管理员
-  const bcrypt = await import('bcryptjs')
-  const hashedPassword = await bcrypt.hash('haichuangyuan2026', 10)
-  await prisma.adminUser.create({
-    data: {
-      username: 'admin',
-      password: hashedPassword,
-      name: '管理员',
-      role: 'ADMIN',
-    },
-  })
-  console.log('默认管理员 (用户名: admin, 密码: haichuangyuan2026)')
-
-  console.log('\n数据迁移完成!')
+  console.log('\n✓ Data migration completed successfully!')
 }
 
 migrate()
-  .catch(console.error)
+  .catch((error) => {
+    console.error('\n✗ Migration failed:', error instanceof Error ? error.message : String(error))
+    process.exit(1)
+  })
   .finally(() => prisma.$disconnect())
