@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Next.js
+.next
+out
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# Docs
+docs
+
+# Data (已迁移到数据库)
+data
