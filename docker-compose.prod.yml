@@ -10,6 +10,7 @@ services:
       dockerfile: Dockerfile
       args:
         STANDALONE: true
+        DATABASE_URL: ${DATABASE_URL}
     container_name: hcy-website
     ports:
       - "3000:3000"

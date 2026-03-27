@@ -9,10 +9,14 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# 接收 DATABASE_URL 作为构建参数（Prisma 7 需要）
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# 生成 Prisma Client
+# 生成 Prisma Client（需要 DATABASE_URL 环境变量）
 RUN npx prisma generate
 
 # 构建应用（启用 standalone 模式）
