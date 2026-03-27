@@ -57,8 +57,8 @@ export async function PUT(
   try {
     const body = await request.json();
 
-    // 单例类型的内容更新
     switch (collection) {
+      // 单例类型的内容更新
       case "home": {
         const existing = await prisma.homeContent.findFirst();
         if (!existing) {
@@ -103,6 +103,49 @@ export async function PUT(
         });
         break;
       }
+      // 数组类型的内容更新 (需要 id)
+      case "news": {
+        if (!body.id) {
+          return NextResponse.json({ error: "id is required for news updates" }, { status: 400 });
+        }
+        await prisma.newsArticle.update({
+          where: { id: body.id },
+          data: body,
+        });
+        break;
+      }
+      case "cases": {
+        // cases 需要指定类型: schoolCase 或 competitionHonor
+        if (!body.id || !body.type) {
+          return NextResponse.json({ error: "id and type (schoolCase|competitionHonor) are required for cases updates" }, { status: 400 });
+        }
+        if (body.type === "schoolCase") {
+          await prisma.schoolCase.update({
+            where: { id: body.id },
+            data: body,
+          });
+        } else if (body.type === "competitionHonor") {
+          await prisma.competitionHonor.update({
+            where: { id: body.id },
+            data: body,
+          });
+        } else {
+          return NextResponse.json({ error: "Invalid type. Must be 'schoolCase' or 'competitionHonor'" }, { status: 400 });
+        }
+        break;
+      }
+      case "join": {
+        if (!body.id) {
+          return NextResponse.json({ error: "id is required for job position updates" }, { status: 400 });
+        }
+        await prisma.jobPosition.update({
+          where: { id: body.id },
+          data: body,
+        });
+        break;
+      }
+      default:
+        return NextResponse.json({ error: "Unhandled collection type" }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
