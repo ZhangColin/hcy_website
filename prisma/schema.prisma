@@ -1,11 +1,135 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+// ─── 用户管理 ───
+model AdminUser {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String?
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── 首页内容 ───
+model HomeContent {
+  id         String   @id @default(cuid())
+  heroSlides Json
+  dataStrip  Json
+  highlights Json
+  partners   Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── 新闻文章 ───
+model NewsArticle {
+  id        String   @id @default(cuid())
+  title     String
+  excerpt   String
+  content   String   @db.Text
+  category  String
+  date      DateTime
+  image     String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date, published])
+}
+
+// ─── 关于我们 ───
+model AboutContent {
+  id        String   @id @default(cuid())
+  intro     Json
+  culture   Json
+  timeline  Json
+  honors    Json
+  partners  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── 案例与成果 ───
+model SchoolCase {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  region    String
+  stage     String
+  summary   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CompetitionHonor {
+  id        String   @id @default(cuid())
+  title     String
+  level     String
+  year      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── 联系方式 ───
+model ContactInfo {
+  id        String   @id @default(cuid())
+  address   String
+  contacts  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── 招聘岗位 ───
+model JobPosition {
+  id          String   @id @default(cuid())
+  title       String
+  department  String
+  location    String
+  type        String
+  description String   @db.Text
+  requirements Json
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+// ─── 站点配置 ───
+model SiteConfig {
+  id            String @id @default(cuid())
+  companyName   String
+  shortName     String
+  address       String
+  icp           String
+  copyright     String
+  friendlyLinks Json
+  socialLinks   Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ─── 留言表单提交 ───
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  company   String?
+  phone     String
+  email     String?
+  needType  String
+  message   String   @db.Text
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
