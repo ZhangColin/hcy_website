@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand-blue: #1A3C8A;
+  --color-brand-blue-light: #2B6CB0;
+  --color-brand-gold: #D4A843;
+  --color-edu-blue: #1565C0;
+  --color-eco-teal: #00796B;
+  --color-bg-gray: #F5F7FA;
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --font-sans: "Source Han Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #333333;
+  font-family: "Source Han Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* Counter animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Infinite scroll for partners */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+/* Smooth section reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sticky header transition */
+.header-scrolled {
+  backdrop-filter: blur(12px);
+  background-color: rgba(26, 60, 138, 0.92) !important;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Hero gradient */
+.hero-gradient {
+  background: linear-gradient(135deg, #0f2557 0%, #1A3C8A 40%, #2B6CB0 100%);
+}
+
+/* Gold accent gradient */
+.gold-gradient {
+  background: linear-gradient(135deg, #D4A843, #E8C36A);
+}
+
+/* Mega menu */
+.mega-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A3C8A;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2B6CB0;
 }

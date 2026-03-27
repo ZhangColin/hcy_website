@@ -1,0 +1,17 @@
+{
+  "companyName": "北京海创元人工智能教育科技有限公司",
+  "shortName": "海创元AI教育",
+  "address": "北京市海淀区中关村大街1号",
+  "icp": "京ICP备XXXXXXXX号-X",
+  "copyright": "北京海创元人工智能教育科技有限公司",
+  "friendlyLinks": [
+    { "label": "海淀国投集团", "href": "https://www.hdgt.com" },
+    { "label": "智研云平台", "href": "https://zhiyan.aieducenter.com" },
+    { "label": "AI党建平台", "href": "https://dangjian.aieducenter.com" }
+  ],
+  "socialLinks": {
+    "weibo": "",
+    "douyin": "",
+    "bilibili": ""
+  }
+}

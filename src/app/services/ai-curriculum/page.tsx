@@ -1,0 +1,627 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
+const nModules = [
+  {
+    id: "N1",
+    title: "N1 师资培训",
+    desc: "面向信息科技教师与非信息科技教师的双轨培训体系，涵盖线下专项培训与线上数字人辅导，确保教师具备AI教学能力。",
+  },
+  {
+    id: "N2",
+    title: "N2 等级认证",
+    desc: "工业和信息化部教育与考试中心权威认证，初级/中级/高级三级体系，全国通用、有效期5年，学完即考即持证。",
+  },
+  {
+    id: "N3",
+    title: "N3 教学竞赛",
+    desc: "组织并辅导教师参与各级AI教学竞赛，以赛促教，激发创新教学方法，提升教师专业影响力。",
+  },
+  {
+    id: "N4",
+    title: "N4 AI未来实验室",
+    desc: "面向学校建设AI专用实验室，提供硬件配置方案、空间设计及施工指导，打造沉浸式AI学习空间。",
+  },
+  {
+    id: "N5",
+    title: "N5 科创赛事",
+    desc: "覆盖NOI、蓝桥杯、全国青少年人工智能创新挑战赛等主流赛事指导与辅导，助力学生竞赛获奖。",
+  },
+  {
+    id: "N6",
+    title: "N6 AI研学",
+    desc: "提供多层次、多场景的AI研学服务，包括名校参访、科研院所考察、企业定制化研学等多种形式。",
+  },
+  {
+    id: "N7",
+    title: "N7 智研云平台",
+    desc: "一站式AI教研云平台，集课程管理、教学分析、资源共享于一体，支持区域教研协同与数据驱动决策。",
+  },
+  {
+    id: "N8",
+    title: "N8 生态产品联盟",
+    desc: "联合海亮科技、蜜蜂家校、洋葱学园、宇视科技等生态伙伴，一站式补全AI教育完整生态。",
+  },
+];
+
+const gradeData = [
+  {
+    grade: "小学1-3年级",
+    tag: "AI启蒙",
+    desc: "以趣味化、游戏化方式引入AI概念，培养学生对人工智能的初步认知与兴趣，通过图形化编程工具进行简单的AI体验。",
+    color: "#4CAF50",
+  },
+  {
+    grade: "小学4年级",
+    tag: "AI基础",
+    desc: "系统学习AI基础知识，了解机器学习、图像识别等核心概念，通过项目式学习完成简单AI应用的搭建与体验。",
+    color: "#2196F3",
+  },
+  {
+    grade: "小学5-6年级",
+    tag: "AI进阶",
+    desc: "深入学习编程思维与算法基础，掌握Python基础语法，能够利用AI工具完成创意项目，培养计算思维与问题解决能力。",
+    color: "#9C27B0",
+  },
+  {
+    grade: "初中",
+    tag: "AI应用",
+    desc: "系统学习人工智能原理与技术，掌握数据处理、模型训练等核心技能，能够独立完成AI项目开发与应用实践。",
+    color: "#FF9800",
+  },
+  {
+    grade: "高中",
+    tag: "AI深化",
+    desc: "深入学习深度学习、自然语言处理等前沿技术，具备AI项目的完整开发能力，为大学AI相关专业学习奠定基础。",
+    color: "#F44336",
+  },
+];
+
+const caseSchools = [
+  "北京中学",
+  "海亮教育",
+  "上外附中",
+  "华东师大附中",
+  "复旦附中",
+  "深圳中学",
+  "杭州二中",
+  "南京外国语学校",
+];
+
+export default function AICurriculumPage() {
+  const [openModule, setOpenModule] = useState<string | null>("N1");
+
+  return (
+    <div className="min-h-screen bg-[#F5F7FA]">
+      {/* Breadcrumb */}
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <ol className="flex items-center gap-2 text-sm text-gray-500">
+            <li>
+              <Link href="/" className="hover:text-[#1A3C8A] transition-colors">
+                首页
+              </Link>
+            </li>
+            <li>/</li>
+            <li>
+              <Link href="/services" className="hover:text-[#1A3C8A] transition-colors">
+                智教服务集群
+              </Link>
+            </li>
+            <li>/</li>
+            <li className="text-[#1565C0] font-medium">AI课程入校</li>
+          </ol>
+        </div>
+      </nav>
+
+      {/* Hero Banner */}
+      <section className="relative bg-gradient-to-br from-[#1565C0] via-[#1A3C8A] to-[#0D2B6B] text-white overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#D4A843] rounded-full blur-3xl" />
+        </div>
+        <div className="relative max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+          <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm mb-6">
+            智教服务集群 · 核心产品
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight">
+            AI课程入校 · <span className="text-[#D4A843]">核心引擎</span>
+          </h1>
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-8">
+            1+N综合解决方案，覆盖小/初/高全学段
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <a
+              href="#model"
+              className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
+            >
+              了解1+N模式
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center px-6 py-3 bg-white/10 border border-white/30 text-white font-medium rounded-lg hover:bg-white/20 transition-colors"
+            >
+              预约课程演示
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Product Advantages */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              产品优势
+            </h2>
+            <p className="text-gray-500 text-lg">深耕AI教育领域，构建差异化竞争壁垒</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Card 1 */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow border border-gray-100">
+              <div className="w-14 h-14 bg-[#1565C0]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#1565C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">5年课堂实践打磨</h3>
+              <p className="text-gray-600 leading-relaxed">
+                上外附中教育部直属校深度合作，央视新闻深度报道，经过5年真实课堂环境的反复验证与迭代优化。
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="text-xs bg-[#1565C0]/10 text-[#1565C0] px-3 py-1 rounded-full">教育部直属</span>
+                <span className="text-xs bg-[#D4A843]/10 text-[#D4A843] px-3 py-1 rounded-full">央视深度报道</span>
+              </div>
+            </div>
+            {/* Card 2 */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow border border-gray-100">
+              <div className="w-14 h-14 bg-[#D4A843]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#D4A843]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">破解AI进校五大难题</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                系统性解决AI教育落地过程中面临的核心挑战，让AI课程真正走进每一间教室。
+              </p>
+              <div className="space-y-2">
+                {["课程缺位", "师资匮乏", "设施不足", "平台稀缺", "机制断点"].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-sm text-gray-700">
+                    <span className="w-1.5 h-1.5 bg-[#D4A843] rounded-full flex-shrink-0" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Card 3 */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow border border-gray-100">
+              <div className="w-14 h-14 bg-[#2B6CB0]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#2B6CB0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">完整适配教育部六大任务</h3>
+              <p className="text-gray-600 leading-relaxed">
+                全面对标教育部人工智能教育政策要求，从课程建设、师资培养到评价体系，实现六大任务的完整适配与落地。
+              </p>
+              <div className="mt-4">
+                <span className="text-xs bg-[#2B6CB0]/10 text-[#2B6CB0] px-3 py-1 rounded-full">政策完整适配</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 1+N Model */}
+      <section id="model" className="py-16 md:py-24 bg-white">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              1+N 综合解决方案
+            </h2>
+            <p className="text-gray-500 text-lg">以&ldquo;1&rdquo;为核心主干，&ldquo;N&rdquo;个模块灵活扩展</p>
+          </div>
+
+          {/* Core "1" */}
+          <div className="mb-12">
+            <div className="bg-gradient-to-r from-[#1565C0] to-[#1A3C8A] rounded-2xl p-8 md:p-10 text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="bg-[#D4A843] text-white text-2xl font-bold w-12 h-12 rounded-xl flex items-center justify-center">
+                  1
+                </span>
+                <h3 className="text-2xl font-bold">核心主干</h3>
+              </div>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <div className="text-[#D4A843] font-semibold mb-2">人工智能课程</div>
+                  <p className="text-white/80 text-sm">覆盖小/初/高全学段的标准化AI课程体系</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <div className="text-[#D4A843] font-semibold mb-2">教学平台</div>
+                  <p className="text-white/80 text-sm">三端联动智慧教学平台，支持课前-课中-课后全流程</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <div className="text-[#D4A843] font-semibold mb-2">课案与学案</div>
+                  <p className="text-white/80 text-sm">配套教师课案与学生学案，开箱即用</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* "N" Modules Accordion */}
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <span className="bg-[#1565C0] text-white text-2xl font-bold w-12 h-12 rounded-xl flex items-center justify-center">
+                N
+              </span>
+              <h3 className="text-2xl font-bold text-gray-900">扩展模块</h3>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              {nModules.map((mod) => (
+                <div
+                  key={mod.id}
+                  className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:border-[#1565C0]/30 transition-colors"
+                >
+                  <button
+                    onClick={() => setOpenModule(openModule === mod.id ? null : mod.id)}
+                    className="w-full flex items-center justify-between p-5 text-left"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-bold text-[#1565C0] bg-[#1565C0]/10 px-2.5 py-1 rounded-md">
+                        {mod.id}
+                      </span>
+                      <span className="font-semibold text-gray-900">{mod.title}</span>
+                    </div>
+                    <svg
+                      className={`w-5 h-5 text-gray-400 transition-transform ${
+                        openModule === mod.id ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {openModule === mod.id && (
+                    <div className="px-5 pb-5 pt-0">
+                      <p className="text-gray-600 text-sm leading-relaxed pl-12">{mod.desc}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Grade Curriculum */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              全学段课程体系
+            </h2>
+            <p className="text-gray-500 text-lg">从小学到高中，循序渐进的AI课程规划</p>
+          </div>
+          {/* Horizontal scroll on mobile */}
+          <div className="overflow-x-auto pb-4">
+            <div className="flex gap-4 min-w-max md:min-w-0 md:grid md:grid-cols-5">
+              {gradeData.map((item, idx) => (
+                <div key={item.grade} className="flex flex-col items-center w-56 md:w-auto">
+                  {/* Arrow connector */}
+                  {idx > 0 && (
+                    <div className="hidden md:block absolute -left-4 top-1/2 w-4 h-0.5 bg-gray-300" />
+                  )}
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 h-full w-full">
+                    <div
+                      className="inline-block text-xs font-bold text-white px-3 py-1 rounded-full mb-4"
+                      style={{ backgroundColor: item.color }}
+                    >
+                      {item.tag}
+                    </div>
+                    <h4 className="font-bold text-gray-900 mb-2">{item.grade}</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+                  {idx < gradeData.length - 1 && (
+                    <div className="md:hidden flex items-center justify-center my-2">
+                      <svg className="w-6 h-6 text-gray-400 rotate-90 md:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Desktop arrow row */}
+          <div className="hidden md:flex items-center justify-center gap-2 mt-4">
+            {gradeData.map((item, idx) => (
+              <div key={item.grade + "-arrow"} className="flex items-center">
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }} />
+                {idx < gradeData.length - 1 && (
+                  <div className="w-24 lg:w-32 h-0.5 bg-gray-300" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Three-Terminal Platform */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              三端联动教学平台
+            </h2>
+            <p className="text-gray-500 text-lg">课前-课中-课后全流程数字化教学支撑</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* 课前 */}
+            <div className="relative bg-gradient-to-b from-[#E8F0FE] to-white rounded-2xl p-8 border border-[#1565C0]/10">
+              <div className="absolute -top-4 left-8 bg-[#1565C0] text-white text-sm font-bold px-4 py-1.5 rounded-full">
+                课前
+              </div>
+              <div className="mt-4">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">资料云端同步</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-[#1565C0] rounded-full mt-1.5 flex-shrink-0" />
+                    教学资源一键下发
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-[#1565C0] rounded-full mt-1.5 flex-shrink-0" />
+                    课案学案自动同步
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-[#1565C0] rounded-full mt-1.5 flex-shrink-0" />
+                    预习任务在线布置
+                  </li>
+                </ul>
+              </div>
+            </div>
+            {/* 课中 */}
+            <div className="relative bg-gradient-to-b from-[#FFF8E1] to-white rounded-2xl p-8 border border-[#D4A843]/10">
+              <div className="absolute -top-4 left-8 bg-[#D4A843] text-white text-sm font-bold px-4 py-1.5 rounded-full">
+                课中
+              </div>
+              <div className="mt-4">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">智慧课堂互动</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-[#D4A843] rounded-full mt-1.5 flex-shrink-0" />
+                    60+课堂互动功能
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-[#D4A843] rounded-full mt-1.5 flex-shrink-0" />
+                    黑屏管控 / 屏幕广播
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-[#D4A843] rounded-full mt-1.5 flex-shrink-0" />
+                    分组教学与协作
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-[#D4A843] rounded-full mt-1.5 flex-shrink-0" />
+                    实时学情监测
+                  </li>
+                </ul>
+              </div>
+            </div>
+            {/* 课后 */}
+            <div className="relative bg-gradient-to-b from-[#E8F5E9] to-white rounded-2xl p-8 border border-green-200">
+              <div className="absolute -top-4 left-8 bg-green-600 text-white text-sm font-bold px-4 py-1.5 rounded-full">
+                课后
+              </div>
+              <div className="mt-4">
+                <h4 className="text-lg font-bold text-gray-900 mb-4">作业智能管理</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-green-600 rounded-full mt-1.5 flex-shrink-0" />
+                    作业智能统计分析
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-green-600 rounded-full mt-1.5 flex-shrink-0" />
+                    云端自动批改
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-600 text-sm">
+                    <span className="w-1.5 h-1.5 bg-green-600 rounded-full mt-1.5 flex-shrink-0" />
+                    学习报告自动生成
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {/* Flow arrows */}
+          <div className="hidden md:flex items-center justify-center mt-8 gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span className="w-3 h-3 bg-[#1565C0] rounded-full" />
+              课前准备
+            </div>
+            <svg className="w-8 h-4 text-gray-400" fill="none" viewBox="0 0 32 16">
+              <path d="M0 8h28m0 0l-6-6m6 6l-6 6" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span className="w-3 h-3 bg-[#D4A843] rounded-full" />
+              课中互动
+            </div>
+            <svg className="w-8 h-4 text-gray-400" fill="none" viewBox="0 0 32 16">
+              <path d="M0 8h28m0 0l-6-6m6 6l-6 6" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span className="w-3 h-3 bg-green-600 rounded-full" />
+              课后管理
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hardware */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              硬件终端
+            </h2>
+            <p className="text-gray-500 text-lg">自研AI教学终端设备，满足不同场景需求</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* STD-1 */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+              <div className="bg-gray-100 h-56 flex items-center justify-center">
+                <div className="text-center text-gray-400">
+                  <svg className="w-16 h-16 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-sm">产品图片占位</span>
+                </div>
+              </div>
+              <div className="p-8">
+                <div className="inline-block bg-[#1565C0]/10 text-[#1565C0] text-xs font-bold px-3 py-1 rounded-full mb-3">
+                  基础型
+                </div>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">STD-1 基础型</h4>
+                <p className="text-gray-600 text-sm mb-4">适用于AI课程基础教学场景，满足图形化编程与基础AI实验需求。</p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex justify-between">
+                    <span>处理器</span>
+                    <span className="text-gray-700">详见产品规格</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>内存</span>
+                    <span className="text-gray-700">详见产品规格</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>存储</span>
+                    <span className="text-gray-700">详见产品规格</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* SMU-1/SMU-2 */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+              <div className="bg-gradient-to-br from-[#1A3C8A]/5 to-[#D4A843]/5 h-56 flex items-center justify-center">
+                <div className="text-center text-gray-400">
+                  <svg className="w-16 h-16 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                  </svg>
+                  <span className="text-sm">产品图片占位</span>
+                </div>
+              </div>
+              <div className="p-8">
+                <div className="inline-block bg-[#D4A843]/10 text-[#D4A843] text-xs font-bold px-3 py-1 rounded-full mb-3">
+                  智算型
+                </div>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">SMU-1 / SMU-2 智算型</h4>
+                <p className="text-gray-600 text-sm mb-4">适用于AI深度学习与模型训练场景，支持GPU加速计算与大模型推理。</p>
+                <div className="space-y-2 text-sm text-gray-500">
+                  <div className="flex justify-between">
+                    <span>GPU</span>
+                    <span className="text-gray-700">详见产品规格</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>算力</span>
+                    <span className="text-gray-700">详见产品规格</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>显存</span>
+                    <span className="text-gray-700">详见产品规格</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Smart Research Cloud Platform */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              智研云平台
+            </h2>
+            <p className="text-gray-500 text-lg">一站式AI教研协同平台，数据驱动教学决策</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="space-y-6">
+                {[
+                  { title: "课程管理中心", desc: "统一管理AI课程资源，支持多版本课程并行管理与按需分发。" },
+                  { title: "教学数据分析", desc: "多维度学情分析看板，实时掌握教学效果，精准教学干预。" },
+                  { title: "区域教研协同", desc: "支持区域级教研活动组织与教学成果共享，促进均衡发展。" },
+                  { title: "资源共享中心", desc: "优秀课案、学案、教学素材云端共享，降低教师备课负担。" },
+                ].map((feature, idx) => (
+                  <div key={idx} className="flex gap-4">
+                    <div className="w-10 h-10 bg-[#1565C0]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-[#1565C0] font-bold text-sm">{String(idx + 1).padStart(2, "0")}</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">{feature.title}</h4>
+                      <p className="text-gray-600 text-sm">{feature.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-gray-100 rounded-2xl h-80 flex items-center justify-center">
+              <div className="text-center text-gray-400">
+                <svg className="w-20 h-20 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-sm">平台截图占位区域</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Case Studies */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              合作学校
+            </h2>
+            <p className="text-gray-500 text-lg">覆盖全国多个省市的优质合作院校</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {caseSchools.map((school) => (
+              <div
+                key={school}
+                className="bg-white rounded-xl p-6 flex items-center justify-center border border-gray-100 hover:border-[#1565C0]/30 hover:shadow-md transition-all h-24"
+              >
+                <span className="text-gray-700 font-medium">{school}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section id="contact" className="py-16 md:py-24 bg-gradient-to-br from-[#1565C0] via-[#1A3C8A] to-[#0D2B6B] text-white">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            开启AI课程入校之旅
+          </h2>
+          <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto">
+            立即预约课程演示，了解1+N综合解决方案如何助力贵校AI教育落地
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="w-full sm:w-auto px-8 py-4 bg-[#D4A843] text-white font-semibold rounded-xl hover:bg-[#c49a3a] transition-colors">
+              预约课程演示
+            </button>
+            <button className="w-full sm:w-auto px-8 py-4 bg-white/10 border border-white/30 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors">
+              下载方案白皮书
+            </button>
+            <button className="w-full sm:w-auto px-8 py-4 bg-white text-[#1A3C8A] font-semibold rounded-xl hover:bg-gray-100 transition-colors">
+              联系我们
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

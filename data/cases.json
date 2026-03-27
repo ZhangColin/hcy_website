@@ -1,0 +1,14 @@
+{
+  "schoolCases": [
+    { "id": "1", "name": "北京中学", "type": "青少年AI创新学院共建", "region": "北京", "stage": "中学", "summary": "共建青少年AI创新学院，打造校内AI教育标杆" },
+    { "id": "2", "name": "海亮教育", "type": "AI课程入校", "region": "浙江", "stage": "全学段", "summary": "120所院校签约合作，大规模AI课程部署" },
+    { "id": "3", "name": "上外附中", "type": "AI课程合作", "region": "上海", "stage": "中学", "summary": "5年深度合作，教育部直属示范校，央视专题报道" }
+  ],
+  "competitionHonors": [
+    { "title": "Intel AI全球影响力嘉年华总冠军", "level": "全球", "year": "2023" },
+    { "title": "丘成桐中学科学奖全球总冠军", "level": "全球", "year": "2024" },
+    { "title": "ISEF国际科学与工程大奖赛全球冠军", "level": "全球", "year": "2025" },
+    { "title": "全国青少年人工智能创新挑战赛冠军", "level": "全国", "year": "2023" },
+    { "title": "全国中小学信息技术创新与实践大赛冠军", "level": "全国", "year": "2024" }
+  ]
+}

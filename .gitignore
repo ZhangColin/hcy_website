@@ -39,3 +39,26 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prisma
+/prisma/migrations/*_*/
+!/prisma/migrations/migration_lock.toml
+/prisma/*.db
+/prisma/*.db-journal
+
+# docker
+.dockerignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# logs
+logs/
+*.log
+
+# temporary
+.tmp/
+temp/

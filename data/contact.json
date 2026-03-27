@@ -1,0 +1,10 @@
+{
+  "address": "北京市海淀区中关村大街1号",
+  "contacts": [
+    { "department": "综合业务", "person": "赵元章", "phone": "", "email": "" },
+    { "department": "智教服务集群", "person": "王尧", "phone": "", "email": "" },
+    { "department": "产融生态矩阵", "person": "林伟冬", "phone": "", "email": "" },
+    { "department": "政企AI赋能培训", "person": "刘强", "phone": "", "email": "" },
+    { "department": "OPC生态 / AI党建", "person": "李彬彬", "phone": "", "email": "" }
+  ]
+}
