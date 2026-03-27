@@ -43,32 +43,17 @@ echo -e "${YELLOW}数据库: ${DB_DISPLAY}${NC}"
 echo -e "${YELLOW}网站地址: ${NEXT_PUBLIC_SITE_URL:-未设置}${NC}"
 echo ""
 
-# 询问是否运行数据迁移
-echo -e "${YELLOW}────────────────────────────────────${NC}"
-read -p "是否首次部署？需要运行数据迁移吗？(y/n): " -n 1 -r
-echo ""
-
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  echo -e "${YELLOW}正在构建镜像...${NC}"
-  docker build --build-arg STANDALONE=true -t hcy-website:latest .
-
-  echo -e "${YELLOW}正在运行数据库迁移...${NC}"
-  docker run --rm \
-    -e DATABASE_URL="$DATABASE_URL" \
-    hcy-website:latest \
-    sh -c "npx prisma db push --accept-data-loss && npm run migrate:data"
-
-  echo -e "${GREEN}✓ 数据迁移完成${NC}"
-  echo ""
-fi
-
 # 停止旧容器
 echo -e "${YELLOW}停止旧容器...${NC}"
 docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
 
+# 构建镜像（总是重新构建，使用 docker-compose）
+echo -e "${YELLOW}构建镜像...${NC}"
+DATABASE_URL="$DATABASE_URL" docker-compose -f docker-compose.prod.yml build
+
 # 启动新容器
 echo -e "${YELLOW}启动服务...${NC}"
-docker-compose -f docker-compose.prod.yml up -d
+DATABASE_URL="$DATABASE_URL" docker-compose -f docker-compose.prod.yml up -d
 
 # 等待容器启动
 echo -e "${YELLOW}等待服务启动...${NC}"
