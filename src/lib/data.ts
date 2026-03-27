@@ -18,7 +18,13 @@ export async function loadNews() {
   const articles = await prisma.newsArticle.findMany({
     orderBy: { date: 'desc' }
   })
-  return { articles }
+  // 将 Date 对象转换为 ISO 字符串格式
+  return {
+    articles: articles.map(a => ({
+      ...a,
+      date: a.date.toISOString(),
+    }))
+  }
 }
 
 // 关于我们

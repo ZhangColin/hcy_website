@@ -19,7 +19,7 @@ const FIELD_WHITELISTS = {
 function extractAllowedFields<T extends keyof typeof FIELD_WHITELISTS>(
   collection: T,
   body: Record<string, unknown>
-): Partial<Record<(typeof FIELD_WHITELISTS)[T][number], unknown>> {
+): Record<string, unknown> {
   const allowed = FIELD_WHITELISTS[collection];
   const result: Record<string, unknown> = {};
   for (const key of allowed) {

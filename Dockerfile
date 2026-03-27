@@ -15,8 +15,8 @@ COPY . .
 # 生成 Prisma Client
 RUN npx prisma generate
 
-# 构建应用
-RUN npm run build
+# 构建应用（启用 standalone 模式）
+RUN STANDALONE=true npm run build
 
 # 多阶段构建 - 运行
 FROM node:20-alpine AS runner

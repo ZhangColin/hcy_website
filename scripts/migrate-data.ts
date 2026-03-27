@@ -18,6 +18,7 @@ import { readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 import { config } from 'dotenv'
+import type { Prisma } from '@prisma/client'
 
 // Load .env file
 config()
@@ -71,13 +72,13 @@ async function migrate() {
   console.log('✓ All required data files found')
 
   // Read all JSON files
-  const home = await readJsonFile(path.join(dataDir, 'home.json'), 'home.json')
-  const news = await readJsonFile(path.join(dataDir, 'news.json'), 'news.json')
-  const about = await readJsonFile(path.join(dataDir, 'about.json'), 'about.json')
-  const cases = await readJsonFile(path.join(dataDir, 'cases.json'), 'cases.json')
-  const contact = await readJsonFile(path.join(dataDir, 'contact.json'), 'contact.json')
-  const join = await readJsonFile(path.join(dataDir, 'join.json'), 'join.json')
-  const site = await readJsonFile(path.join(dataDir, 'site.json'), 'site.json')
+  const home = await readJsonFile<Record<string, unknown>>(path.join(dataDir, 'home.json'), 'home.json')
+  const news = await readJsonFile<{ articles: unknown[] }>(path.join(dataDir, 'news.json'), 'news.json')
+  const about = await readJsonFile<Record<string, unknown>>(path.join(dataDir, 'about.json'), 'about.json')
+  const cases = await readJsonFile<Record<string, unknown>>(path.join(dataDir, 'cases.json'), 'cases.json')
+  const contact = await readJsonFile<Record<string, unknown>>(path.join(dataDir, 'contact.json'), 'contact.json')
+  const join = await readJsonFile<Record<string, unknown>>(path.join(dataDir, 'join.json'), 'join.json')
+  const site = await readJsonFile<Record<string, unknown>>(path.join(dataDir, 'site.json'), 'site.json')
   console.log('✓ Data files parsed successfully')
 
   // Wrap entire migration in a transaction for atomicity
@@ -96,101 +97,101 @@ async function migrate() {
     // Migrate home content
     await tx.homeContent.create({
       data: {
-        heroSlides: home.heroSlides,
-        dataStrip: home.dataStrip,
-        highlights: home.highlights,
-        partners: home.partners,
+        heroSlides: home.heroSlides as Prisma.InputJsonValue,
+        dataStrip: home.dataStrip as Prisma.InputJsonValue,
+        highlights: home.highlights as Prisma.InputJsonValue,
+        partners: home.partners as Prisma.InputJsonValue,
       },
     })
     console.log('✓ Home content migrated')
 
     // Migrate news articles
-    for (const article of news.articles) {
+    for (const article of news.articles as Array<Record<string, unknown>>) {
       await tx.newsArticle.create({
         data: {
-          title: article.title,
-          excerpt: article.excerpt,
-          content: article.content,
-          category: article.category,
-          date: new Date(article.date),
-          image: article.image,
+          title: String(article.title),
+          excerpt: String(article.excerpt),
+          content: String(article.content),
+          category: String(article.category),
+          date: new Date(String(article.date)),
+          image: article.image ? String(article.image) : null,
         },
       })
     }
-    console.log(`✓ News articles migrated (${news.articles.length} records)`)
+    console.log(`✓ News articles migrated (${(news.articles as unknown[]).length} records)`)
 
     // Migrate about content
     await tx.aboutContent.create({
       data: {
-        intro: about.intro,
-        culture: about.culture,
-        timeline: about.timeline,
-        honors: about.honors,
-        partners: about.partners,
+        intro: about.intro as Prisma.InputJsonValue,
+        culture: about.culture as Prisma.InputJsonValue,
+        timeline: about.timeline as Prisma.InputJsonValue,
+        honors: about.honors as Prisma.InputJsonValue,
+        partners: about.partners as Prisma.InputJsonValue,
       },
     })
     console.log('✓ About content migrated')
 
     // Migrate school cases
-    for (const item of cases.schoolCases) {
+    for (const item of cases.schoolCases as Array<Record<string, unknown>>) {
       await tx.schoolCase.create({
         data: {
-          name: item.name,
-          type: item.type,
-          region: item.region,
-          stage: item.stage,
-          summary: item.summary,
+          name: String(item.name),
+          type: String(item.type),
+          region: String(item.region),
+          stage: String(item.stage),
+          summary: String(item.summary),
         },
       })
     }
-    console.log(`✓ School cases migrated (${cases.schoolCases.length} records)`)
+    console.log(`✓ School cases migrated (${(cases.schoolCases as unknown[]).length} records)`)
 
     // Migrate competition honors
-    for (const item of cases.competitionHonors) {
+    for (const item of cases.competitionHonors as Array<Record<string, unknown>>) {
       await tx.competitionHonor.create({
         data: {
-          title: item.title,
-          level: item.level,
-          year: item.year,
+          title: String(item.title),
+          level: String(item.level),
+          year: String(item.year),
         },
       })
     }
-    console.log(`✓ Competition honors migrated (${cases.competitionHonors.length} records)`)
+    console.log(`✓ Competition honors migrated (${(cases.competitionHonors as unknown[]).length} records)`)
 
     // Migrate contact info
     await tx.contactInfo.create({
       data: {
-        address: contact.address,
-        contacts: contact.contacts,
+        address: String(contact.address),
+        contacts: contact.contacts as Prisma.InputJsonValue,
       },
     })
     console.log('✓ Contact info migrated')
 
     // Migrate job positions
-    for (const item of join.jobPositions) {
+    for (const item of join.jobPositions as Array<Record<string, unknown>>) {
       await tx.jobPosition.create({
         data: {
-          title: item.title,
-          department: item.department,
-          location: item.location,
-          type: item.type,
-          description: item.description,
-          requirements: item.requirements,
+          title: String(item.title),
+          department: String(item.department),
+          location: String(item.location),
+          type: String(item.type),
+          description: String(item.description),
+          requirements: item.requirements as Prisma.InputJsonValue,
         },
       })
     }
-    console.log(`✓ Job positions migrated (${join.jobPositions.length} records)`)
+    console.log(`✓ Job positions migrated (${(join.jobPositions as unknown[]).length} records)`)
 
     // Migrate site config
     await tx.siteConfig.create({
       data: {
-        companyName: site.companyName,
-        shortName: site.shortName,
-        address: site.address,
-        icp: site.icp,
-        copyright: site.copyright,
-        friendlyLinks: site.friendlyLinks,
-        socialLinks: site.socialLinks,
+        companyName: String(site.companyName),
+        shortName: String(site.shortName),
+        address: String(site.address),
+        icp: String(site.icp),
+        copyright: String(site.copyright),
+        friendlyLinks: site.friendlyLinks as Prisma.InputJsonValue,
+        socialLinks: site.socialLinks as Prisma.InputJsonValue,
       },
     })
     console.log('✓ Site config migrated')
