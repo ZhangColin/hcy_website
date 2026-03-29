@@ -106,6 +106,7 @@ export default function CasesPage() {
   const [schoolCases, setSchoolCases] = useState<SchoolCase[]>([]);
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch data from API on mount
   useEffect(() => {
@@ -118,6 +119,7 @@ export default function CasesPage() {
         setCompetitions(data.competitionHonors || []);
       } catch (error) {
         console.error('Failed to fetch cases:', error);
+        setError('加载数据失败，请稍后重试');
       } finally {
         setIsLoading(false);
       }
@@ -244,7 +246,17 @@ export default function CasesPage() {
             </div>
 
             {/* case cards */}
-            {isLoading ? (
+            {error ? (
+              <div className="text-center py-12">
+                <p className="text-red-500 mb-4">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-[#1A3C8A] text-white rounded-lg hover:bg-[#2B6CB0]"
+                >
+                  重试
+                </button>
+              </div>
+            ) : isLoading ? (
               <div className="flex items-center justify-center py-16">
                 <div className="text-center">
                   <div className="inline-block w-8 h-8 border-3 border-[#1A3C8A] border-t-transparent rounded-full animate-spin mb-4" />
