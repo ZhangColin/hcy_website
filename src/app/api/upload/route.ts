@@ -8,7 +8,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
 
 // 允许的图片类型目录
-const ALLOWED_TYPES_DIRS = ['highlights', 'news', 'hero', 'partners', 'honors', 'uploads', 'contacts', 'qrcode', 'cases', 'cases/cover', 'cases/logo', 'cases/trophy'];
+const ALLOWED_TYPES_DIRS = ['highlights', 'news', 'news/editor', 'hero', 'partners', 'honors', 'uploads', 'contacts', 'qrcode', 'cases', 'cases/cover', 'cases/logo', 'cases/trophy'];
 
 export async function POST(request: NextRequest) {
   // 1. 验证权限

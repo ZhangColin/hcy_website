@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tailwindcss/theme" theme(typography);
 
 @theme inline {
   --color-brand-blue: #1A3C8A;
