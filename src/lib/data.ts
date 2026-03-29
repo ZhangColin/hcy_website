@@ -30,7 +30,16 @@ export async function loadNews() {
 // 关于我们
 export async function loadAbout() {
   const data = await prisma.aboutContent.findFirst()
-  if (!data) throw new Error("About content not found")
+  if (!data) {
+    // 返回默认数据，避免页面崩溃
+    return {
+      intro: { title: "关于海创元", subtitle: "", description: "" },
+      culture: { mission: "", vision: "", values: [] },
+      timeline: [],
+      honors: [],
+      partners: { strategic: [], ecosystem: [] },
+    }
+  }
   return data
 }
 
@@ -46,7 +55,13 @@ export async function loadCases() {
 // 联系方式
 export async function loadContact() {
   const data = await prisma.contactInfo.findFirst()
-  if (!data) throw new Error("Contact info not found")
+  if (!data) {
+    // 返回默认数据，避免页面崩溃
+    return {
+      address: "北京市海淀区",
+      contacts: [],
+    }
+  }
   return {
     address: data.address,
     contacts: data.contacts as any[],

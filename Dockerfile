@@ -39,13 +39,19 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# 复制 Prisma
+# 复制 Prisma 和相关依赖
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/pg ./node_modules/pg
+COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
+COPY --from=builder /app/node_modules/postgres-array ./node_modules/postgres-array
+COPY --from=builder /app/node_modules/postgres-bytea ./node_modules/postgres-bytea
+COPY --from=builder /app/node_modules/postgres-date ./node_modules/postgres-date
+COPY --from=builder /app/node_modules/postgres-interval ./node_modules/postgres-interval
 COPY --from=builder /app/prisma ./prisma
 
-# 复制迁移脚本和数据文件（用于首次部署）
+# 复制 seed 脚本
 COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/data ./data
 
 USER nextjs
 

@@ -76,8 +76,19 @@ export default async function Home() {
   const homeData = await loadData("home");
   const newsData = await loadData("news");
 
-  const heroSlides = homeData.heroSlides;
-  const dataStrip = homeData.dataStrip;
+  // Normalize heroSlides data - ensure required fields exist
+  const heroSlides = homeData.heroSlides.map((slide: any) => ({
+    title: slide.title || "",
+    subtitle: slide.subtitle || "",
+    cta: slide.cta || "了解更多",
+    href: slide.href || "/contact",
+  }));
+  // Convert dataStrip format from {title, value} to {label, value, suffix}
+  const dataStrip = homeData.dataStrip.map((item: any) => ({
+    label: item.title || item.label || "",
+    value: typeof item.value === 'number' ? item.value : parseInt(item.value?.replace(/\D/g, '') || '0'),
+    suffix: typeof item.value === 'string' && item.value?.includes('+') ? '+' : '',
+  }));
   const highlights = homeData.highlights;
   const partners = homeData.partners;
   const newsItems = newsData.articles.slice(0, 3);

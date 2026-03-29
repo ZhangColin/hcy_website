@@ -18,8 +18,14 @@ echo ""
 if [ -f .env.production ]; then
   export $(cat .env.production | grep -v '^#' | xargs)
 else
-  echo -e "${RED}错误: 未找到 .env.production 文件${NC}"
-  exit 1
+  echo -e "${YELLOW}未找到 .env.production，使用默认配置创建...${NC}"
+  cat > .env.production << 'EOF'
+DATABASE_URL="postgresql://hcy_pgsql:hcy_admin_pgsql@postgres-server:5432/hcy_website"
+ADMIN_PASSWORD="haichuangyuan2026"
+NEXT_PUBLIC_SITE_URL="https://portal.aieducenter.com"
+EOF
+  echo -e "${GREEN}✓ 已创建 .env.production${NC}"
+  export $(cat .env.production | grep -v '^#' | xargs)
 fi
 
 if [ -z "$DATABASE_URL" ]; then
@@ -51,15 +57,15 @@ docker build --build-arg STANDALONE=true --build-arg DATABASE_URL="$DATABASE_URL
 echo -e "${GREEN}✓ 镜像构建完成${NC}"
 echo ""
 
-# Step 3: 运行数据库迁移
+# Step 3: 运行数据库迁移和初始化数据
 echo -e "${YELLOW}────────────────────────────────────${NC}"
 echo -e "${YELLOW}Step 3: 运行数据库迁移${NC}"
 echo -e "${YELLOW}────────────────────────────────────${NC}"
-docker run --rm \
+docker run --rm --user root --network webnet \
   -e DATABASE_URL="$DATABASE_URL" \
   hcy-website:latest \
-  sh -c "npx prisma db push --accept-data-loss && npm run migrate:data"
-echo -e "${GREEN}✓ 数据迁移完成${NC}"
+  sh -c "npx prisma db push --url='$DATABASE_URL' --accept-data-loss && node scripts/seed-data.js"
+echo -e "${GREEN}✓ 数据库迁移完成${NC}"
 echo ""
 
 # Step 4: 启动服务

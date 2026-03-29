@@ -14,6 +14,8 @@ services:
     container_name: hcy-website
     ports:
       - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-haichuangyuan2026}
@@ -33,7 +35,7 @@ services:
         max-size: "10m"
         max-file: "3"
 
-# 连接到外部 Docker 网络
+# Docker 网络（连接到外部 webnet 网络）
 networks:
   default:
     external: true
