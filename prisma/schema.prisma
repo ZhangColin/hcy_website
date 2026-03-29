@@ -56,9 +56,12 @@ model SchoolCase {
   id          String   @id @default(cuid())
   name        String
   region      String
+  /// JSON array of grade levels, e.g., ["小学", "初中", "高中"]
   grade       String   @default("[]")
   abbr        String   @default("")
+  /// Partnership description text
   partnership String   @default("")
+  /// Results/achievements description text
   results     String   @default("")
   color       String   @default("from-[#1A3C8A] to-[#2B6CB0]")
   coverImage  String?
@@ -66,6 +69,8 @@ model SchoolCase {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([order])
 }
 
 model CompetitionHonor {
@@ -73,11 +78,14 @@ model CompetitionHonor {
   title        String
   level        String
   year         String
+  /// Achievement description text
   achievements String   @default("")
   image        String?
   order        Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([order])
 }
 
 model ContactInfo {
