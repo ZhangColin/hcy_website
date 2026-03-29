@@ -377,11 +377,30 @@ function AboutEditor({ data, setData }: { data: Record<string, unknown>; setData
 
 // ─── Cases Editor ────────────────────────────────────────────────────────────
 
-function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
-  const schools = (data.schoolCases as Record<string, unknown>[]) ?? [];
-  const competitions = (data.competitionHonors as Record<string, string>[]) ?? [];
+// Modal component
+function Modal({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: ReactNode }) {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+        </div>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
+  );
+}
 
-  // 颜色预设选项
+// School Case Form
+function SchoolCaseForm({
+  item,
+  onChange,
+}: {
+  item: Record<string, unknown>;
+  onChange: (field: string, value: unknown) => void;
+}) {
   const colorOptions = [
     { value: "from-[#1A3C8A] to-[#2B6CB0]", label: "蓝色渐变" },
     { value: "from-[#2B6CB0] to-blue-500", label: "浅蓝渐变" },
@@ -391,145 +410,474 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
     { value: "from-rose-500 to-pink-600", label: "粉色渐变" },
   ];
 
-  // 学段选项
   const gradeOptions = [
     { value: "小学", label: "小学" },
     { value: "初中", label: "初中" },
     { value: "高中", label: "高中" },
   ];
 
+  const currentGrades = (item.grade as string[]) ?? [];
+  const toggleGrade = (gradeValue: string) => {
+    const updated = currentGrades.includes(gradeValue)
+      ? currentGrades.filter((g) => g !== gradeValue)
+      : [...currentGrades, gradeValue];
+    onChange("grade", updated);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">学校名称 *</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.name as string) || ""}
+            onChange={(e) => onChange("name", e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">地区 *</label>
+          <select
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.region as string) || ""}
+            onChange={(e) => onChange("region", e.target.value)}
+          >
+            <option value="">请选择</option>
+            <option value="北京">北京</option>
+            <option value="上海">上海</option>
+            <option value="浙江">浙江</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">学段</label>
+        <div className="flex gap-4">
+          {gradeOptions.map((option) => (
+            <label key={option.value} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={currentGrades.includes(option.value)}
+                onChange={() => toggleGrade(option.value)}
+                className="rounded border-gray-300 text-[#1A3C8A] focus:ring-[#1A3C8A]"
+              />
+              <span className="text-sm text-gray-700">{option.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">缩写</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.abbr as string) || ""}
+            onChange={(e) => onChange("abbr", e.target.value)}
+            placeholder="如：BZ"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">颜色</label>
+          <select
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.color as string) || "from-[#1A3C8A] to-[#2B6CB0]"}
+            onChange={(e) => onChange("color", e.target.value)}
+          >
+            {colorOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">合作内容</label>
+        <textarea
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] min-h-[80px]"
+          value={(item.partnership as string) || ""}
+          onChange={(e) => onChange("partnership", e.target.value)}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">成果</label>
+        <textarea
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] min-h-[80px]"
+          value={(item.results as string) || ""}
+          onChange={(e) => onChange("results", e.target.value)}
+        />
+      </div>
+
+      <ImageButton
+        label="封面图"
+        value={(item.coverImage as string) || ""}
+        onChange={(v) => onChange("coverImage", v)}
+        type="cases"
+      />
+
+      <ImageButton
+        label="学校 Logo (可选)"
+        value={(item.schoolLogo as string) || ""}
+        onChange={(v) => onChange("schoolLogo", v)}
+        type="cases/logo"
+      />
+    </div>
+  );
+}
+
+// Competition Honor Form
+function CompetitionForm({
+  item,
+  onChange,
+}: {
+  item: Record<string, unknown>;
+  onChange: (field: string, value: unknown) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">赛事名称 *</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.title as string) || ""}
+            onChange={(e) => onChange("title", e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">级别 *</label>
+          <select
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.level as string) || ""}
+            onChange={(e) => onChange("level", e.target.value)}
+          >
+            <option value="">请选择</option>
+            <option value="国际">国际</option>
+            <option value="全国">全国</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">年份 *</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.year as string) || ""}
+            onChange={(e) => onChange("year", e.target.value)}
+            placeholder="如：2024"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">获奖成果 *</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+            value={(item.achievements as string) || ""}
+            onChange={(e) => onChange("achievements", e.target.value)}
+          />
+        </div>
+      </div>
+
+      <ImageButton
+        label="奖杯图片 (可选)"
+        value={(item.image as string) || ""}
+        onChange={(v) => onChange("image", v)}
+        type="cases/trophy"
+      />
+    </div>
+  );
+}
+
+function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
+  const schools = (data.schoolCases as Record<string, unknown>[]) ?? [];
+  const competitions = (data.competitionHonors as Record<string, string>[]) ?? [];
+  const [saving, setSaving] = useState(false);
+
+  // Immediate save to API
+  const saveToApi = async (updatedData: Record<string, unknown>) => {
+    setSaving(true);
+    try {
+      const token = sessionStorage.getItem("admin_token") ?? "";
+      const res = await fetch("/api/admin/cases", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (res.ok) {
+        setData(updatedData);
+        alert("保存成功");
+      } else {
+        const errorData = await res.json().catch(() => ({ error: "未知错误" }));
+        alert(`保存失败: ${errorData.error || "未知错误"}`);
+      }
+    } catch (err) {
+      console.error("保存异常:", err);
+      alert("保存失败，请检查网络");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // School case modal state
+  const [schoolModalOpen, setSchoolModalOpen] = useState(false);
+  const [editingSchool, setEditingSchool] = useState<Record<string, unknown> | null>(null);
+  const [schoolFormData, setSchoolFormData] = useState<Record<string, unknown>>({});
+
+  // Competition modal state
+  const [competitionModalOpen, setCompetitionModalOpen] = useState(false);
+  const [editingCompetition, setEditingCompetition] = useState<Record<string, unknown> | null>(null);
+  const [competitionFormData, setCompetitionFormData] = useState<Record<string, unknown>>({});
+
+  // Open school modal for add/edit
+  const openSchoolModal = (school?: Record<string, unknown>) => {
+    if (school) {
+      setEditingSchool(school);
+      setSchoolFormData({ ...school });
+    } else {
+      setEditingSchool(null);
+      setSchoolFormData({
+        name: "",
+        region: "",
+        grade: [] as string[],
+        abbr: "",
+        color: "from-[#1A3C8A] to-[#2B6CB0]",
+        partnership: "",
+        results: "",
+        coverImage: "",
+        schoolLogo: "",
+      });
+    }
+    setSchoolModalOpen(true);
+  };
+
+  // Save school
+  const saveSchool = async () => {
+    if (!schoolFormData.name || !schoolFormData.region) {
+      alert("请填写学校名称和地区");
+      return;
+    }
+    let updated;
+    if (editingSchool) {
+      updated = schools.map((s) => (s === editingSchool ? schoolFormData : s));
+    } else {
+      updated = [...schools, schoolFormData];
+    }
+    const updatedData = { ...data, schoolCases: updated };
+    await saveToApi(updatedData);
+    setSchoolModalOpen(false);
+  };
+
+  // Delete school
+  const deleteSchool = (school: Record<string, unknown>) => {
+    if (confirm("确定删除此案例吗？")) {
+      setData({ ...data, schoolCases: schools.filter((s) => s !== school) });
+    }
+  };
+
+  // Open competition modal for add/edit
+  const openCompetitionModal = (competition?: Record<string, unknown>) => {
+    if (competition) {
+      setEditingCompetition(competition);
+      setCompetitionFormData({ ...competition });
+    } else {
+      setEditingCompetition(null);
+      setCompetitionFormData({ title: "", level: "", year: "", achievements: "", image: "" });
+    }
+    setCompetitionModalOpen(true);
+  };
+
+  // Save competition
+  const saveCompetition = async () => {
+    if (!competitionFormData.title || !competitionFormData.level || !competitionFormData.year || !competitionFormData.achievements) {
+      alert("请填写所有必填项");
+      return;
+    }
+    let updated;
+    if (editingCompetition) {
+      updated = competitions.map((c) => (c === editingCompetition ? competitionFormData : c));
+    } else {
+      updated = [...competitions, competitionFormData];
+    }
+    const updatedData = { ...data, competitionHonors: updated };
+    await saveToApi(updatedData);
+    setCompetitionModalOpen(false);
+  };
+
+  // Delete competition
+  const deleteCompetition = (competition: Record<string, unknown>) => {
+    if (confirm("确定删除此荣誉吗？")) {
+      setData({ ...data, competitionHonors: competitions.filter((c) => c !== competition) });
+    }
+  };
+
   return (
     <>
+      {/* School Cases Section */}
       <SectionCard title="学校案例">
-        <ListEditor
-          title="案例列表"
-          items={schools}
-          onChange={(v) => setData({ ...data, schoolCases: v })}
-          createItem={() => ({
-            name: "",
-            region: "",
-            grade: [] as string[],
-            abbr: "",
-            color: "from-[#1A3C8A] to-[#2B6CB0]",
-            partnership: "",
-            results: "",
-            coverImage: "",
-            schoolLogo: "",
-          })}
-          renderItem={(item, _i, update) => {
-            const currentGrades = (item.grade as string[]) ?? [];
-            const toggleGrade = (gradeValue: string) => {
-              const updated = currentGrades.includes(gradeValue)
-                ? currentGrades.filter((g) => g !== gradeValue)
-                : [...currentGrades, gradeValue];
-              update("grade", updated);
-            };
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => openSchoolModal()}
+            className="bg-[#1A3C8A] text-white px-4 py-2 rounded-md text-sm hover:bg-[#15306e] transition-colors"
+          >
+            + 添加案例
+          </button>
+        </div>
 
-            return (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <FieldEditor label="学校名称" value={(item.name as string) || ""} onChange={(v) => update("name", v)} />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">地区</label>
-                    <select
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent"
-                      value={(item.region as string) || ""}
-                      onChange={(e) => update("region", e.target.value)}
-                    >
-                      <option value="">请选择</option>
-                      <option value="北京">北京</option>
-                      <option value="上海">上海</option>
-                      <option value="浙江">浙江</option>
-                      <option value="其他">其他</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">学段</label>
-                    <div className="flex gap-4 mt-2">
-                      {gradeOptions.map((option) => (
-                        <label key={option.value} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={currentGrades.includes(option.value)}
-                            onChange={() => toggleGrade(option.value)}
-                            className="rounded border-gray-300 text-[#1A3C8A] focus:ring-[#1A3C8A]"
-                          />
-                          <span className="text-sm text-gray-700">{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <FieldEditor label="缩写" value={(item.abbr as string) || ""} onChange={(v) => update("abbr", v)} />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">颜色</label>
-                    <select
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent"
-                      value={(item.color as string) || "from-[#1A3C8A] to-[#2B6CB0]"}
-                      onChange={(e) => update("color", e.target.value)}
-                    >
-                      {colorOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <ImageButton
-                    label="学校 Logo (可选)"
-                    value={(item.schoolLogo as string) || ""}
-                    onChange={(v) => update("schoolLogo", v)}
-                    type="cases/logo"
-                  />
-                </div>
-                <FieldEditor label="合作内容" value={(item.partnership as string) || ""} onChange={(v) => update("partnership", v)} multiline />
-                <FieldEditor label="成果" value={(item.results as string) || ""} onChange={(v) => update("results", v)} multiline />
-                <ImageButton
-                  label="封面图"
-                  value={(item.coverImage as string) || ""}
-                  onChange={(v) => update("coverImage", v)}
-                  type="cases"
-                />
-              </>
-            );
-          }}
-        />
+        {schools.length === 0 ? (
+          <p className="text-sm text-gray-400 py-4">暂无案例，点击上方按钮添加</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">学校名称</th>
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">地区</th>
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">学段</th>
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">缩写</th>
+                  <th className="text-right py-2 px-3 font-medium text-gray-700">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {schools.map((school, i) => (
+                  <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-2 px-3">{school.name as string}</td>
+                    <td className="py-2 px-3">{school.region as string}</td>
+                    <td className="py-2 px-3">{((school.grade as string[]) ?? []).join(", ")}</td>
+                    <td className="py-2 px-3">{school.abbr as string}</td>
+                    <td className="py-2 px-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() => openSchoolModal(school)}
+                        className="text-[#1A3C8A] hover:underline mr-3"
+                      >
+                        编辑
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteSchool(school)}
+                        className="text-red-500 hover:underline"
+                      >
+                        删除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <Modal isOpen={schoolModalOpen} onClose={() => setSchoolModalOpen(false)} title={editingSchool ? "编辑案例" : "添加案例"}>
+          <SchoolCaseForm item={schoolFormData} onChange={(field, value) => setSchoolFormData({ ...schoolFormData, [field]: value })} />
+          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={() => setSchoolModalOpen(false)}
+              className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              onClick={() => saveSchool()}
+              disabled={saving}
+              className="px-4 py-2 text-sm bg-[#1A3C8A] text-white rounded-md hover:bg-[#15306e] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "保存中..." : "保存"}
+            </button>
+          </div>
+        </Modal>
       </SectionCard>
 
+      {/* Competition Honors Section */}
       <SectionCard title="竞赛荣誉">
-        <ListEditor
-          title="荣誉列表"
-          items={competitions}
-          onChange={(v) => setData({ ...data, competitionHonors: v })}
-          createItem={() => ({ title: "", level: "", year: "", achievements: "", image: "" })}
-          renderItem={(item, _i, update) => (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FieldEditor label="赛事名称" value={(item.title as string) || ""} onChange={(v) => update("title", v)} />
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">级别</label>
-                  <select
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent"
-                    value={(item.level as string) || ""}
-                    onChange={(e) => update("level", e.target.value)}
-                  >
-                    <option value="国际">国际</option>
-                    <option value="全国">全国</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FieldEditor label="年份" value={(item.year as string) || ""} onChange={(v) => update("year", v)} />
-                <FieldEditor label="获奖成果" value={(item.achievements as string) || ""} onChange={(v) => update("achievements", v)} />
-              </div>
-              <ImageButton
-                label="奖杯图片 (可选)"
-                value={(item.image as string) || ""}
-                onChange={(v) => update("image", v)}
-                type="cases/trophy"
-              />
-            </>
-          )}
-        />
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => openCompetitionModal()}
+            className="bg-[#1A3C8A] text-white px-4 py-2 rounded-md text-sm hover:bg-[#15306e] transition-colors"
+          >
+            + 添加荣誉
+          </button>
+        </div>
+
+        {competitions.length === 0 ? (
+          <p className="text-sm text-gray-400 py-4">暂无荣誉，点击上方按钮添加</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">赛事名称</th>
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">级别</th>
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">年份</th>
+                  <th className="text-left py-2 px-3 font-medium text-gray-700">获奖成果</th>
+                  <th className="text-right py-2 px-3 font-medium text-gray-700">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {competitions.map((competition, i) => (
+                  <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-2 px-3">{competition.title as string}</td>
+                    <td className="py-2 px-3">{competition.level as string}</td>
+                    <td className="py-2 px-3">{competition.year as string}</td>
+                    <td className="py-2 px-3">{competition.achievements as string}</td>
+                    <td className="py-2 px-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() => openCompetitionModal(competition)}
+                        className="text-[#1A3C8A] hover:underline mr-3"
+                      >
+                        编辑
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteCompetition(competition)}
+                        className="text-red-500 hover:underline"
+                      >
+                        删除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <Modal isOpen={competitionModalOpen} onClose={() => setCompetitionModalOpen(false)} title={editingCompetition ? "编辑荣誉" : "添加荣誉"}>
+          <CompetitionForm item={competitionFormData} onChange={(field, value) => setCompetitionFormData({ ...competitionFormData, [field]: value })} />
+          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={() => setCompetitionModalOpen(false)}
+              className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              onClick={() => saveCompetition()}
+              disabled={saving}
+              className="px-4 py-2 text-sm bg-[#1A3C8A] text-white rounded-md hover:bg-[#15306e] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "保存中..." : "保存"}
+            </button>
+          </div>
+        </Modal>
       </SectionCard>
     </>
   );

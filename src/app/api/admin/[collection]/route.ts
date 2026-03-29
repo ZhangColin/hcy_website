@@ -55,7 +55,14 @@ export async function GET(
           prisma.schoolCase.findMany({ orderBy: { order: 'asc' } }),
           prisma.competitionHonor.findMany({ orderBy: { order: 'asc' } }),
         ]);
-        data = { schoolCases: schools, competitionHonors: competitions };
+        // Parse grade from JSON string to array
+        data = {
+          schoolCases: schools.map((s) => ({
+            ...s,
+            grade: typeof s.grade === 'string' ? JSON.parse(s.grade) : s.grade,
+          })),
+          competitionHonors: competitions,
+        };
         break;
       case "contact":
         data = await prisma.contactInfo.findFirst();
@@ -184,24 +191,125 @@ export async function PUT(
         break;
       }
       case "cases": {
-        // cases 需要指定类型: schoolCase 或 competitionHonor
-        if (!body.id || !body.type) {
-          return NextResponse.json({ error: "缺少必需参数: id 和 type (schoolCase|competitionHonor)" }, { status: 400 });
-        }
-        if (body.type === "schoolCase") {
-          const allowedData = extractAllowedFields("schoolCase", body);
-          await prisma.schoolCase.update({
-            where: { id: body.id },
-            data: allowedData,
-          });
-        } else if (body.type === "competitionHonor") {
-          const allowedData = extractAllowedFields("competitionHonor", body);
-          await prisma.competitionHonor.update({
-            where: { id: body.id },
-            data: allowedData,
-          });
+        // 支持批量保存 schoolCases 和 competitionHonors 数组
+        const hasSchoolCases = "schoolCases" in body && Array.isArray(body.schoolCases);
+        const hasCompetitionHonors = "competitionHonors" in body && Array.isArray(body.competitionHonors);
+
+        if (hasSchoolCases || hasCompetitionHonors) {
+          // 处理学校案例
+          if (hasSchoolCases) {
+            const schools = body.schoolCases as Array<{ id?: string; order?: number } & Record<string, unknown>>;
+
+            // 获取现有记录
+            const existingSchools = await prisma.schoolCase.findMany({ select: { id: true } });
+            const existingIds = new Set(existingSchools.map((s) => s.id));
+            const incomingIds = new Set(schools.filter((s) => s.id).map((s) => s.id as string));
+
+            // 1. 更新现有记录
+            for (const school of schools) {
+              if (school.id) {
+                const allowedData = extractAllowedFields("schoolCase", school);
+                // Stringify grade array to JSON for database
+                if (Array.isArray(allowedData.grade)) {
+                  (allowedData as any).grade = JSON.stringify(allowedData.grade);
+                }
+                await prisma.schoolCase.update({
+                  where: { id: school.id },
+                  data: allowedData,
+                });
+              }
+            }
+
+            // 2. 创建新记录（没有 id 的）
+            for (const school of schools) {
+              if (!school.id) {
+                const allowedData = extractAllowedFields("schoolCase", school);
+                // Stringify grade array to JSON for database
+                if (Array.isArray(allowedData.grade)) {
+                  (allowedData as any).grade = JSON.stringify(allowedData.grade);
+                }
+                await prisma.schoolCase.create({
+                  data: {
+                    ...allowedData,
+                    order: school.order ?? 0,
+                  } as any,
+                });
+              }
+            }
+
+            // 3. 删除不在前端数据中的记录
+            const idsToDelete = [...existingIds].filter((id) => !incomingIds.has(id));
+            if (idsToDelete.length > 0) {
+              await prisma.schoolCase.deleteMany({
+                where: { id: { in: idsToDelete } },
+              });
+            }
+          }
+
+          // 处理赛事荣誉
+          if (hasCompetitionHonors) {
+            const competitions = body.competitionHonors as Array<{ id?: string; order?: number } & Record<string, unknown>>;
+
+            // 获取现有记录
+            const existingCompetitions = await prisma.competitionHonor.findMany({ select: { id: true } });
+            const existingIds = new Set(existingCompetitions.map((c) => c.id));
+            const incomingIds = new Set(competitions.filter((c) => c.id).map((c) => c.id as string));
+
+            // 1. 更新现有记录
+            for (const competition of competitions) {
+              if (competition.id) {
+                const allowedData = extractAllowedFields("competitionHonor", competition);
+                await prisma.competitionHonor.update({
+                  where: { id: competition.id },
+                  data: allowedData,
+                });
+              }
+            }
+
+            // 2. 创建新记录（没有 id 的）
+            for (const competition of competitions) {
+              if (!competition.id) {
+                const allowedData = extractAllowedFields("competitionHonor", competition);
+                await prisma.competitionHonor.create({
+                  data: {
+                    ...allowedData,
+                    order: competition.order ?? 0,
+                  } as any,
+                });
+              }
+            }
+
+            // 3. 删除不在前端数据中的记录
+            const idsToDelete = [...existingIds].filter((id) => !incomingIds.has(id));
+            if (idsToDelete.length > 0) {
+              await prisma.competitionHonor.deleteMany({
+                where: { id: { in: idsToDelete } },
+              });
+            }
+          }
+        } else if (body.id && body.type) {
+          // 单条记录更新（向后兼容）
+          if (body.type === "schoolCase") {
+            const allowedData = extractAllowedFields("schoolCase", body);
+            // Stringify grade array to JSON for database
+            if (Array.isArray(allowedData.grade)) {
+              (allowedData as any).grade = JSON.stringify(allowedData.grade);
+            }
+            await prisma.schoolCase.update({
+              where: { id: body.id },
+              data: allowedData,
+            });
+          } else if (body.type === "competitionHonor") {
+            const allowedData = extractAllowedFields("competitionHonor", body);
+            await prisma.competitionHonor.update({
+              where: { id: body.id },
+              data: allowedData,
+            });
+          } else {
+            return NextResponse.json({ error: "无效的类型，必须是 'schoolCase' 或 'competitionHonor'" }, { status: 400 });
+          }
         } else {
-          return NextResponse.json({ error: "无效的类型，必须是 'schoolCase' 或 'competitionHonor'" }, { status: 400 });
+          return NextResponse.json({ error: "缺少必需参数: schoolCases/competitionHonors 数组，或 id 和 type" }, { status: 400 });
         }
         break;
       }

@@ -276,7 +276,7 @@ export default function CasesPage() {
                     <div className={`h-32 bg-gradient-to-br ${c.color} flex items-center justify-center relative overflow-hidden`}>
                       {c.coverImage ? (
                         <img
-                          src={c.coverImage}
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${c.coverImage}`}
                           alt={c.name}
                           className="absolute inset-0 w-full h-full object-cover"
                         />
@@ -285,7 +285,7 @@ export default function CasesPage() {
                       )}
                       {c.schoolLogo ? (
                         <img
-                          src={c.schoolLogo}
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${c.schoolLogo}`}
                           alt={`${c.name} logo`}
                           className="w-16 h-16 rounded-xl object-cover border-2 border-white/30 relative z-10"
                         />
@@ -375,7 +375,7 @@ export default function CasesPage() {
                     comp.level === "国际" ? "bg-gradient-to-br from-amber-50 to-amber-100" : "bg-gradient-to-br from-blue-50 to-blue-100"
                   }`}>
                     {comp.image ? (
-                      <img src={comp.image} alt={comp.title} className="w-16 h-16 object-contain" />
+                      <img src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${comp.image}`} alt={comp.title} className="w-16 h-16 object-contain" />
                     ) : (
                       <span className="text-4xl">🏆</span>
                     )}
