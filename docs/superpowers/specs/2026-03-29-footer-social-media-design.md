@@ -1,4 +1,4 @@
-# Footer 与社交媒体配置设计文档
+# Footer 与社交媒体配置设计设计文档
 
 **日期:** 2026-03-29
 **目标:** 让 Footer 组件使用站点配置数据，支持微信二维码上传和社交媒体动态管理
@@ -14,58 +14,55 @@
 
 **当前状态分析：**
 - Footer.tsx 硬编码了公司信息、友情链接、sitemap 导航
-- SiteConfig 已有 `socialLinks` 字段，但后台使用的是 `social` 字段存储对象格式 `{ weibo, douyin, bilibili }`
+- SiteConfig schema 中字段是 `socialLinks`，但 admin 页面错误地使用了 `data.social`（这是一个 bug）
 - src/lib/data.ts 中使用的是 `loadSite()` 函数
-- 图片上传 API 在 `/api/upload/route.ts`，`ALLOWED_TYPES_DIRS` 需要添加新类型
+- 图片上传 API 在 `/api/upload/route.ts`，使用腾讯云 COS
 
 ---
 
-## 数据结构变更
+## 数据结构
 
-### Prisma Schema
+### Prisma Schema（当前状态）
 
 ```prisma
 model SiteConfig {
-  id                 String   @id @default(cuid())
-  companyName        String
-  shortName          String
-  address            String
-  phone              String?
-  email              String?
-  mapLng             String?
-  mapLat             String?
-  icp                String
-  copyright          String
-  friendlyLinks      Json     // [{ label: string, href: string }]
-  socialLinks        Json     // [{ platform: string, url: string }]
-  wechatOfficialQr   String?  // 微信公众号二维码 URL
-  wechatServiceQr    String?  // 微信客服二维码 URL
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id            String @id @default(cuid())
+  companyName   String
+  shortName     String
+  address       String
+  phone         String?
+  email         String?
+  mapLng        String?
+  mapLat        String?
+  icp           String
+  copyright     String
+  friendlyLinks Json   // 当前: [{ label: string, href: string }]
+  socialLinks   Json   // 当前: 可能是对象格式 { weibo: "", douyin: "", bilibili: "" }
+  // 新增字段:
+  wechatOfficialQr String?  // 微信公众号二维码 URL
+  wechatServiceQr   String?  // 微信客服二维码 URL
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 ```
 
-### SocialLink 类型定义
+**重要**: 当前 admin 页面使用 `data.social` 是错误的，正确字段名是 `socialLinks`。这次实现将修正这个问题。
+
+### 类型定义
 
 ```typescript
+// 友情链接
+interface FriendlyLink {
+  label: string;
+  href: string;
+}
+
+// 社交媒体链接（目标格式）
 interface SocialLink {
   platform: 'weibo' | 'douyin' | 'bilibili' | 'xiaohongshu' | 'zhihu' | 'weixin';
   url: string;
 }
 ```
-
-**注意**: `socialLinks` 从对象格式改为数组格式是**破坏性变更**。
-
-### FriendlyLink 类型定义
-
-```typescript
-interface FriendlyLink {
-  label: string;
-  href: string;
-}
-```
-
-**注意**: 移除 `external` 属性，所有友情链接统一作为外部链接处理（添加 `target="_blank"`）。
 
 ---
 
@@ -73,34 +70,38 @@ interface FriendlyLink {
 
 ### 站点设置页面 (SiteEditor)
 
-#### 1. 微信二维码区块
+#### 1. 修正字段名
+
+将 `data.social` 改为 `data.socialLinks`，修正当前的 bug。
+
+#### 2. 微信二维码区块
 
 - **微信公众号二维码**: 图片上传组件
 - **微信客服二维码**: 图片上传组件
 
-使用现有的图片上传机制，需要在 `src/app/api/upload/route.ts` 的 `ALLOWED_TYPES_DIRS` 中添加 `'qrcode'` 类型。
-
-上传目录：`qrcode/`
+图片上传使用腾讯云 COS，类型为 `qrcode`，最终路径格式：`https://image.website.aieducenter.com/qrcode/filename.jpg`
 
 图片规格：建议 200x200px，正方形
 
-#### 2. 社交媒体区块
+#### 3. 社交媒体区块
 
-**字段名称变更**: 从 `social` 改为 `socialLinks`，与数据库字段保持一致。
+从对象格式改为数组列表编辑：
 
-动态列表，每项包含：
-- **平台选择**: 下拉框，选项：
-  - 微博 (weibo) - 社交媒体平台
-  - 抖音 (douyin) - 社交媒体平台
-  - 哔哩哔哩 (bilibili) - 社交媒体平台
-  - 小红书 (xiaohongshu) - 社交媒体平台
-  - 知乎 (zhihu) - 社交媒体平台
-  - 微信视频号 (weixin) - 视频平台（区别于二维码）
-- **链接输入**: 文本输入框
-- **操作**: 上移、下移、删除按钮
-- **添加按钮**: 添加新的社交媒体项
+**平台选项及中文名称：**
+| 值 | 中文名称 | 说明 |
+|---|---------|------|
+| weibo | 微博 | 社交媒体平台 |
+| douyin | 抖音 | 短视频平台 |
+| bilibili | 哔哩哔哩 | 视频平台 |
+| xiaohongshu | 小红书 | 社交电商平台 |
+| zhihu | 知乎 | 问答社区 |
+| weixin | 微信视频号 | 视频号平台（区别于公众号二维码） |
 
-**数据格式**: `socialLinks: [{ platform: 'weibo', url: 'https://...' }]`
+**列表项包含：**
+- 平台选择（下拉框）
+- 链接输入（文本框）
+- 上移/下移按钮（调整顺序）
+- 删除按钮
 
 ---
 
@@ -112,26 +113,28 @@ Footer 组件通过 `loadSite()` 获取站点配置数据。
 
 ### 渲染逻辑
 
-1. **Sitemap 导航区**: 保持硬编码（不涉及配置）
+1. **Sitemap 导航区**: 保持硬编码
 2. **公司信息区**: 从配置读取 `companyName`、`address`、`icp`、`copyright`
-   - ICP 备案号保持链接到 `beian.miit.gov.cn` 的行为
-3. **友情链接区**: 遍历 `friendlyLinks` 数组渲染，所有链接添加 `target="_blank"`
+   - ICP 备案号链接到 `beian.miit.gov.cn`
+3. **友情链接区**: 遍历 `friendlyLinks` 数组，所有链接 `target="_blank"`
 4. **微信二维码区**:
-   - 如果 `wechatOfficialQr` 有值，显示图片（200x200px），alt="微信公众号二维码"
-   - 如果无值，显示占位图标（保持当前行为）
+   - 有 URL: 显示图片（200x200px），alt="微信公众号二维码" / "微信客服二维码"
+   - 无 URL: 显示当前占位图标（灰色背景 + 轮廓图标）
    - 下方始终显示标签"微信公众号"、"微信客服"
-5. **社交媒体区**: 遍历 `socialLinks` 数组，根据 platform 渲染对应 SVG 图标
-   - 每个图标链接添加 `aria-label` 属性，值为平台中文名称
+   - 图片加载失败时，回退到占位图标
+5. **社交媒体区**: 遍历 `socialLinks` 数组渲染图标链接
+   - 每个链接有 `aria-label` 属性
+   - 图标根据 platform 渲染对应 SVG
 
 ### 图标组件
 
-在 Footer 组件内定义各平台的 SVG 图标组件。SVG 路径参考：
-- WeiboIcon（复用现有）
-- DouyinIcon（复用现有）
-- BilibiliIcon（复用现有）
-- XiaohongshuIcon（使用标准小红书图标 SVG）
-- ZhihuIcon（使用标准知乎图标 SVG）
-- WeixinIcon（使用标准微信图标 SVG）
+在 Footer.tsx 中内联定义 SVG 图标组件。参考当前 Footer 中已有的图标风格（简单的品牌 logo 路径）。
+
+**已有图标**（复用）: Weibo, Douyin, Bilibili
+**需要新增**（从 Simple Icons 或类似库获取 SVG 路径）:
+- Xiaohongshu: https://simpleicons.org/icons/xiaohongshu
+- Zhihu: https://simpleicons.org/icons/zhihu
+- Weixin: https://simpleicons.org/icons/weixin
 
 ---
 
@@ -139,21 +142,23 @@ Footer 组件通过 `loadSite()` 获取站点配置数据。
 
 ### GET /api/admin/site
 
-返回 site 配置时包含新增字段 `wechatOfficialQr`、`wechatServiceQr`。
+添加数据格式迁移逻辑：如果 `socialLinks` 是对象格式，自动转换为数组格式。
 
-**数据迁移逻辑位置**: 在 GET 返回前，检测 `socialLinks` 格式：
-- 如果是对象格式 `{ weibo: "url" }`，自动转换为数组格式 `[{ platform: "weibo", url: "url" }]`
+```typescript
+// 返回前检查并转换
+if (siteData.socialLinks && typeof siteData.socialLinks === 'object' && !Array.isArray(siteData.socialLinks)) {
+  // 从 { weibo: "url" } 转换为 [{ platform: "weibo", url: "url" }]
+  siteData.socialLinks = Object.entries(siteData.socialLinks).map(([platform, url]) => ({ platform, url }));
+}
+```
 
 ### PUT /api/admin/[collection]/route.ts
 
-更新 `FIELD_WHITELISTS.site` 数组，添加：
-- `wechatOfficialQr`
-- `wechatServiceQr`
-- `socialLinks`（已存在，但格式从对象改为数组）
+`FIELD_WHITELISTS.site` 添加：`wechatOfficialQr`、`wechatServiceQr`
 
 ### POST /api/upload/route.ts
 
-在 `ALLOWED_TYPES_DIRS` 中添加 `'qrcode'` 类型。
+`ALLOWED_TYPES_DIRS` 添加 `'qrcode'`
 
 ---
 
@@ -163,37 +168,30 @@ Footer 组件通过 `loadSite()` 获取站点配置数据。
 |------|------|------|
 | `prisma/schema.prisma` | 修改 | 添加 `wechatOfficialQr`、`wechatServiceQr` 字段 |
 | `src/app/api/upload/route.ts` | 修改 | `ALLOWED_TYPES_DIRS` 添加 `'qrcode'` |
-| `src/app/api/admin/[collection]/route.ts` | 修改 | `FIELD_WHITELISTS.site` 添加新字段，GET 添加数据迁移逻辑 |
-| `src/app/admin/page.tsx` | 修改 | SiteEditor：`social` 改为 `socialLinks`，添加微信二维码上传和社交媒体列表编辑 |
-| `src/components/Footer.tsx` | 修改 | 从配置读取数据渲染，添加新图标组件，移除 `external` 属性判断 |
-| `src/lib/data.ts` | 检查 | 确认 `loadSite()` 函数正常工作 |
+| `src/app/api/admin/[collection]/route.ts` | 修改 | 添加 `socialLinks` 格式迁移逻辑，更新 whitelist |
+| `src/app/admin/page.tsx` | 修改 | `social` → `socialLinks`，添加二维码上传和社交媒体列表 |
+| `src/components/Footer.tsx` | 修改 | 从配置读取数据，新增社交媒体图标 |
 | `prisma/migrations/` | 新增 | 数据库迁移文件 |
 
 ---
 
-## 数据迁移
+## 数据迁移策略
 
-当前 `socialLinks` 字段可能存储的是对象格式：
-```json
-{ "weibo": "https://...", "douyin": "https://..." }
-```
-
-需要迁移为数组格式：
-```json
-[{ "platform": "weibo", "url": "https://..." }, { "platform": "douyin", "url": "https://..." }]
-```
-
-**迁移实现位置**: `src/app/api/admin/[collection]/route.ts` 的 GET 处理器中，返回数据前进行格式检测和转换。
+采用运行时转换策略：
+1. GET 返回时检测 `socialLinks` 格式
+2. 如果是对象格式，转换为数组格式
+3. PUT 保存时，已经是数组格式，直接保存
+4. 第一次保存后，数据库中的数据就永久更新为新格式
 
 ---
 
 ## 测试计划
 
-1. 后台上传微信二维码，保存成功，前台正确显示（200x200px，带 alt 文本）
+1. 后台上传微信二维码，保存成功
 2. 后台添加/删除/排序社交媒体，保存成功
 3. 前台 Footer 正确显示所有配置数据
-4. 社交媒体图标正确渲染（包括新增的小红书、知乎、微信视频号）
-5. 当二维码未配置时，显示占位图标和标签
-6. ICP 备案号链接正确跳转到 beian.miit.gov.cn
-7. 友情链接正确在新标签页打开
-8. 社交媒体链接具有正确的 aria-label
+4. 社交媒体图标正确渲染
+5. 二维码未配置时显示占位图标
+6. 二维码图片加载失败时回退到占位图标
+7. ICP 备案号链接正确
+8. 友情链接在新标签页打开
