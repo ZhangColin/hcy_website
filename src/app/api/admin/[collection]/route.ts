@@ -12,7 +12,7 @@ const FIELD_WHITELISTS = {
   competitionHonor: ["title", "level", "year", "order"],
   contact: ["address", "contacts"],
   jobPosition: ["title", "department", "location", "type", "description", "requirements", "active", "order"],
-  site: ["companyName", "shortName", "address", "phone", "email", "mapLng", "mapLat", "icp", "copyright", "friendlyLinks", "socialLinks"],
+  site: ["companyName", "shortName", "address", "phone", "email", "mapLng", "mapLat", "icp", "copyright", "friendlyLinks", "socialLinks", "wechatOfficialQr", "wechatServiceQr"],
 } as const;
 
 // 提取允许的字段
@@ -71,6 +71,18 @@ export async function GET(
         data = { partners: homeData?.partners ?? [] };
         break;
     }
+
+    // socialLinks 数据格式迁移：对象转数组
+    if (collection === "site" && data && typeof data === "object") {
+      const siteData = data as any;
+      if (siteData.socialLinks && typeof siteData.socialLinks === 'object' && !Array.isArray(siteData.socialLinks)) {
+        // 从 { weibo: "url" } 转换为 [{ platform: "weibo", url: "url" }]
+        siteData.socialLinks = Object.entries(siteData.socialLinks)
+          .filter(([_, url]) => typeof url === 'string' && url.trim().length > 0)
+          .map(([platform, url]) => ({ platform, url: url.trim() }));
+      }
+    }
+
     return NextResponse.json(data);
   } catch (error) {
     console.error(`[API Error] GET /admin/${collection}:`, error);
