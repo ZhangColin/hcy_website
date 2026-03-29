@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, ReactNode } from "react";
+import { ImageButton } from "@/components/ImageButton";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -185,11 +186,17 @@ function HomeEditor({ data, setData }: { data: Record<string, unknown>; setData:
           title="亮点列表"
           items={highlights}
           onChange={(v) => setData({ ...data, highlights: v })}
-          createItem={() => ({ title: "", text: "" })}
+          createItem={() => ({ title: "", text: "", image: "" })}
           renderItem={(item, _i, update) => (
             <>
               <FieldEditor label="标题" value={item.title} onChange={(v) => update("title", v)} />
               <FieldEditor label="描述" value={item.text} onChange={(v) => update("text", v)} multiline />
+              <ImageButton
+                label="图片"
+                value={(item.image as string) || ""}
+                onChange={(v) => update("image", v)}
+                type="highlights"
+              />
             </>
           )}
         />
