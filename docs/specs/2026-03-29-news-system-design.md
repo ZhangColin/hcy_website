@@ -138,6 +138,21 @@ function generateSlug(title: string): string {
 - `search` - 关键词搜索
 - `homepage` - 仅首页显示
 
+### 3.4 权限验证
+
+- `/api/admin/news/*` 所有接口都需要管理员权限验证
+- 复用现有 `src/lib/auth.ts` 中的 `authenticateRequest` 中间件
+- 前台 API (`/api/news/*`) 无需权限验证
+
+---
+
+**列表查询:**
+- `page` / `limit` - 分页
+- `category` - 分类筛选
+- `published` - 发布状态
+- `search` - 关键词搜索
+- `homepage` - 仅首页显示
+
 ---
 
 ## 四、页面设计
@@ -284,7 +299,7 @@ const showSaveButton = activeSection !== "cases";
 
 ## 八、文件清单
 
-### 7.1 新增文件
+### 8.1 新增文件
 
 ```
 src/app/admin/news/page.tsx                    # 新闻列表管理页
@@ -303,7 +318,7 @@ src/components/TiptapEditor.tsx                # Tiptap 编辑器封装
 src/components/NewsDetailClient.tsx            # 新闻详情客户端组件
 ```
 
-### 7.2 修改文件
+### 8.2 修改文件
 
 ```
 prisma/schema.prisma                           # NewsArticle 模型
