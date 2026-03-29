@@ -82,6 +82,7 @@ export default async function Home() {
     subtitle: slide.subtitle || "",
     cta: slide.cta || "了解更多",
     href: slide.href || "/contact",
+    image: slide.image || undefined,
   }));
   // Convert dataStrip format from {title, value} to {label, value, suffix}
   const dataStrip = homeData.dataStrip.map((item: any) => ({

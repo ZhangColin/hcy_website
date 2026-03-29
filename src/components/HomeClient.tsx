@@ -320,19 +320,18 @@ export function PartnersWall({ partners }: { partners: Array<string | PartnerIte
         return (
           <div
             key={i}
-            className="flex items-center justify-center mx-6 px-8 py-4 bg-white rounded-xl shadow-sm min-w-[160px] h-20"
+            className="flex items-center gap-3 mx-6 px-6 py-4 bg-white rounded-xl shadow-sm min-w-[180px] h-20"
           >
-            {logoUrl ? (
+            {logoUrl && (
               <img
                 src={logoUrl}
                 alt={partner.name}
-                className="max-w-full max-h-full object-contain"
+                className="w-10 h-10 object-contain flex-shrink-0"
               />
-            ) : (
-              <span className="text-lg font-bold text-[#1A3C8A]/70 whitespace-nowrap">
-                {partner.name}
-              </span>
             )}
+            <span className="text-base font-bold text-[#1A3C8A]/80 whitespace-nowrap">
+              {partner.name}
+            </span>
           </div>
         );
       })}
