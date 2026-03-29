@@ -266,35 +266,37 @@ export default async function Home() {
           </RevealSection>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {newsItems.map((news: { id: string; title: string; excerpt: string; date: string; category: string }) => (
+            {newsItems.map((news: { id: string; title: string; excerpt: string; date: string; category: string; slug: string }) => (
               <RevealSection key={news.title}>
-                <article className="bg-[#F5F7FA] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
-                  {/* Thumbnail placeholder */}
-                  <div className="aspect-[16/9] bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] flex items-center justify-center">
-                    <svg
-                      className="w-12 h-12 text-white/30"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={1.5}
-                    >
-                      <rect x="3" y="3" width="18" height="18" rx="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <path d="M21 15l-5-5L5 21" />
-                    </svg>
-                  </div>
-                  <div className="p-6">
-                    <time className="text-xs text-gray-400 mb-2 block">
-                      {news.date}
-                    </time>
-                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-[#1A3C8A] transition-colors line-clamp-2">
-                      {news.title}
-                    </h3>
-                    <p className="text-sm text-gray-500 line-clamp-2">
-                      {news.excerpt}
-                    </p>
-                  </div>
-                </article>
+                <Link href={`/news/${news.slug}`}>
+                  <article className="bg-[#F5F7FA] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group h-full">
+                    {/* Thumbnail placeholder */}
+                    <div className="aspect-[16/9] bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] flex items-center justify-center">
+                      <svg
+                        className="w-12 h-12 text-white/30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
+                      >
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="M21 15l-5-5L5 21" />
+                      </svg>
+                    </div>
+                    <div className="p-6">
+                      <time className="text-xs text-gray-400 mb-2 block">
+                        {news.date}
+                      </time>
+                      <h3 className="font-bold text-gray-900 mb-2 group-hover:text-[#1A3C8A] transition-colors line-clamp-2">
+                        {news.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 line-clamp-2">
+                        {news.excerpt}
+                      </p>
+                    </div>
+                  </article>
+                </Link>
               </RevealSection>
             ))}
           </div>
