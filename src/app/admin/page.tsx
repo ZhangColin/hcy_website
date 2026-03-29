@@ -474,6 +474,21 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
         <FieldEditor label="版权信息" value={(data.copyright as string) ?? ""} onChange={(v) => setData({ ...data, copyright: v })} />
       </SectionCard>
 
+      <SectionCard title="微信二维码">
+        <ImageButton
+          label="微信公众号二维码"
+          value={(data.wechatOfficialQr as string) || ""}
+          onChange={(v) => setData({ ...data, wechatOfficialQr: v })}
+          type="qrcode"
+        />
+        <ImageButton
+          label="微信客服二维码"
+          value={(data.wechatServiceQr as string) || ""}
+          onChange={(v) => setData({ ...data, wechatServiceQr: v })}
+          type="qrcode"
+        />
+      </SectionCard>
+
       <SectionCard title="友情链接">
         <ListEditor
           title="链接列表"
