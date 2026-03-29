@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { loadSite } from "@/lib/data";
 
 const sitemapColumns = [
   {
@@ -46,21 +47,27 @@ const sitemapColumns = [
   },
 ];
 
-const friendlyLinks = [
-  { label: "海淀国投集团", href: "https://www.hdgt.com", external: true },
-  {
-    label: "智研云平台",
-    href: "https://zhiyan.aieducenter.com",
-    external: true,
-  },
-  {
-    label: "AI党建平台",
-    href: "https://dangjian.aieducenter.com",
-    external: true,
-  },
-];
-
-export default function Footer() {
+export default async function Footer() {
+  // 获取站点配置，如果失败则使用默认值
+  let site;
+  try {
+    site = await loadSite();
+  } catch (error) {
+    console.error('Failed to load site config:', error);
+    // 使用默认值避免页面崩溃
+    site = {
+      companyName: "北京海创元人工智能教育科技有限公司",
+      address: "北京市海淀区中关村大街1号",
+      icp: "京ICP备XXXXXXXX号-X",
+      copyright: "北京海创元人工智能教育科技有限公司",
+      friendlyLinks: [],
+      socialLinks: [],
+      wechatOfficialQr: null,
+      wechatServiceQr: null,
+    };
+  }
+  const friendlyLinks = (site.friendlyLinks as Array<{ label: string; href: string }>) ?? [];
+  const socialLinks = (site.socialLinks as Array<{ platform: string; url: string }>) ?? [];
   return (
     <footer className="bg-[#0F2557] text-white/80">
       {/* Row 1: Sitemap */}
