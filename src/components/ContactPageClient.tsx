@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { AMap } from "@/components/AMap";
+import { validateConsultationForm } from "@/lib/validators";
 
 /* ───────── types ───────── */
 interface ContactData {
@@ -20,6 +21,7 @@ interface SiteData {
   mapLat?: string | null;
   icp: string;
   copyright: string;
+  wechatServiceQr?: string | null;
 }
 
 /* ───────── scroll reveal hook ───────── */
@@ -112,6 +114,7 @@ interface FormErrors {
   email?: string;
   needType?: string;
   message?: string;
+  general?: string;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -131,25 +134,6 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
   const [submitted, setSubmitted] = useState(false);
 
   /* ── validation ── */
-  function validate(data: FormData): FormErrors {
-    const errs: FormErrors = {};
-    if (!data.name.trim()) errs.name = "请输入姓名";
-    if (!data.company.trim()) errs.company = "请输入单位名称";
-    if (!data.phone.trim()) {
-      errs.phone = "请输入联系电话";
-    } else if (!/^1[3-9]\d{9}$/.test(data.phone.trim())) {
-      errs.phone = "请输入正确的手机号码";
-    }
-    if (!data.email.trim()) {
-      errs.email = "请输入邮箱地址";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
-      errs.email = "请输入正确的邮箱格式";
-    }
-    if (!data.needType) errs.needType = "请选择需求类型";
-    if (!data.message.trim()) errs.message = "请输入留言内容";
-    return errs;
-  }
-
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
@@ -157,25 +141,67 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
     const next = { ...form, [name]: value };
     setForm(next);
     if (touched[name]) {
-      setErrors(validate(next));
+      const result = validateConsultationForm(next);
+      const errs: FormErrors = {};
+      Object.keys(result.errors).forEach((key) => {
+        errs[key as keyof FormErrors] = result.errors[key];
+      });
+      setErrors(errs);
     }
   }
 
   function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
-    setErrors(validate(form));
+    const result = validateConsultationForm(form);
+    const errs: FormErrors = {};
+    Object.keys(result.errors).forEach((key) => {
+      errs[key as keyof FormErrors] = result.errors[key];
+    });
+    setErrors(errs);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const allTouched: Record<string, boolean> = {};
     Object.keys(form).forEach((k) => (allTouched[k] = true));
     setTouched(allTouched);
-    const errs = validate(form);
+
+    // 客户端验证
+    const result = validateConsultationForm(form);
+    const errs: FormErrors = {};
+    Object.keys(result.errors).forEach((key) => {
+      errs[key as keyof FormErrors] = result.errors[key];
+    });
     setErrors(errs);
+
     if (Object.keys(errs).length === 0) {
-      setSubmitted(true);
+      // 提交到服务器
+      try {
+        const res = await fetch("/api/contact/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          setSubmitted(true);
+        } else {
+          // 显示服务器返回的错误
+          const serverErrors: FormErrors = {};
+          if (data.errors) {
+            Object.keys(data.errors).forEach((key) => {
+              serverErrors[key as keyof FormErrors] = data.errors[key];
+            });
+          }
+          setErrors(serverErrors);
+        }
+      } catch (error) {
+        console.error("Submit error:", error);
+        setErrors({ general: "网络错误，请稍后重试" });
+      }
     }
   }
 
@@ -589,6 +615,19 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                     )}
                   </div>
 
+                  {/* General Error */}
+                  {errors.general && (
+                    <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200">
+                      <p className="text-sm text-red-600 flex items-center gap-2">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M12 8v4m0 4h.01" />
+                        </svg>
+                        {errors.general}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Submit */}
                   <button
                     type="submit"
@@ -606,22 +645,42 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                 <h3 className="font-bold text-[#333333] text-lg mb-2">微信客服</h3>
                 <p className="text-sm text-[#666666] mb-6">扫码添加微信客服，获取即时咨询服务</p>
 
-                {/* QR placeholder */}
-                <div className="w-48 h-48 mx-auto rounded-2xl bg-gradient-to-br from-[#F5F7FA] to-gray-100 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center mb-6">
-                  <svg className="w-12 h-12 text-gray-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
-                    <rect x="2" y="2" width="8" height="8" rx="1" />
-                    <rect x="14" y="2" width="8" height="8" rx="1" />
-                    <rect x="2" y="14" width="8" height="8" rx="1" />
-                    <rect x="14" y="14" width="4" height="4" rx="0.5" />
-                    <rect x="20" y="14" width="2" height="2" rx="0.25" />
-                    <rect x="14" y="20" width="2" height="2" rx="0.25" />
-                    <rect x="18" y="18" width="4" height="4" rx="0.5" />
-                    <rect x="5" y="5" width="2" height="2" fill="currentColor" />
-                    <rect x="17" y="5" width="2" height="2" fill="currentColor" />
-                    <rect x="5" y="17" width="2" height="2" fill="currentColor" />
-                  </svg>
-                  <span className="text-xs text-gray-400">二维码占位</span>
-                </div>
+                {/* WeChat QR Code */}
+                {siteData.wechatServiceQr ? (
+                  <div className="w-48 h-48 mx-auto mb-6">
+                    <img
+                      src={
+                        siteData.wechatServiceQr.startsWith('http')
+                          ? siteData.wechatServiceQr
+                          : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${siteData.wechatServiceQr}`
+                      }
+                      alt="微信客服"
+                      className="w-full h-full object-cover rounded-2xl"
+                      onError={(e) => {
+                        // 图片加载失败时显示占位符
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-48 h-48 mx-auto rounded-2xl bg-gradient-to-br from-[#F5F7FA] to-gray-100 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center mb-6">
+                    <svg className="w-12 h-12 text-gray-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
+                      <rect x="2" y="2" width="8" height="8" rx="1" />
+                      <rect x="14" y="2" width="8" height="8" rx="1" />
+                      <rect x="2" y="14" width="8" height="8" rx="1" />
+                      <rect x="14" y="14" width="4" height="4" rx="0.5" />
+                      <rect x="20" y="14" width="2" height="2" rx="0.25" />
+                      <rect x="14" y="20" width="2" height="2" rx="0.25" />
+                      <rect x="18" y="18" width="4" height="4" rx="0.5" />
+                      <rect x="5" y="5" width="2" height="2" fill="currentColor" />
+                      <rect x="17" y="5" width="2" height="2" fill="currentColor" />
+                      <rect x="5" y="17" width="2" height="2" fill="currentColor" />
+                    </svg>
+                    <span className="text-xs text-gray-400">二维码未配置</span>
+                  </div>
+                )}
 
                 <div className="w-full h-px bg-gray-100 mb-6" />
 
