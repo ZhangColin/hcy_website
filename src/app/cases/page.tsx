@@ -340,27 +340,33 @@ export default function CasesPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-[#333333] mb-2">赛事荣誉</h2>
             <p className="text-[#666666] mb-12">以赛促学，以赛促教，培养AI创新人才</p>
 
-            {/* honor wall */}
-            <div className="relative mb-16 p-8 md:p-12 rounded-3xl bg-gradient-to-br from-[#1A3C8A] via-[#2B6CB0] to-[#1A3C8A] overflow-hidden">
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4A843] rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-60 h-60 bg-white rounded-full blur-3xl" />
-              </div>
-              <div className="relative text-center">
-                <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-6xl md:text-8xl font-black text-[#D4A843]">3</span>
-                    <span className="text-xl md:text-2xl text-white font-semibold">个全球总冠军</span>
+            {/* honor wall - dynamic statistics */}
+            {(() => {
+              const intlCount = competitions.filter((c) => c.level === "国际" || c.level === "全球").length;
+              const nationalCount = competitions.filter((c) => c.level === "全国").length;
+              return (
+                <div className="relative mb-16 p-8 md:p-12 rounded-3xl bg-gradient-to-br from-[#1A3C8A] via-[#2B6CB0] to-[#1A3C8A] overflow-hidden">
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4A843] rounded-full blur-3xl" />
+                    <div className="absolute bottom-0 left-0 w-60 h-60 bg-white rounded-full blur-3xl" />
                   </div>
-                  <span className="text-3xl text-[#D4A843] font-bold">+</span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-6xl md:text-8xl font-black text-[#D4A843]">7</span>
-                    <span className="text-xl md:text-2xl text-white font-semibold">个全国总冠军</span>
+                  <div className="relative text-center">
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-6">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-6xl md:text-8xl font-black text-[#D4A843]">{intlCount}</span>
+                        <span className="text-xl md:text-2xl text-white font-semibold">个国际总冠军</span>
+                      </div>
+                      <span className="text-3xl text-[#D4A843] font-bold">+</span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-6xl md:text-8xl font-black text-[#D4A843]">{nationalCount}</span>
+                        <span className="text-xl md:text-2xl text-white font-semibold">个全国总冠军</span>
+                      </div>
+                    </div>
+                    <p className="text-blue-200 text-lg">累计获得国际及全国重量级赛事荣誉</p>
                   </div>
                 </div>
-                <p className="text-blue-200 text-lg">累计获得国际及全国重量级赛事荣誉</p>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* competition list */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
