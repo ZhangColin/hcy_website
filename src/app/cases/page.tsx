@@ -47,6 +47,7 @@ interface Competition {
   level: string;
   achievements: string;
   year: string;
+  image?: string | null;
 }
 
 const timelineAwards = [
@@ -362,20 +363,30 @@ export default function CasesPage() {
             </div>
 
             {/* competition list */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
               {competitions.map((comp) => (
-                <div key={comp.title} className="group flex items-start gap-4 p-5 bg-[#F5F7FA] rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 border border-transparent hover:border-gray-100">
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm ${comp.level === "国际" ? "bg-gradient-to-br from-[#D4A843] to-amber-600" : "bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0]"}`}>
-                    {comp.level}
+                <div key={comp.title} className={`group bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                  comp.level === "国际"
+                    ? "border-amber-200 hover:border-amber-400"
+                    : "border-blue-200 hover:border-blue-400"
+                }`}>
+                  {/* 图标/图片区域 */}
+                  <div className={`h-24 flex items-center justify-center ${
+                    comp.level === "国际" ? "bg-gradient-to-br from-amber-50 to-amber-100" : "bg-gradient-to-br from-blue-50 to-blue-100"
+                  }`}>
+                    {comp.image ? (
+                      <img src={comp.image} alt={comp.title} className="w-16 h-16 object-contain" />
+                    ) : (
+                      <span className="text-4xl">🏆</span>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-[#333333] mb-1">{comp.title}</h4>
-                    <p className="text-sm text-[#2B6CB0] font-medium">{comp.achievements}</p>
-                    <p className="text-xs text-[#666666] mt-1">{comp.year}</p>
+                  <div className="p-5">
+                    <h4 className="font-bold text-[#333333] mb-2 line-clamp-2">{comp.title}</h4>
+                    <p className={`text-sm font-medium mb-1 ${
+                      comp.level === "国际" ? "text-amber-600" : "text-[#2B6CB0]"
+                    }`}>{comp.achievements}</p>
+                    <p className="text-xs text-[#666666]">{comp.year}</p>
                   </div>
-                  <svg className="w-5 h-5 text-gray-300 group-hover:text-[#D4A843] transition-colors flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" clipRule="evenodd"/>
-                  </svg>
                 </div>
               ))}
             </div>
