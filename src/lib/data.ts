@@ -48,7 +48,8 @@ export async function loadAbout() {
   }
 
   // 从 HomeContent 读取 partners 数据
-  let partnersData = defaultAbout.partners;
+  type PartnerData = { strategic: Array<{ name: string; logo?: string }>; ecosystem: Array<{ name: string; logo?: string }> };
+  const partnersData: PartnerData = { strategic: [], ecosystem: [] };
   if (homeData?.partners) {
     const partners = homeData.partners as Array<{ name: string; logo?: string; category?: string }> | string[];
     // 兼容旧格式
@@ -57,14 +58,12 @@ export async function loadAbout() {
     );
 
     // 按分类分组
-    const strategic = normalizedPartners
+    partnersData.strategic = normalizedPartners
       .filter((p) => p.category === "strategic" && p.name)
       .map((p) => ({ name: p.name, logo: p.logo }));
-    const ecosystem = normalizedPartners
+    partnersData.ecosystem = normalizedPartners
       .filter((p) => p.category === "ecosystem" && p.name)
       .map((p) => ({ name: p.name, logo: p.logo }));
-
-    partnersData = { strategic, ecosystem };
   }
 
   return {

@@ -51,16 +51,17 @@ export async function GET(request: NextRequest) {
 
     // 日期范围筛选
     if (startDate || endDate) {
-      where.createdAt = {};
+      const dateCondition: { gte?: Date; lt?: Date } = {};
       if (startDate) {
-        where.createdAt.gte = new Date(startDate);
+        dateCondition.gte = new Date(startDate);
       }
       if (endDate) {
         // 包含结束日期当天，加一天
         const end = new Date(endDate);
         end.setDate(end.getDate() + 1);
-        where.createdAt.lt = end;
+        dateCondition.lt = end;
       }
+      where.createdAt = dateCondition;
     }
 
     // 计算分页

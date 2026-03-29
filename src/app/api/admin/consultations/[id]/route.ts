@@ -16,8 +16,9 @@ export async function PATCH(
     return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
+  const { id } = await params;
+
   try {
-    const { id } = await params;
     const body = await request.json();
 
     // 字段白名单
@@ -63,9 +64,9 @@ export async function DELETE(
     return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
-  try {
-    const { id } = await params;
+  const { id } = await params;
 
+  try {
     await prisma.contactSubmission.delete({
       where: { id },
     });

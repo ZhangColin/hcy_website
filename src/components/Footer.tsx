@@ -52,7 +52,7 @@ function WeixinIcon() {
 }
 
 // Icon and platform name mappings
-const SOCIAL_ICONS: Record<string, JSX.Element> = {
+const SOCIAL_ICONS: Record<string, React.ReactElement> = {
   weibo: <WeiboIcon />,
   douyin: <DouyinIcon />,
   bilibili: <BilibiliIcon />,
