@@ -119,10 +119,12 @@ model SiteConfig {
   mapLat        String?
   icp           String
   copyright     String
-  friendlyLinks Json
-  socialLinks   Json
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  friendlyLinks     Json
+  socialLinks       Json
+  wechatOfficialQr  String? // 微信公众号二维码 URL
+  wechatServiceQr   String? // 微信客服二维码 URL
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 // ─── 留言表单提交 ───
