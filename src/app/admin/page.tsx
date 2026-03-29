@@ -5,7 +5,7 @@ import { ImageButton } from "@/components/ImageButton";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join";
+type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join" | "consultations";
 
 interface NavItem {
   key: CollectionKey;
@@ -26,6 +26,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "contact", label: "联系方式" },
   { key: "site", label: "站点设置" },
   { key: "join", label: "招聘管理" },
+  { key: "consultations", label: "咨询管理" },
 ];
 
 // ─── Toast ───────────────────────────────────────────────────────────────────
@@ -690,6 +691,587 @@ function PartnersEditor({ data, setData }: { data: Record<string, unknown>; setD
   );
 }
 
+// ─── Consultations Editor ───────────────────────────────────────────────────────
+
+const NEED_TYPES = [
+  "AI课程入校",
+  "AI师资培训与认证",
+  "AI研学",
+  "生态产品联盟",
+  "政企AI赋能培训",
+  "OPC生态",
+  "智创专项服务",
+  "不良资产盘活",
+  "AI党建业务",
+  "其他",
+] as const;
+
+interface ConsultationItem {
+  id: string;
+  createdAt: string;
+  name: string;
+  company?: string | null;
+  phone: string;
+  email?: string | null;
+  needType: string;
+  message: string;
+  handled: boolean;
+  repliedAt?: string | null;
+  replyNotes?: string | null;
+}
+
+interface ConsultationsListResponse {
+  items: ConsultationItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+function ConsultationsEditor() {
+  const [items, setItems] = useState<ConsultationItem[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // 筛选状态
+  const [search, setSearch] = useState("");
+  const [needType, setNeedType] = useState("");
+  const [handled, setHandled] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // 分页状态
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+
+  // 排序状态
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [order, setOrder] = useState<"asc" | "desc">("desc");
+
+  // 详情弹窗
+  const [detailItem, setDetailItem] = useState<ConsultationItem | null>(null);
+  const [detailNotes, setDetailNotes] = useState("");
+
+  // 获取 token
+  const getToken = () => sessionStorage.getItem("admin_token") ?? "";
+
+  // 加载数据
+  const loadItems = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+      if (search) params.append("search", search);
+      if (needType) params.append("needType", needType);
+      if (handled !== "") params.append("handled", handled);
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
+      if (sortBy) params.append("sortBy", sortBy);
+      if (order) params.append("order", order);
+
+      const res = await fetch(`/api/admin/consultations?${params}`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (res.ok) {
+        const data: ConsultationsListResponse = await res.json();
+        setItems(data.items);
+        setTotal(data.total);
+      }
+    } catch {
+      console.error("Failed to load consultations");
+    } finally {
+      setLoading(false);
+    }
+  }, [page, limit, search, needType, handled, startDate, endDate, sortBy, order]);
+
+  // 初始加载和筛选变化时重新加载
+  useEffect(() => {
+    loadItems();
+  }, [loadItems]);
+
+  // 全选/取消全选
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(new Set(items.map((item) => item.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  // 单选
+  const handleSelectOne = (id: string, checked: boolean) => {
+    const next = new Set(selectedIds);
+    if (checked) {
+      next.add(id);
+    } else {
+      next.delete(id);
+    }
+    setSelectedIds(next);
+  };
+
+  // 批量操作
+  const handleBatchAction = async (action: "markHandled" | "markUnhandled" | "delete") => {
+    if (selectedIds.size === 0) return;
+    try {
+      const res = await fetch("/api/admin/consultations/batch", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({
+          ids: Array.from(selectedIds),
+          action,
+        }),
+      });
+      if (res.ok) {
+        setSelectedIds(new Set());
+        loadItems();
+      }
+    } catch {
+      console.error("Batch action failed");
+    }
+  };
+
+  // 导出 CSV
+  const handleExport = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (search) params.append("search", search);
+      if (needType) params.append("needType", needType);
+      if (handled !== "") params.append("handled", handled);
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
+
+      const res = await fetch(`/api/admin/consultations/export?${params}`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `consultations_${new Date().toISOString().split("T")[0]}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch {
+      console.error("Export failed");
+    }
+  };
+
+  // 打开详情
+  const openDetail = (item: ConsultationItem) => {
+    setDetailItem(item);
+    setDetailNotes(item.replyNotes ?? "");
+  };
+
+  // 保存详情
+  const saveDetail = async () => {
+    if (!detailItem) return;
+    try {
+      const res = await fetch(`/api/admin/consultations/${detailItem.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({
+          handled: detailItem.handled,
+          replyNotes: detailNotes,
+        }),
+      });
+      if (res.ok) {
+        setDetailItem(null);
+        loadItems();
+      }
+    } catch {
+      console.error("Save detail failed");
+    }
+  };
+
+  // 删除单条
+  const handleDelete = async (id: string) => {
+    if (!confirm("确定要删除这条咨询吗？")) return;
+    try {
+      const res = await fetch(`/api/admin/consultations/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (res.ok) {
+        loadItems();
+      }
+    } catch {
+      console.error("Delete failed");
+    }
+  };
+
+  // 排序处理
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
+      setOrder(order === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setOrder("desc");
+    }
+  };
+
+  const totalPages = Math.ceil(total / limit);
+
+  return (
+    <div className="space-y-6">
+      {/* 筛选栏 */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">搜索</label>
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+              placeholder="姓名/电话/邮箱/单位"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">需求类型</label>
+            <select
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+              value={needType}
+              onChange={(e) => {
+                setNeedType(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">全部</option>
+              {NEED_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">状态</label>
+            <select
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+              value={handled}
+              onChange={(e) => {
+                setHandled(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">全部</option>
+              <option value="false">未回复</option>
+              <option value="true">已回复</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">开始日期</label>
+            <input
+              type="date"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+              value={startDate}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">结束日期</label>
+            <input
+              type="date"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+              value={endDate}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
+        </div>
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-gray-500">共 {total} 条记录</p>
+          <button
+            onClick={handleExport}
+            className="text-sm bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+          >
+            导出 CSV
+          </button>
+        </div>
+      </div>
+
+      {/* 批量操作栏 */}
+      {selectedIds.size > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
+          <span className="text-sm text-blue-800">已选择 {selectedIds.size} 条</span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleBatchAction("markHandled")}
+              className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
+            >
+              标记已回复
+            </button>
+            <button
+              onClick={() => handleBatchAction("markUnhandled")}
+              className="text-sm bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700 transition-colors"
+            >
+              标记未回复
+            </button>
+            <button
+              onClick={() => {
+                if (confirm(`确定要删除选中的 ${selectedIds.size} 条记录吗？`)) {
+                  handleBatchAction("delete");
+                }
+              }}
+              className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors"
+            >
+              删除
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 数据表格 */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-4 py-3 text-left w-10">
+                  <input
+                    type="checkbox"
+                    checked={items.length > 0 && selectedIds.size === items.length}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                </th>
+                <th
+                  className="px-4 py-3 text-left cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort("createdAt")}
+                >
+                  提交时间 {sortBy === "createdAt" && (order === "asc" ? "↑" : "↓")}
+                </th>
+                <th className="px-4 py-3 text-left">姓名</th>
+                <th className="px-4 py-3 text-left">单位</th>
+                <th className="px-4 py-3 text-left">电话</th>
+                <th className="px-4 py-3 text-left">需求类型</th>
+                <th className="px-4 py-3 text-left">留言</th>
+                <th className="px-4 py-3 text-left">状态</th>
+                <th className="px-4 py-3 text-left">操作</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {loading ? (
+                <tr>
+                  <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
+                    加载中...
+                  </td>
+                </tr>
+              ) : items.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
+                    暂无数据
+                  </td>
+                </tr>
+              ) : (
+                items.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(item.id)}
+                        onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                        className="rounded border-gray-300"
+                      />
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {new Date(item.createdAt).toLocaleString("zh-CN")}
+                    </td>
+                    <td className="px-4 py-3">{item.name}</td>
+                    <td className="px-4 py-3">{item.company ?? "-"}</td>
+                    <td className="px-4 py-3">{item.phone}</td>
+                    <td className="px-4 py-3">{item.needType}</td>
+                    <td className="px-4 py-3 max-w-xs truncate" title={item.message}>
+                      {item.message}
+                    </td>
+                    <td className="px-4 py-3">
+                      {item.handled ? (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          已回复
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          未回复
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => openDetail(item)}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          查看
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          删除
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* 分页 */}
+        {totalPages > 1 && (
+          <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              第 {(page - 1) * limit + 1} - {Math.min(page * limit, total)} 条，共 {total} 条
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                上一页
+              </button>
+              <span className="px-3 py-1 text-sm text-gray-600">
+                第 {page} / {totalPages} 页
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                下一页
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 详情弹窗 */}
+      {detailItem && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">咨询详情</h3>
+                <button
+                  onClick={() => setDetailItem(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">提交时间</label>
+                    <p className="text-gray-900">{new Date(detailItem.createdAt).toLocaleString("zh-CN")}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">状态</label>
+                    <p className="text-gray-900">
+                      {detailItem.handled ? "已回复" : "未回复"}
+                      {detailItem.repliedAt && ` (${new Date(detailItem.repliedAt).toLocaleString("zh-CN")})`}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-500">姓名</label>
+                  <p className="text-gray-900">{detailItem.name}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-500">单位</label>
+                  <p className="text-gray-900">{detailItem.company ?? "-"}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">电话</label>
+                    <p className="text-gray-900">{detailItem.phone}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">邮箱</label>
+                    <p className="text-gray-900">{detailItem.email ?? "-"}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-500">需求类型</label>
+                  <p className="text-gray-900">{detailItem.needType}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-500">留言</label>
+                  <p className="text-gray-900 whitespace-pre-wrap">{detailItem.message}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-500">回复备注</label>
+                  <textarea
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] min-h-[100px]"
+                    value={detailNotes}
+                    onChange={(e) => setDetailNotes(e.target.value)}
+                    placeholder="添加回复备注..."
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={detailItem.handled}
+                      onChange={(e) =>
+                        setDetailItem({ ...detailItem, handled: e.target.checked })
+                      }
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm text-gray-700">标记为已回复</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setDetailItem(null)}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={saveDetail}
+                  className="px-4 py-2 text-sm bg-[#1A3C8A] text-white rounded hover:bg-[#15306e] transition-colors"
+                >
+                  保存
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Admin Page ─────────────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -833,6 +1415,8 @@ export default function AdminPage() {
         return <SiteEditor {...props} />;
       case "join":
         return <JoinEditor {...props} />;
+      case "consultations":
+        return <ConsultationsEditor />;
       default:
         return null;
     }
