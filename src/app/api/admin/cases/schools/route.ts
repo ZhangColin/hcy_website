@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { authenticateRequest } from "@/lib/auth";
 
 function safeParseJson<T>(json: string, fallback: T): T {
   try {
@@ -10,6 +11,11 @@ function safeParseJson<T>(json: string, fallback: T): T {
 }
 
 export async function GET(request: NextRequest) {
+  // 认证检查
+  if (!(await authenticateRequest(request))) {
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
+  }
+
   try {
     const cases = await prisma.schoolCase.findMany({
       orderBy: { order: "asc" },
@@ -28,6 +34,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // 认证检查
+  if (!(await authenticateRequest(request))) {
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { authenticateRequest } from "@/lib/auth";
 
 function safeParseJson<T>(json: string, fallback: T): T {
   try {
@@ -39,6 +40,11 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 认证检查
+  if (!(await authenticateRequest(request))) {
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
+  }
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -81,6 +87,11 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 认证检查
+  if (!(await authenticateRequest(request))) {
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
+  }
+
   try {
     const { id } = await params;
 
