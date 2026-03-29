@@ -18,27 +18,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 批量更新学校案例排序
-    for (const item of body.schoolCases) {
-      if (item.id && typeof item.order === 'number') {
-        await prisma.schoolCase.update({
-          where: { id: item.id },
-          data: { order: item.order },
-        });
-      }
-    }
-
-    // 批量更新赛事荣誉排序
-    if (body.competitionHonors && Array.isArray(body.competitionHonors)) {
-      for (const item of body.competitionHonors) {
+    // 使用事务确保原子性
+    await prisma.$transaction(async (tx) => {
+      // 批量更新学校案例排序
+      for (const item of body.schoolCases) {
         if (item.id && typeof item.order === 'number') {
-          await prisma.competitionHonor.update({
+          await tx.schoolCase.update({
             where: { id: item.id },
             data: { order: item.order },
           });
         }
       }
-    }
+
+      // 批量更新赛事荣誉排序
+      if (body.competitionHonors && Array.isArray(body.competitionHonors)) {
+        for (const item of body.competitionHonors) {
+          if (item.id && typeof item.order === 'number') {
+            await tx.competitionHonor.update({
+              where: { id: item.id },
+              data: { order: item.order },
+            });
+          }
+        }
+      }
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
