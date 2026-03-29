@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { AMap } from "@/components/AMap";
 
 /* ───────── types ───────── */
 interface ContactData {
   address: string;
-  contacts: { department: string; person: string; phone: string; email: string }[];
+  contacts: { department: string; person: string; phone: string; email: string; avatar?: string }[];
 }
 
 interface SiteData {
@@ -234,7 +235,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                 <div>
                   <h3 className="font-bold text-[#333333] text-lg mb-1">办公地址</h3>
                   <p className="text-[#666666] leading-relaxed">
-                    {contactData.address}
+                    {siteData.address || contactData.address}
                   </p>
                 </div>
               </div>
@@ -265,16 +266,25 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
               </div>
             </div>
 
-            {/* Map placeholder */}
-            <div className="rounded-2xl bg-gradient-to-br from-[#1A3C8A]/5 to-[#2B6CB0]/10 border-2 border-dashed border-[#1A3C8A]/20 flex flex-col items-center justify-center min-h-[320px]">
-              <svg className="w-16 h-16 text-[#1A3C8A]/30 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
-                <path d="M9 2L3 5v17l6-3 6 3 6-3V2l-6 3-6-3z" />
-                <path d="M9 2v17" />
-                <path d="M15 5v17" />
-              </svg>
-              <span className="text-[#1A3C8A]/50 font-medium text-lg">地图加载区域</span>
-              <span className="text-[#666666]/50 text-sm mt-1">Map Placeholder</span>
-            </div>
+            {/* Map */}
+            {(siteData.mapLng && siteData.mapLat) ? (
+              <AMap
+                lng={siteData.mapLng}
+                lat={siteData.mapLat}
+                address={siteData.address}
+                className="min-h-[320px]"
+              />
+            ) : (
+              <div className="rounded-2xl bg-gradient-to-br from-[#1A3C8A]/5 to-[#2B6CB0]/10 border-2 border-dashed border-[#1A3C8A]/20 flex flex-col items-center justify-center min-h-[320px]">
+                <svg className="w-16 h-16 text-[#1A3C8A]/30 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
+                  <path d="M9 2L3 5v17l6-3 6 3 6-3V2l-6 3-6-3z" />
+                  <path d="M9 2v17" />
+                  <path d="M15 5v17" />
+                </svg>
+                <span className="text-[#1A3C8A]/50 font-medium text-lg">地图未配置</span>
+                <span className="text-[#666666]/50 text-sm mt-1">请在后台设置地图坐标</span>
+              </div>
+            )}
           </div>
         </div>
       </Section>
