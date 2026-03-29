@@ -113,6 +113,10 @@ model SiteConfig {
   companyName   String
   shortName     String
   address       String
+  phone         String?
+  email         String?
+  mapLng        String?
+  mapLat        String?
   icp           String
   copyright     String
   friendlyLinks Json
