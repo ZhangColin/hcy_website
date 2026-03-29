@@ -5,7 +5,7 @@ import { ImageButton } from "@/components/ImageButton";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type CollectionKey = "home" | "news" | "about" | "cases" | "contact" | "site" | "join";
+type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join";
 
 interface NavItem {
   key: CollectionKey;
@@ -16,6 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "home", label: "首页内容" },
   { key: "news", label: "新闻管理" },
   { key: "about", label: "关于我们" },
+  { key: "partners", label: "合作伙伴" },
   { key: "cases", label: "案例管理" },
   { key: "contact", label: "联系方式" },
   { key: "site", label: "站点设置" },
@@ -144,10 +145,10 @@ function HomeEditor({ data, setData }: { data: Record<string, unknown>; setData:
   const slides = (data.heroSlides as Record<string, string>[]) ?? [];
   const dataStrip = (data.dataStrip as Record<string, string>[]) ?? [];
   const highlights = (data.highlights as Record<string, string>[]) ?? [];
-  const partners = (data.partners as Array<{ name: string; logo?: string }> | string[]) ?? [];
+  const partners = (data.partners as Array<{ name: string; logo?: string; category?: string }> | string[]) ?? [];
   // 兼容旧格式：如果是字符串数组，转换为对象数组
   const normalizedPartners = partners.map((p) =>
-    typeof p === "string" ? { name: p, logo: "" } : p
+    typeof p === "string" ? { name: p, logo: "", category: "strategic" } : p
   );
 
   return (
@@ -210,27 +211,6 @@ function HomeEditor({ data, setData }: { data: Record<string, unknown>; setData:
                 type="highlights"
               />
             </>
-          )}
-        />
-      </SectionCard>
-
-      <SectionCard title="合作伙伴">
-        <ListEditor
-          title="合作伙伴列表"
-          items={normalizedPartners}
-          onChange={(v) => setData({ ...data, partners: v })}
-          createItem={() => ({ name: "", logo: "" })}
-          renderItem={(item, _i, update) => (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <FieldEditor label="名称" value={item.name} onChange={(v) => update("name", v)} />
-              <ImageButton
-                label="Logo"
-                value={(item.logo as string) || ""}
-                onChange={(v) => update("logo", v)}
-                type="partners"
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              />
-            </div>
           )}
         />
       </SectionCard>
@@ -368,11 +348,19 @@ function AboutEditor({ data, setData }: { data: Record<string, unknown>; setData
           title="荣誉列表"
           items={honors}
           onChange={(v) => setData({ ...data, honors: v })}
-          createItem={() => ({ title: "", category: "" })}
+          createItem={() => ({ title: "", category: "", image: "" })}
           renderItem={(item, _i, update) => (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <FieldEditor label="荣誉名称" value={item.title} onChange={(v) => update("title", v)} />
-              <FieldEditor label="类别" value={item.category} onChange={(v) => update("category", v)} />
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FieldEditor label="荣誉名称" value={item.title} onChange={(v) => update("title", v)} />
+                <FieldEditor label="类别" value={item.category} onChange={(v) => update("category", v)} />
+              </div>
+              <ImageButton
+                label="图片"
+                value={(item.image as string) || ""}
+                onChange={(v) => update("image", v)}
+                type="honors"
+              />
             </div>
           )}
         />
@@ -478,6 +466,10 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
         <FieldEditor label="公司全称" value={(data.companyName as string) ?? ""} onChange={(v) => setData({ ...data, companyName: v })} />
         <FieldEditor label="公司简称" value={(data.shortName as string) ?? ""} onChange={(v) => setData({ ...data, shortName: v })} />
         <FieldEditor label="公司地址" value={(data.address as string) ?? ""} onChange={(v) => setData({ ...data, address: v })} />
+        <FieldEditor label="联系电话" value={(data.phone as string) ?? ""} onChange={(v) => setData({ ...data, phone: v })} />
+        <FieldEditor label="电子邮箱" value={(data.email as string) ?? ""} onChange={(v) => setData({ ...data, email: v })} />
+        <FieldEditor label="地图经度" value={(data.mapLng as string) ?? ""} onChange={(v) => setData({ ...data, mapLng: v })} placeholder="如：116.397428" />
+        <FieldEditor label="地图纬度" value={(data.mapLat as string) ?? ""} onChange={(v) => setData({ ...data, mapLat: v })} placeholder="如：39.90923" />
         <FieldEditor label="ICP备案号" value={(data.icp as string) ?? ""} onChange={(v) => setData({ ...data, icp: v })} />
         <FieldEditor label="版权信息" value={(data.copyright as string) ?? ""} onChange={(v) => setData({ ...data, copyright: v })} />
       </SectionCard>
@@ -570,6 +562,50 @@ function JoinEditor({ data, setData }: { data: Record<string, unknown>; setData:
             </>
           );
         }}
+      />
+    </SectionCard>
+  );
+}
+
+// ─── Partners Editor ───────────────────────────────────────────────────────────
+
+function PartnersEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
+  const partners = (data.partners as Array<{ name: string; logo?: string; category?: string }> | string[]) ?? [];
+  // 兼容旧格式
+  const normalizedPartners = partners.map((p) =>
+    typeof p === "string" ? { name: p, logo: "", category: "strategic" } : { ...p, category: p.category || "strategic" }
+  );
+
+  return (
+    <SectionCard title="合作伙伴">
+      <ListEditor
+        title="合作伙伴列表"
+        items={normalizedPartners}
+        onChange={(v) => setData({ ...data, partners: v })}
+        createItem={() => ({ name: "", logo: "", category: "strategic" })}
+        renderItem={(item, _i, update) => (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <FieldEditor label="名称" value={item.name} onChange={(v) => update("name", v)} />
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">分类</label>
+              <select
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                value={item.category || "strategic"}
+                onChange={(e) => update("category", e.target.value)}
+              >
+                <option value="strategic">战略合作伙伴</option>
+                <option value="ecosystem">生态代理品牌</option>
+              </select>
+            </div>
+            <ImageButton
+              label="Logo"
+              value={(item.logo as string) || ""}
+              onChange={(v) => update("logo", v)}
+              type="partners"
+              accept="image/jpeg,image/png,image/webp,image/svg+xml"
+            />
+          </div>
+        )}
       />
     </SectionCard>
   );
@@ -708,6 +744,8 @@ export default function AdminPage() {
         return <NewsEditor {...props} />;
       case "about":
         return <AboutEditor {...props} />;
+      case "partners":
+        return <PartnersEditor {...props} />;
       case "cases":
         return <CasesEditor {...props} />;
       case "contact":
