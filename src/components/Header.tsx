@@ -367,7 +367,7 @@ function MobileNav({
         {/* Drawer Footer */}
         <div className="border-t border-gray-100 px-5 py-4 space-y-3">
           <Link
-            href="/consultation"
+            href="/contact#form"
             onClick={onClose}
             className="flex items-center justify-center gap-2 w-full rounded-lg bg-[#1A3C8A] px-4 py-3 text-sm font-semibold text-white hover:bg-[#15306E] transition-colors"
           >
@@ -586,7 +586,7 @@ export default function Header() {
 
             {/* CTA Button */}
             <Link
-              href="/consultation"
+              href="/contact#form"
               className="inline-flex items-center gap-1.5 rounded-lg bg-[#1A3C8A] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#15306E] hover:shadow-md active:scale-[0.97] transition-all duration-150"
             >
               <ChatIcon className="w-4 h-4" />
@@ -635,7 +635,7 @@ export default function Header() {
       {/*  FLOATING CONSULTATION BUTTON                                  */}
       {/* ============================================================= */}
       <Link
-        href="/consultation"
+        href="/contact#form"
         aria-label="在线咨询"
         className="
           fixed bottom-8 right-6 z-20
