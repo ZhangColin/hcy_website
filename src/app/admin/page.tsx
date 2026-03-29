@@ -275,7 +275,12 @@ function NewsEditor({ data, setData }: { data: Record<string, unknown>; setData:
                 </select>
               </div>
               <FieldEditor label="日期" value={item.date} onChange={(v) => update("date", v)} placeholder="YYYY-MM-DD" />
-              <FieldEditor label="图片URL" value={item.image} onChange={(v) => update("image", v)} />
+              <ImageButton
+                label="封面图片"
+                value={item.image}
+                onChange={(v) => update("image", v)}
+                type="news"
+              />
             </div>
             <FieldEditor label="摘要" value={item.excerpt} onChange={(v) => update("excerpt", v)} multiline />
             <FieldEditor label="正文内容" value={item.content} onChange={(v) => update("content", v)} multiline />
