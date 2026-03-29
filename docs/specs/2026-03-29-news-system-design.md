@@ -21,6 +21,20 @@
 - 保持网站主题风格（蓝色渐变 #1A3C8A，金色 #D4A843）
 - 案例管理仅移除"大保存"按钮，其他不动
 
+### 1.3 架构决策说明
+
+**为什么新闻管理使用独立页面/独立 API？**
+
+现有后台管理 (`/admin/page.tsx`) 使用 SPA 单页模式，适合简单的内联编辑。但新闻系统有以下特殊需求：
+
+1. **富文本编辑器** - 需要更大空间和专注的编辑环境
+2. **独立编辑页** - 用户明确要求"文章编辑跳转一个新页面"
+3. **复杂表单** - 字段较多，独立页面体验更好
+
+因此：
+- **新闻管理** → 独立页面 (`/admin/news`) + 独立 API (`/api/admin/news`)
+- **案例管理** → 保持现有 SPA 模式，仅移除"大保存"按钮
+
 ---
 
 ## 二、数据库设计
@@ -49,9 +63,44 @@ model NewsArticle {
 }
 ```
 
-### 2.2 数据迁移
+### 2.2 Slug 生成规则
 
-- 现有数据自动生成 `slug`（基于 title + date）
+```typescript
+// 格式: {pinyin}-{date}-{random}
+// 示例: xinwen-gsgs-20260329-a1b2c3
+
+import { pinyin } from 'pinyin-pro';
+
+function generateSlug(title: string): string {
+  // 1. 中文转拼音首字母
+  const pinyinStr = pinyin(title, { pattern: 'first', toneType: 'none' })
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 20); // 限制长度
+
+  // 2. 添加日期和随机后缀
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const random = Math.random().toString(36).substring(2, 7);
+
+  return `${pinyinStr}-${date}-${random}`;
+}
+
+// 冲突处理: 自动追加数字后缀 (如 -2, -3)
+// 允许手动修改，需验证唯一性
+```
+
+### 2.3 数据迁移
+
+```typescript
+// prisma/migrations/xxx_add_news_fields/migration.sql
+// 1. 添加新字段
+// 2. 为现有数据生成 slug
+// 3. 设置默认值
+```
+
+- 现有数据自动生成 `slug`（基于上述规则）
 - `featured` 默认 false
 - `showOnHomepage` 默认 true
 - `views` 初始 0
@@ -129,6 +178,12 @@ model NewsArticle {
 - 链接、图片上传
 - 撤销/重做
 
+**图片上传配置:**
+- 上传目录: `news/editor/`
+- 调用 `/api/upload` 接口
+- 图片样式: `max-width: 100%`, `height: auto`
+- 大小限制: 5MB（编辑器内图片）
+
 ### 4.3 新闻详情页（前台）
 
 **路径:** `/news/[slug]`
@@ -158,15 +213,55 @@ model NewsArticle {
 **位置:** `src/app/admin/page.tsx` CasesEditor
 
 **调整:**
-- 移除页面顶部"大保存"按钮（仅针对 cases section）
-- 保留模态框内保存按钮
-- 保存逻辑不变
+- 当 `activeSection === "cases"` 时，隐藏顶部通用保存按钮
+- 保留 CasesEditor 模态框内的保存按钮不变
+- 保存逻辑不变（每次模态框保存直接调用 API）
+
+```typescript
+// 修改前
+<button onClick={handleSave}>保存</button>  // 所有 section 都显示
+
+// 修改后
+{showSaveButton && <button onClick={handleSave}>保存</button>}
+const showSaveButton = activeSection !== "cases";
+```
 
 ---
 
-## 六、依赖项
+## 六、错误处理
 
-### 6.1 新增 npm 包
+### 6.1 API 统一错误响应格式
+
+```typescript
+// 成功
+{ success: true, data: {...} }
+
+// 失败
+{ success: false, error: "错误描述", code: "ERROR_CODE" }
+```
+
+### 6.2 前端表单验证
+
+| 字段 | 验证规则 |
+|------|----------|
+| 标题 | 必填，1-100 字符 |
+| URL 标识 | 必填，a-z0-9-，唯一 |
+| 分类 | 必填，枚举值 |
+| 日期 | 必填，有效日期 |
+| 摘要 | 可选，最多 200 字符 |
+| 正文 | 必填，HTML 内容 |
+
+### 6.3 网络失败处理
+
+- 上传失败：显示错误提示，保留已填写内容
+- API 超时：3 秒超时，显示重试按钮
+- 并发冲突：使用 updatedAt 乐观锁
+
+---
+
+## 七、依赖项
+
+### 7.1 新增 npm 包
 
 ```json
 {
@@ -174,11 +269,12 @@ model NewsArticle {
   "@tiptap/starter-kit": "^2.x",
   "@tiptap/extension-image": "^2.x",
   "@tiptap/extension-link": "^2.x",
-  "@tiptap/extension-placeholder": "^2.x"
+  "@tiptap/extension-placeholder": "^2.x",
+  "pinyin-pro": "^3.x"
 }
 ```
 
-### 6.2 复用现有
+### 7.2 复用现有
 
 - 腾讯云 COS 上传（`src/lib/cos.ts`）
 - 认证中间件（`src/lib/auth.ts`）
@@ -186,7 +282,7 @@ model NewsArticle {
 
 ---
 
-## 七、文件清单
+## 八、文件清单
 
 ### 7.1 新增文件
 
@@ -219,7 +315,55 @@ src/app/news/NewsClient.tsx                    # 新闻卡片链接调整
 
 ---
 
-## 八、实施顺序
+## 九、实施顺序
+
+1. 安装依赖（Tiptap、pinyin-pro）
+2. 数据库迁移（Prisma migrate + 数据填充）
+3. Slug 生成工具函数
+4. 后端 API 开发
+5. 后台管理页（列表 + 编辑）
+6. 前台详情页
+7. 首页关联
+8. 案例管理"大保存"移除
+9. 测试与验收
+
+---
+
+## 十、SEO 考量
+
+### 10.1 Meta 标签
+
+```typescript
+// 动态生成
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const article = await getNewsBySlug(params.slug);
+  return {
+    title: article.title,
+    description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      images: [article.image],
+      type: 'article',
+    },
+  };
+}
+```
+
+### 10.2 结构化数据
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "标题",
+  "image": "图片URL",
+  "datePublished": "2024-03-20",
+  "dateModified": "2024-03-20"
+}
+```
+
+---
 
 1. 数据库迁移（Prisma migrate）
 2. 后端 API 开发
