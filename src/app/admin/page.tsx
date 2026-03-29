@@ -474,7 +474,12 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
                       ))}
                     </select>
                   </div>
-                  <FieldEditor label="学校 Logo" value={(item.schoolLogo as string) || ""} onChange={(v) => update("schoolLogo", v)} />
+                  <ImageButton
+                    label="学校 Logo (可选)"
+                    value={(item.schoolLogo as string) || ""}
+                    onChange={(v) => update("schoolLogo", v)}
+                    type="cases/logo"
+                  />
                 </div>
                 <FieldEditor label="合作内容" value={(item.partnership as string) || ""} onChange={(v) => update("partnership", v)} multiline />
                 <FieldEditor label="成果" value={(item.results as string) || ""} onChange={(v) => update("results", v)} multiline />
