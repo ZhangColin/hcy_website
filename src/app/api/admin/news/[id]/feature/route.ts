@@ -4,16 +4,17 @@ import { authenticateRequest } from '@/lib/auth';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await authenticateRequest(request))) {
     return NextResponse.json({ error: '未授权' }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     const body = await request.json();
     const article = await prisma.newsArticle.update({
-      where: { id: params.id },
+      where: { id },
       data: { featured: body.featured },
     });
 

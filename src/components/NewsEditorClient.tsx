@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { TiptapEditor } from '@/components/TiptapEditor';
 import { ImageButton } from '@/components/ImageButton';
-import { generateUniqueSlug, isValidSlug } from '@/lib/slug';
+import { isValidSlug } from '@/lib/slug';
 
 interface NewsArticle {
   id?: string;
@@ -45,15 +45,45 @@ export function NewsEditorClient({ article }: NewsEditorClientProps) {
       date: new Date().toISOString().slice(0, 10),
       featured: false,
       showOnHomepage: true,
-      published: true,
+      published: false,  // 默认未发布
     }
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const generateSlugFromTitle = async () => {
-    if (formData.title && !article) { // 只在新建时自动生成
-      const slug = await generateUniqueSlug(formData.title);
-      setFormData({ ...formData, slug });
+    if (!formData.title) {
+      alert('请先输入标题');
+      return;
+    }
+
+    const token = sessionStorage.getItem('admin_token');
+    if (!token) {
+      alert('未登录，请先登录后台管理系统');
+      return;
+    }
+
+    try {
+      console.log('[generateSlug] Requesting slug for:', formData.title);
+      const res = await fetch('/api/admin/generate-slug', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: formData.title }),
+      });
+
+      const data = await res.json();
+      console.log('[generateSlug] Response:', data);
+
+      if (res.ok) {
+        setFormData({ ...formData, slug: data.slug });
+      } else {
+        alert(`生成失败: ${data.error || '未知错误'}${data.details ? '\n' + data.details : ''}`);
+      }
+    } catch (error) {
+      console.error('Generate slug error:', error);
+      alert(`生成失败，请检查网络连接\n错误: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 

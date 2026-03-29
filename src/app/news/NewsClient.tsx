@@ -143,27 +143,40 @@ export default function NewsClient({ articles }: { articles: NewsArticle[] }) {
             <Link href={`/news/${featuredArticle.slug}`} className="group block mb-10">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-transparent">
                 <div className="flex flex-col md:flex-row">
-                  {/* thumbnail placeholder */}
-                  <div className="md:w-[420px] h-56 md:h-auto bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] relative overflow-hidden flex-shrink-0">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDgpIi8+PC9zdmc+')] opacity-40" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <svg className="w-16 h-16 text-white/30 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                        </svg>
-                        <span className="text-white/40 text-sm">Featured</span>
+                  {/* Cover image or placeholder */}
+                  {featuredArticle.image ? (
+                    <div className="md:w-[420px] h-56 md:h-auto relative overflow-hidden flex-shrink-0">
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${featuredArticle.image}`}
+                        alt={featuredArticle.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-[#D4A843] text-white text-xs font-bold rounded-full">置顶</span>
                       </div>
                     </div>
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-[#D4A843] text-white text-xs font-bold rounded-full">置顶</span>
+                  ) : (
+                    <div className="md:w-[420px] h-56 md:h-auto bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] relative overflow-hidden flex-shrink-0">
+                      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDgpIi8+PC9zdmc+')] opacity-40" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center">
+                          <svg className="w-16 h-16 text-white/30 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                          </svg>
+                          <span className="text-white/40 text-sm">Featured</span>
+                        </div>
+                      </div>
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-[#D4A843] text-white text-xs font-bold rounded-full">置顶</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-3">
                       <span className={`px-3 py-1 text-xs font-semibold rounded-full ${categoryColors[categoryKeyToLabel[featuredArticle.category]]}`}>
                         {categoryKeyToLabel[featuredArticle.category]}
                       </span>
-                      <span className="text-sm text-[#666666]">{featuredArticle.date}</span>
+                      <span className="text-sm text-[#666666]">{featuredArticle.date.slice(0, 10)}</span>
                     </div>
                     <h2 className="text-xl md:text-2xl font-bold text-[#333333] mb-3 group-hover:text-[#1A3C8A] transition-colors leading-snug">
                       {featuredArticle.title}
@@ -191,26 +204,41 @@ export default function NewsClient({ articles }: { articles: NewsArticle[] }) {
                 style={{ animationDelay: `${i * 60}ms` }}
               >
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-transparent hover:-translate-y-1 h-full flex flex-col">
-                  {/* thumbnail */}
-                  <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                  {/* Cover image or placeholder */}
+                  {article.image ? (
+                    <div className="h-48 relative overflow-hidden">
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${article.image}`}
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 left-3">
+                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${categoryColors[categoryKeyToLabel[article.category]]}`}>
+                          {categoryKeyToLabel[article.category]}
+                        </span>
+                      </div>
                     </div>
-                    <div className="absolute top-3 left-3">
-                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${categoryColors[categoryKeyToLabel[article.category]]}`}>
-                        {categoryKeyToLabel[article.category]}
-                      </span>
+                  ) : (
+                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div className="absolute top-3 left-3">
+                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${categoryColors[categoryKeyToLabel[article.category]]}`}>
+                          {categoryKeyToLabel[article.category]}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="p-5 flex-1 flex flex-col">
                     <h3 className="text-base font-bold text-[#333333] mb-2 group-hover:text-[#1A3C8A] transition-colors leading-snug line-clamp-2">
                       {article.title}
                     </h3>
                     <p className="text-sm text-[#666666] leading-relaxed line-clamp-2 mb-4 flex-1">{article.excerpt}</p>
                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                      <span className="text-xs text-[#666666]">{article.date}</span>
+                      <span className="text-xs text-[#666666]">{article.date.slice(0, 10)}</span>
                       <span className="inline-flex items-center text-[#2B6CB0] text-sm font-medium group-hover:text-[#1A3C8A] transition-colors">
                         阅读
                         <svg className="w-3.5 h-3.5 ml-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

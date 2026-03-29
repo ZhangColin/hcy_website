@@ -36,15 +36,3 @@ export function generateSlug(title: string, existingSlugs: string[] = []): strin
 export function isValidSlug(slug: string): boolean {
   return /^[a-z0-9-]+$/.test(slug) && slug.length >= 5 && slug.length <= 100;
 }
-
-/**
- * 从现有标题生成唯一 slug
- */
-export async function generateUniqueSlug(title: string): Promise<string> {
-  const { prisma } = await import('@/lib/prisma');
-  const existingArticles = await prisma.newsArticle.findMany({
-    select: { slug: true },
-  });
-  const existingSlugs = existingArticles.map((a) => a.slug);
-  return generateSlug(title, existingSlugs);
-}

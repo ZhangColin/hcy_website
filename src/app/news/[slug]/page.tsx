@@ -4,9 +4,10 @@ import { NewsDetailClient } from '@/components/NewsDetailClient';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const article = await prisma.newsArticle.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
   });
 
   if (!article) return {};
@@ -20,10 +21,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function NewsDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   const article = await prisma.newsArticle.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
   });
 
   if (!article || !article.published) {
@@ -35,8 +37,15 @@ export default async function NewsDetailPage({
       <div className="px-4 sm:px-6 lg:px-8">
         <NewsDetailClient
           article={{
-            ...article,
+            id: article.id,
+            title: article.title,
+            slug: article.slug,
+            excerpt: article.excerpt,
+            content: article.content,
+            category: article.category,
             date: article.date.toISOString().slice(0, 10),
+            image: article.image || undefined,
+            views: article.views,
           }}
         />
       </div>

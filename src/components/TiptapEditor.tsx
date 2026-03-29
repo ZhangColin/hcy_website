@@ -45,6 +45,7 @@ export function TiptapEditor({
     ],
     content,
     editable,
+    immediatelyRender: false, // Fix SSR hydration issue
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
@@ -189,12 +190,14 @@ export function TiptapEditor({
       {editable && <MenuBar />}
       <EditorContent
         editor={editor}
-        className="prose max-w-none p-4 min-h-[300px] focus:outline-none"
+        className="p-4 min-h-[300px] focus:outline-none"
       />
       <style jsx global>{`
-        .ProseMirror:focus {
+        /* Tiptap Editor Styles */
+        .ProseMirror {
           outline: none;
         }
+
         .ProseMirror p.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
           float: left;
@@ -202,9 +205,111 @@ export function TiptapEditor({
           pointer-events: none;
           height: 0;
         }
+
+        /* Typography styles for editor content */
+        .ProseMirror {
+          font-size: 16px;
+          line-height: 1.6;
+        }
+
+        .ProseMirror h1 {
+          font-size: 2em;
+          font-weight: 700;
+          margin-top: 1em;
+          margin-bottom: 0.5em;
+          line-height: 1.2;
+        }
+
+        .ProseMirror h2 {
+          font-size: 1.5em;
+          font-weight: 600;
+          margin-top: 0.8em;
+          margin-bottom: 0.4em;
+          line-height: 1.3;
+        }
+
+        .ProseMirror h3 {
+          font-size: 1.25em;
+          font-weight: 600;
+          margin-top: 0.6em;
+          margin-bottom: 0.3em;
+          line-height: 1.4;
+        }
+
+        .ProseMirror p {
+          margin-bottom: 1em;
+        }
+
+        .ProseMirror ul, .ProseMirror ol {
+          padding-left: 1.5em;
+          margin-bottom: 1em;
+        }
+
+        .ProseMirror ul {
+          list-style-type: disc;
+        }
+
+        .ProseMirror ol {
+          list-style-type: decimal;
+        }
+
+        .ProseMirror li {
+          margin-bottom: 0.25em;
+        }
+
+        .ProseMirror strong {
+          font-weight: 700;
+        }
+
+        .ProseMirror em {
+          font-style: italic;
+        }
+
+        .ProseMirror a {
+          color: #1A3C8A;
+          text-decoration: underline;
+        }
+
+        .ProseMirror a:hover {
+          color: #2B6CB0;
+        }
+
         .ProseMirror img {
           max-width: 100%;
           height: auto;
+          border-radius: 8px;
+          margin: 1em 0;
+        }
+
+        .ProseMirror blockquote {
+          border-left: 4px solid #1A3C8A;
+          padding-left: 1em;
+          margin: 1em 0;
+          color: #666;
+          font-style: italic;
+        }
+
+        .ProseMirror code {
+          background: #f3f4f6;
+          padding: 0.2em 0.4em;
+          border-radius: 4px;
+          font-family: monospace;
+          font-size: 0.9em;
+        }
+
+        .ProseMirror pre {
+          background: #1f2937;
+          color: #f3f4f6;
+          padding: 1em;
+          border-radius: 8px;
+          overflow-x: auto;
+          margin: 1em 0;
+        }
+
+        .ProseMirror pre code {
+          background: none;
+          padding: 0;
+          color: inherit;
         }
       `}</style>
     </div>

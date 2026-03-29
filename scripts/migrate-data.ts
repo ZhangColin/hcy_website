@@ -19,6 +19,7 @@ import { existsSync } from 'fs'
 import path from 'path'
 import { config } from 'dotenv'
 import type { Prisma } from '@prisma/client'
+import { pinyin } from 'pinyin-pro'
 
 // Load .env file
 config()
@@ -106,10 +107,32 @@ async function migrate() {
     console.log('✓ Home content migrated')
 
     // Migrate news articles
+    const existingSlugs: string[] = []
     for (const article of news.articles as Array<Record<string, unknown>>) {
+      // Generate slug from title
+      const title = String(article.title)
+      const pinyinStr = pinyin(title, { pattern: 'first', toneType: 'none' })
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        .substring(0, 20)
+      const date = new Date(String(article.date)).toISOString().slice(0, 10).replace(/-/g, '')
+      const random = Math.random().toString(36).substring(2, 7)
+      let slug = `${pinyinStr}-${date}-${random}`
+
+      // Ensure uniqueness
+      let counter = 1
+      while (existingSlugs.includes(slug)) {
+        slug = `${pinyinStr}-${date}-${random}-${counter}`
+        counter++
+      }
+      existingSlugs.push(slug)
+
       await tx.newsArticle.create({
         data: {
-          title: String(article.title),
+          slug,
+          title,
           excerpt: String(article.excerpt),
           content: String(article.content),
           category: String(article.category),

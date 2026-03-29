@@ -266,27 +266,37 @@ export default async function Home() {
           </RevealSection>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {newsItems.map((news: { id: string; title: string; excerpt: string; date: string; category: string; slug: string }) => (
-              <RevealSection key={news.title}>
+            {newsItems.map((news) => (
+              <RevealSection key={news.id}>
                 <Link href={`/news/${news.slug}`}>
                   <article className="bg-[#F5F7FA] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group h-full">
-                    {/* Thumbnail placeholder */}
-                    <div className="aspect-[16/9] bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] flex items-center justify-center">
-                      <svg
-                        className="w-12 h-12 text-white/30"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <path d="M21 15l-5-5L5 21" />
-                      </svg>
-                    </div>
+                    {/* Cover image or placeholder */}
+                    {news.image ? (
+                      <div className="aspect-[16/9] relative overflow-hidden">
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${news.image}`}
+                          alt={news.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-[16/9] bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] flex items-center justify-center">
+                        <svg
+                          className="w-12 h-12 text-white/30"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
+                        >
+                          <rect x="3" y="3" width="18" height="18" rx="2" />
+                          <circle cx="8.5" cy="8.5" r="1.5" />
+                          <path d="M21 15l-5-5L5 21" />
+                        </svg>
+                      </div>
+                    )}
                     <div className="p-6">
                       <time className="text-xs text-gray-400 mb-2 block">
-                        {news.date}
+                        {news.date.slice(0, 10)}
                       </time>
                       <h3 className="font-bold text-gray-900 mb-2 group-hover:text-[#1A3C8A] transition-colors line-clamp-2">
                         {news.title}

@@ -4,7 +4,7 @@ import { authenticateRequest } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await authenticateRequest(request))) {
     return NextResponse.json({ error: '未授权' }, { status: 401 });
@@ -12,7 +12,7 @@ export async function GET(
 
   try {
     const article = await prisma.newsArticle.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!article) {
@@ -28,7 +28,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await authenticateRequest(request))) {
     return NextResponse.json({ error: '未授权' }, { status: 401 });
@@ -38,7 +38,7 @@ export async function PUT(
     const body = await request.json();
 
     const article = await prisma.newsArticle.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         title: body.title,
         slug: body.slug,
@@ -65,7 +65,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await authenticateRequest(request))) {
     return NextResponse.json({ error: '未授权' }, { status: 401 });
@@ -73,7 +73,7 @@ export async function DELETE(
 
   try {
     await prisma.newsArticle.delete({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     return NextResponse.json({ success: true });

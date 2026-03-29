@@ -13,8 +13,8 @@ async function main() {
   const articles = await prisma.newsArticle.findMany({
     where: {
       OR: [
-        { slug: '' },
-        { slug: null },
+        { slug: { equals: '' } },
+        { slug: { equals: null as any } },
       ],
     },
   });
@@ -31,8 +31,12 @@ async function main() {
   const allSlugs = await prisma.newsArticle.findMany({
     select: { slug: true },
     where: {
-      slug: { not: '' },
-      AND: { slug: { not: null } },
+      NOT: {
+        OR: [
+          { slug: '' },
+          { slug: { equals: null as any } },
+        ],
+      },
     },
   });
   const slugSet = new Set(allSlugs.map((a) => a.slug).filter(Boolean));

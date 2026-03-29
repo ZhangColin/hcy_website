@@ -3,11 +3,11 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const article = await prisma.newsArticle.findUnique({
-      where: { slug: params.slug },
+      where: { slug: (await params).slug },
     });
 
     if (!article) {
