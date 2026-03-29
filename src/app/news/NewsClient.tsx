@@ -34,6 +34,7 @@ const categoryLabels: CategoryLabel[] = ["全部", "公司新闻", "行业资讯
 
 export interface NewsArticle {
   id: string;
+  slug: string;
   title: string;
   excerpt: string;
   content: string;
@@ -139,7 +140,7 @@ export default function NewsClient({ articles }: { articles: NewsArticle[] }) {
         >
           {/* Featured Article */}
           {featuredArticle && (
-            <Link href="#" className="group block mb-10">
+            <Link href={`/news/${featuredArticle.slug}`} className="group block mb-10">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-transparent">
                 <div className="flex flex-col md:flex-row">
                   {/* thumbnail placeholder */}
@@ -185,7 +186,7 @@ export default function NewsClient({ articles }: { articles: NewsArticle[] }) {
             {paginatedArticles.map((article, i) => (
               <Link
                 key={article.id}
-                href="#"
+                href={`/news/${article.slug}`}
                 className="group block"
                 style={{ animationDelay: `${i * 60}ms` }}
               >
