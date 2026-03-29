@@ -137,5 +137,8 @@ model ContactSubmission {
   needType  String
   message   String   @db.Text
   handled   Boolean  @default(false)
+  repliedAt DateTime?
+  replyNotes String?  @db.Text
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

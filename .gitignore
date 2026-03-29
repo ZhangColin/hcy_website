@@ -45,8 +45,9 @@ yarn-error.log*
 next-env.d.ts
 
 # prisma
-/prisma/migrations/*_*/
-!/prisma/migrations/migration_lock.toml
+# Track migration.sql files but ignore development migration directories
+/prisma/migrations/*/migration.toml
+!/prisma/migrations/*/migration.sql
 /prisma/*.db
 /prisma/*.db-journal
 
