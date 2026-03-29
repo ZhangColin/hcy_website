@@ -9,6 +9,18 @@ interface ContactData {
   contacts: { department: string; person: string; phone: string; email: string }[];
 }
 
+interface SiteData {
+  companyName: string;
+  shortName: string;
+  address: string;
+  phone?: string | null;
+  email?: string | null;
+  mapLng?: string | null;
+  mapLat?: string | null;
+  icp: string;
+  copyright: string;
+}
+
 /* ───────── scroll reveal hook ───────── */
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -104,7 +116,7 @@ interface FormErrors {
 /* ═══════════════════════════════════════════════════════════
    CONTACT PAGE CLIENT
    ═══════════════════════════════════════════════════════════ */
-export default function ContactPageClient({ data }: { data: ContactData }) {
+export default function ContactPageClient({ contactData, siteData }: { contactData: ContactData; siteData: SiteData }) {
   const [form, setForm] = useState<FormData>({
     name: "",
     company: "",
@@ -222,7 +234,7 @@ export default function ContactPageClient({ data }: { data: ContactData }) {
                 <div>
                   <h3 className="font-bold text-[#333333] text-lg mb-1">办公地址</h3>
                   <p className="text-[#666666] leading-relaxed">
-                    {data.address}
+                    {contactData.address}
                   </p>
                 </div>
               </div>
@@ -235,7 +247,7 @@ export default function ContactPageClient({ data }: { data: ContactData }) {
                 </div>
                 <div>
                   <h3 className="font-bold text-[#333333] text-lg mb-1">联系电话</h3>
-                  <p className="text-[#666666]">010-XXXX-XXXX</p>
+                  <p className="text-[#666666]">{siteData.phone || "010-XXXX-XXXX"}</p>
                 </div>
               </div>
 
@@ -248,7 +260,7 @@ export default function ContactPageClient({ data }: { data: ContactData }) {
                 </div>
                 <div>
                   <h3 className="font-bold text-[#333333] text-lg mb-1">电子邮箱</h3>
-                  <p className="text-[#666666]">contact@haichuangyuan.com</p>
+                  <p className="text-[#666666]">{siteData.email || "contact@haichuangyuan.com"}</p>
                 </div>
               </div>
             </div>
@@ -276,7 +288,7 @@ export default function ContactPageClient({ data }: { data: ContactData }) {
           </p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {data.contacts.map((c) => {
+            {contactData.contacts.map((c) => {
               const style = contactStyles[c.department] || defaultStyle;
               return (
                 <div

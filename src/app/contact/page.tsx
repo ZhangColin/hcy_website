@@ -5,7 +5,10 @@ import ContactPageClient from "@/components/ContactPageClient";
 export const dynamic = 'force-dynamic';
 
 export default async function ContactPage() {
-  const data = await loadData("contact");
+  const [contactData, siteData] = await Promise.all([
+    loadData("contact"),
+    loadData("site")
+  ]);
 
-  return <ContactPageClient data={data} />;
+  return <ContactPageClient contactData={contactData} siteData={siteData} />;
 }
