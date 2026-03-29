@@ -886,7 +886,7 @@ interface SchoolCase {
 
 - [ ] **Step 4: 测试前台页面**
 
-访问 http://localhost:3000/cages 确认页面显示正常。
+访问 http://localhost:3000/cases 确认页面显示正常。
 
 - [ ] **Step 5: 提交**
 
