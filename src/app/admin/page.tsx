@@ -1963,20 +1963,30 @@ export default function AdminPage() {
         >
           <nav className="py-4">
             {NAV_ITEMS.map((item) => (
-              <button
-                key={item.key}
-                onClick={() => {
-                  setActiveSection(item.key);
-                  setSidebarOpen(false);
-                }}
-                className={`w-full text-left px-6 py-3 text-sm transition-colors ${
-                  activeSection === item.key
-                    ? "bg-white/20 font-semibold border-r-4 border-white"
-                    : "hover:bg-white/10"
-                }`}
-              >
-                {item.label}
-              </button>
+              item.key === "news" ? (
+                <a
+                  key={item.key}
+                  href="/admin/news"
+                  className="block w-full text-left px-6 py-3 text-sm transition-colors hover:bg-white/10"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  key={item.key}
+                  onClick={() => {
+                    setActiveSection(item.key);
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-6 py-3 text-sm transition-colors ${
+                    activeSection === item.key
+                      ? "bg-white/20 font-semibold border-r-4 border-white"
+                      : "hover:bg-white/10"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              )
             ))}
           </nav>
         </aside>
@@ -1989,13 +1999,15 @@ export default function AdminPage() {
               <h2 className="text-xl font-bold text-gray-900">
                 {NAV_ITEMS.find((n) => n.key === activeSection)?.label}
               </h2>
-              <button
-                onClick={handleSave}
-                disabled={saving || loading}
-                className="bg-[#1A3C8A] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#15306e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-              >
-                {saving ? "保存中..." : "保存"}
-              </button>
+              {activeSection !== "cases" && (
+                <button
+                  onClick={handleSave}
+                  disabled={saving || loading}
+                  className="bg-[#1A3C8A] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#15306e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                >
+                  {saving ? "保存中..." : "保存"}
+                </button>
+              )}
             </div>
 
             {/* Editor */}
