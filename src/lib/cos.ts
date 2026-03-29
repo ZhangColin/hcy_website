@@ -1,4 +1,5 @@
-import { COS } from 'cos-nodejs-sdk';
+import { COS } from 'cos-nodejs-sdk-v5';
+import crypto from 'node:crypto';
 
 // COS 客户端配置
 const cos = new COS({
@@ -39,13 +40,22 @@ export async function uploadFile(
   const randomId = crypto.randomUUID();
   const key = `${type}/${date}-${randomId}.${ext}`;
 
+  // Convert File to Buffer if necessary
+  let body: Buffer | string;
+  if (file instanceof File) {
+    const arrayBuffer = await file.arrayBuffer();
+    body = Buffer.from(arrayBuffer);
+  } else {
+    body = file;
+  }
+
   // 上传到 COS
   await new Promise<void>((resolve, reject) => {
     cos.putObject({
       Bucket: COS_CONFIG.bucket,
       Region: COS_CONFIG.region,
       Key: key,
-      Body: file,
+      Body: body,
     }, (err, data) => {
       if (err) {
         reject(err);
