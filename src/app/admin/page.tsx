@@ -378,8 +378,25 @@ function AboutEditor({ data, setData }: { data: Record<string, unknown>; setData
 // ─── Cases Editor ────────────────────────────────────────────────────────────
 
 function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
-  const schools = (data.schools as Record<string, string>[]) ?? [];
-  const competitions = (data.competitions as Record<string, string>[]) ?? [];
+  const schools = (data.schoolCases as Record<string, unknown>[]) ?? [];
+  const competitions = (data.competitionHonors as Record<string, string>[]) ?? [];
+
+  // 颜色预设选项
+  const colorOptions = [
+    { value: "from-[#1A3C8A] to-[#2B6CB0]", label: "蓝色渐变" },
+    { value: "from-[#2B6CB0] to-blue-500", label: "浅蓝渐变" },
+    { value: "from-[#D4A843] to-amber-500", label: "金色渐变" },
+    { value: "from-purple-600 to-indigo-600", label: "紫色渐变" },
+    { value: "from-teal-600 to-cyan-600", label: "青色渐变" },
+    { value: "from-rose-500 to-pink-600", label: "粉色渐变" },
+  ];
+
+  // 学段选项
+  const gradeOptions = [
+    { value: "小学", label: "小学" },
+    { value: "初中", label: "初中" },
+    { value: "高中", label: "高中" },
+  ];
 
   return (
     <>
@@ -387,19 +404,89 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
         <ListEditor
           title="案例列表"
           items={schools}
-          onChange={(v) => setData({ ...data, schools: v })}
-          createItem={() => ({ name: "", type: "", region: "", stage: "", summary: "" })}
-          renderItem={(item, _i, update) => (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FieldEditor label="学校名称" value={item.name} onChange={(v) => update("name", v)} />
-                <FieldEditor label="类型" value={item.type} onChange={(v) => update("type", v)} />
-                <FieldEditor label="地区" value={item.region} onChange={(v) => update("region", v)} />
-                <FieldEditor label="阶段" value={item.stage} onChange={(v) => update("stage", v)} />
-              </div>
-              <FieldEditor label="概要" value={item.summary} onChange={(v) => update("summary", v)} multiline />
-            </>
-          )}
+          onChange={(v) => setData({ ...data, schoolCases: v })}
+          createItem={() => ({
+            name: "",
+            region: "",
+            grade: [] as string[],
+            abbr: "",
+            color: "from-[#1A3C8A] to-[#2B6CB0]",
+            partnership: "",
+            results: "",
+            coverImage: "",
+            schoolLogo: "",
+          })}
+          renderItem={(item, _i, update) => {
+            const currentGrades = (item.grade as string[]) ?? [];
+            const toggleGrade = (gradeValue: string) => {
+              const updated = currentGrades.includes(gradeValue)
+                ? currentGrades.filter((g) => g !== gradeValue)
+                : [...currentGrades, gradeValue];
+              update("grade", updated);
+            };
+
+            return (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FieldEditor label="学校名称" value={(item.name as string) || ""} onChange={(v) => update("name", v)} />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">地区</label>
+                    <select
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent"
+                      value={(item.region as string) || ""}
+                      onChange={(e) => update("region", e.target.value)}
+                    >
+                      <option value="">请选择</option>
+                      <option value="北京">北京</option>
+                      <option value="上海">上海</option>
+                      <option value="浙江">浙江</option>
+                      <option value="其他">其他</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">学段</label>
+                    <div className="flex gap-4 mt-2">
+                      {gradeOptions.map((option) => (
+                        <label key={option.value} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={currentGrades.includes(option.value)}
+                            onChange={() => toggleGrade(option.value)}
+                            className="rounded border-gray-300 text-[#1A3C8A] focus:ring-[#1A3C8A]"
+                          />
+                          <span className="text-sm text-gray-700">{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <FieldEditor label="缩写" value={(item.abbr as string) || ""} onChange={(v) => update("abbr", v)} />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">颜色</label>
+                    <select
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent"
+                      value={(item.color as string) || "from-[#1A3C8A] to-[#2B6CB0]"}
+                      onChange={(e) => update("color", e.target.value)}
+                    >
+                      {colorOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <FieldEditor label="学校 Logo" value={(item.schoolLogo as string) || ""} onChange={(v) => update("schoolLogo", v)} />
+                </div>
+                <FieldEditor label="合作内容" value={(item.partnership as string) || ""} onChange={(v) => update("partnership", v)} multiline />
+                <FieldEditor label="成果" value={(item.results as string) || ""} onChange={(v) => update("results", v)} multiline />
+                <ImageButton
+                  label="封面图"
+                  value={(item.coverImage as string) || ""}
+                  onChange={(v) => update("coverImage", v)}
+                  type="cases"
+                />
+              </>
+            );
+          }}
         />
       </SectionCard>
 
@@ -407,7 +494,7 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
         <ListEditor
           title="荣誉列表"
           items={competitions}
-          onChange={(v) => setData({ ...data, competitions: v })}
+          onChange={(v) => setData({ ...data, competitionHonors: v })}
           createItem={() => ({ title: "", level: "", year: "" })}
           renderItem={(item, _i, update) => (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
