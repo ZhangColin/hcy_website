@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-const VALID_COLLECTIONS = ["home", "news", "about", "cases", "contact", "site", "join"];
+const VALID_COLLECTIONS = ["home", "news", "about", "partners", "cases", "contact", "site", "join"];
 
 // 字段白名单配置 - 防止批量赋值漏洞
 const FIELD_WHITELISTS = {
@@ -12,7 +12,7 @@ const FIELD_WHITELISTS = {
   competitionHonor: ["title", "level", "year", "order"],
   contact: ["address", "contacts"],
   jobPosition: ["title", "department", "location", "type", "description", "requirements", "active", "order"],
-  site: ["companyName", "shortName", "address", "icp", "copyright", "friendlyLinks", "socialLinks"],
+  site: ["companyName", "shortName", "address", "phone", "email", "mapLng", "mapLat", "icp", "copyright", "friendlyLinks", "socialLinks"],
 } as const;
 
 // 提取允许的字段
@@ -65,6 +65,10 @@ export async function GET(
         break;
       case "site":
         data = await prisma.siteConfig.findFirst();
+        break;
+      case "partners":
+        const homeData = await prisma.homeContent.findFirst();
+        data = { partners: homeData?.partners ?? [] };
         break;
     }
     return NextResponse.json(data);
@@ -138,6 +142,20 @@ export async function PUT(
           where: { id: existing.id },
           data: allowedData,
         });
+        break;
+      }
+      case "partners": {
+        const existing = await prisma.homeContent.findFirst();
+        if (!existing) {
+          return NextResponse.json({ error: "记录不存在" }, { status: 404 });
+        }
+        // partners is in home content
+        if ("partners" in body) {
+          await prisma.homeContent.update({
+            where: { id: existing.id },
+            data: { partners: body.partners },
+          });
+        }
         break;
       }
       // 数组类型的内容更新 (需要 id)
