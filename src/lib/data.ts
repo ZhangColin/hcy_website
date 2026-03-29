@@ -29,18 +29,48 @@ export async function loadNews() {
 
 // 关于我们
 export async function loadAbout() {
-  const data = await prisma.aboutContent.findFirst()
-  if (!data) {
-    // 返回默认数据，避免页面崩溃
-    return {
-      intro: { title: "关于海创元", subtitle: "", description: "" },
-      culture: { mission: "", vision: "", values: [] },
-      timeline: [],
-      honors: [],
-      partners: { strategic: [], ecosystem: [] },
-    }
+  const [aboutData, homeData] = await Promise.all([
+    prisma.aboutContent.findFirst(),
+    prisma.homeContent.findFirst(),
+  ]);
+
+  // 默认数据
+  const defaultAbout = {
+    intro: { title: "关于海创元", subtitle: "", description: "" },
+    culture: { mission: "", vision: "", values: [] },
+    timeline: [],
+    honors: [],
+    partners: { strategic: [], ecosystem: [] },
+  };
+
+  if (!aboutData) {
+    return defaultAbout;
   }
-  return data
+
+  // 从 HomeContent 读取 partners 数据
+  let partnersData = defaultAbout.partners;
+  if (homeData?.partners) {
+    const partners = homeData.partners as Array<{ name: string; logo?: string; category?: string }> | string[];
+    // 兼容旧格式
+    const normalizedPartners = partners.map((p) =>
+      typeof p === "string" ? { name: p, logo: "", category: "strategic" } : { ...p, category: p.category || "strategic" }
+    );
+
+    // 按分类分组
+    const strategic = normalizedPartners
+      .filter((p) => p.category === "strategic" && p.name)
+      .map((p) => ({ name: p.name, logo: p.logo }));
+    const ecosystem = normalizedPartners
+      .filter((p) => p.category === "ecosystem" && p.name)
+      .map((p) => ({ name: p.name, logo: p.logo }));
+
+    partnersData = { strategic, ecosystem };
+  }
+
+  return {
+    ...aboutData,
+    partners: partnersData,
+  };
 }
 
 // 案例

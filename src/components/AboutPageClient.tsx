@@ -16,10 +16,10 @@ interface AboutData {
     values: string[];
   };
   timeline: { year: string; title: string; desc: string }[];
-  honors: { title: string; category: string }[];
+  honors: { title: string; category: string; image?: string }[];
   partners: {
-    strategic: string[];
-    ecosystem: string[];
+    strategic: Array<{ name: string; logo?: string }>;
+    ecosystem: Array<{ name: string; logo?: string }>;
   };
 }
 
@@ -79,6 +79,27 @@ const honorGradients: Record<string, string> = {
 
 const honorTabs = ["全部", "行业荣誉", "赛事成就", "合作认证", "软著专利"] as const;
 type HonorTab = (typeof honorTabs)[number];
+
+/* ───────── Partner Card Component ───────── */
+function PartnerCard({ partner, gradient }: { partner: { name: string; logo?: string }; gradient: string }) {
+  const logoUrl = partner.logo
+    ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${partner.logo}`
+    : undefined;
+  const initial = partner.name ? partner.name[0] : "?";
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-white border border-gray-100 p-6 hover:shadow-lg hover:border-[#1A3C8A]/20 transition-all duration-300">
+      {logoUrl ? (
+        <img src={logoUrl} alt={partner.name} className="w-20 h-20 object-contain" />
+      ) : (
+        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-lg`}>
+          {initial}
+        </div>
+      )}
+      <span className="font-semibold text-gray-700 text-center text-sm">{partner.name}</span>
+    </div>
+  );
+}
 
 /* ───────── section wrapper ───────── */
 function Section({
@@ -357,38 +378,52 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
 
           {/* grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredHonors.map((h) => (
-              <div
-                key={h.title}
-                className="group rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100"
-              >
+            {filteredHonors.map((h) => {
+              const imageUrl = h.image
+                ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${h.image}`
+                : undefined;
+
+              return (
                 <div
-                  className={`h-40 bg-gradient-to-br ${h.gradient} flex items-center justify-center`}
+                  key={h.title}
+                  className="group rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100"
                 >
-                  <svg
-                    className="w-14 h-14 text-white/40"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.2}
+                  <div
+                    className={`h-40 bg-gradient-to-br ${h.gradient} flex items-center justify-center relative`}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-4.5A3.375 3.375 0 0 0 13.125 10.875h-2.25A3.375 3.375 0 0 0 7.5 14.25v4.5m4.5-12a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
-                    />
-                  </svg>
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt={h.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <svg
+                        className="w-14 h-14 text-white/40"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-4.5A3.375 3.375 0 0 0 13.125 10.875h-2.25A3.375 3.375 0 0 0 7.5 14.25v4.5m4.5-12a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <span className="inline-block rounded-full bg-[#1A3C8A]/10 text-[#1A3C8A] text-xs font-medium px-3 py-1 mb-3">
+                      {h.category}
+                    </span>
+                    <h3 className="font-bold text-gray-800 group-hover:text-[#1A3C8A] transition-colors">
+                      {h.title}
+                    </h3>
+                  </div>
                 </div>
-                <div className="p-5">
-                  <span className="inline-block rounded-full bg-[#1A3C8A]/10 text-[#1A3C8A] text-xs font-medium px-3 py-1 mb-3">
-                    {h.category}
-                  </span>
-                  <h3 className="font-bold text-gray-800 group-hover:text-[#1A3C8A] transition-colors">
-                    {h.title}
-                  </h3>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </Section>
@@ -408,16 +443,8 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
               战略合作伙伴
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {data.partners.strategic.map((name) => (
-                <div
-                  key={name}
-                  className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-white border border-gray-100 p-8 hover:shadow-lg hover:border-[#1A3C8A]/20 transition-all duration-300"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] flex items-center justify-center text-white font-bold text-lg">
-                    {name[0]}
-                  </div>
-                  <span className="font-semibold text-gray-700">{name}</span>
-                </div>
+              {data.partners.strategic.map((partner) => (
+                <PartnerCard key={partner.name} partner={partner} gradient="from-[#1A3C8A] to-[#2B6CB0]" />
               ))}
             </div>
           </div>
@@ -429,16 +456,8 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
               生态代理品牌
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {data.partners.ecosystem.map((name) => (
-                <div
-                  key={name}
-                  className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-white border border-gray-100 p-8 hover:shadow-lg hover:border-[#2B6CB0]/20 transition-all duration-300"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#2B6CB0] to-[#4299e1] flex items-center justify-center text-white font-bold text-lg">
-                    {name[0]}
-                  </div>
-                  <span className="font-semibold text-gray-700">{name}</span>
-                </div>
+              {data.partners.ecosystem.map((partner) => (
+                <PartnerCard key={partner.name} partner={partner} gradient="from-[#2B6CB0] to-[#4299e1]" />
               ))}
             </div>
           </div>

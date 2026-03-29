@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { loadSite } from "@/lib/data";
+import { QrCodeImage } from "./QrCodeImage";
 
 // Social media icon components
 function WeiboIcon() {
@@ -134,44 +135,28 @@ export default async function Footer() {
       wechatServiceQr: null,
     };
   }
-  const friendlyLinks = (site.friendlyLinks as Array<{ label: string; href: string }>) ?? [];
-  const socialLinks = (site.socialLinks as Array<{ platform: string; url: string }>) ?? [];
-
-  function renderQrCode(url: string | null, label: string) {
-    const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || '';
-
-    if (url) {
-      const imageUrl = url.startsWith('http') ? url : `${imageBaseUrl}${url}`;
-      return (
-        <div className="relative h-24 w-24">
-          <img
-            src={imageUrl}
-            alt={`${label}二维码`}
-            className="h-24 w-24 rounded-lg object-cover"
-            onError={(e) => {
-              // 图片加载失败时隐藏图片，显示占位符
-              e.currentTarget.classList.add('hidden');
-              const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
-              if (placeholder) placeholder.classList.remove('hidden');
-            }}
-          />
-          <div className="hidden absolute inset-0 flex items-center justify-center rounded-lg bg-white/10">
-            <svg className="h-10 w-10 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-            </svg>
-          </div>
-        </div>
-      );
-    }
-    // 无配置时显示占位图标
-    return (
-      <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-white/10 text-xs text-white/40">
-        <svg className="h-10 w-10 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-        </svg>
-      </div>
-    );
+  // Handle both old object format and new array format for friendlyLinks
+  let friendlyLinks: Array<{ label: string; href: string }>;
+  if (Array.isArray(site.friendlyLinks)) {
+    friendlyLinks = site.friendlyLinks as Array<{ label: string; href: string }>;
+  } else {
+    friendlyLinks = [];
   }
+
+  // Handle both old object format { weibo: "", douyin: "" } and new array format [{ platform: "weibo", url: "" }]
+  let socialLinks: Array<{ platform: string; url: string }>;
+  if (Array.isArray(site.socialLinks)) {
+    socialLinks = site.socialLinks as Array<{ platform: string; url: string }>;
+  } else if (site.socialLinks && typeof site.socialLinks === 'object' && !Array.isArray(site.socialLinks)) {
+    // Convert old object format to new array format
+    const oldFormat = site.socialLinks as Record<string, string>;
+    socialLinks = Object.entries(oldFormat)
+      .filter(([_, url]) => url && url.trim() !== '')
+      .map(([platform, url]) => ({ platform, url }));
+  } else {
+    socialLinks = [];
+  }
+
   return (
     <footer className="bg-[#0F2557] text-white/80">
       {/* Row 1: Sitemap */}
@@ -248,13 +233,13 @@ export default async function Footer() {
             <div className="flex flex-shrink-0 items-start gap-8">
               {/* WeChat Official Account QR */}
               <div className="flex flex-col items-center gap-2">
-                {renderQrCode(site.wechatOfficialQr as string | null, "微信公众号")}
+                <QrCodeImage url={site.wechatOfficialQr as string | null} label="微信公众号" />
                 <span className="text-xs text-white/50">微信公众号</span>
               </div>
 
               {/* WeChat Customer Service QR */}
               <div className="flex flex-col items-center gap-2">
-                {renderQrCode(site.wechatServiceQr as string | null, "微信客服")}
+                <QrCodeImage url={site.wechatServiceQr as string | null} label="微信客服" />
                 <span className="text-xs text-white/50">微信客服</span>
               </div>
 
