@@ -58,10 +58,14 @@ package.json                              # 添加依赖
 **Files:**
 - Modify: `package.json`
 
-- [ ] **Step 1: 安装 Tiptap 相关包**
+- [ ] **Step 1: 安装依赖包**
 
 ```bash
+# 安装 Tiptap 相关包
 npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-image @tiptap/extension-link @tiptap/extension-placeholder pinyin-pro
+
+# 安装 Tailwind Typography 插件（用于富文本内容样式）
+npm install -D @tailwindcss/typography
 ```
 
 Expected: 包安装成功，node_modules 更新
@@ -74,11 +78,45 @@ grep -E "tiptap|pinyin-pro" package.json
 
 Expected: 输出包含所有新安装的包
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: 更新 Tailwind 配置**
+
+在 `tailwind.config.ts` 或 `tailwind.config.js` 中添加 typography 插件：
+
+```javascript
+// tailwind.config.ts
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    // ... 现有配置
+  ],
+  theme: {
+    // ... 现有配置
+  },
+  plugins: [
+    require('@tailwindcss/typography'), // 添加此行
+  ],
+}
+export default config
+```
+
+- [ ] **Step 4: 更新图片上传白名单**
+
+修改 `src/app/api/upload/route.ts`，添加 `news/editor` 到白名单：
+
+```typescript
+// 修改前
+const ALLOWED_TYPES_DIRS = ['highlights', 'news', 'hero', ...];
+
+// 修改后
+const ALLOWED_TYPES_DIRS = ['highlights', 'news', 'news/editor', 'hero', ...];
+```
+
+- [ ] **Step 5: Commit**
 
 ```bash
-git add package.json package-lock.json
-git commit -m "deps: add tiptap and pinyin-pro for news system"
+git add package.json package-lock.json tailwind.config.ts src/app/api/upload/route.ts
+git commit -m "deps: add tiptap, pinyin-pro, typography; update upload whitelist"
 ```
 
 ---
@@ -144,18 +182,9 @@ export async function generateUniqueSlug(title: string): Promise<string> {
 }
 ```
 
-- [ ] **Step 2: 创建测试文件验证**
+- [ ] **Step 2: 验证代码正确性（可选）**
 
-```bash
-node -e "
-const { generateSlug } = require('./src/lib/slug.ts');
-const slug = generateSlug('测试新闻标题');
-console.log('Generated slug:', slug);
-console.log('Is valid:', /^[a-z0-9-]+$/.test(slug));
-"
-```
-
-Expected: 输出有效的 slug 格式
+可以跳过此步骤，或在后续集成测试中验证 slug 生成功能。
 
 - [ ] **Step 3: Commit**
 
@@ -218,16 +247,25 @@ import { generateSlug } from '../src/lib/slug';
 const prisma = new PrismaClient();
 
 async function seedNewsSlugs() {
+  // 查找没有 slug 的文章（新字段默认为 NULL 或空字符串）
   const articles = await prisma.newsArticle.findMany({
-    where: { slug: { equals: '' } }, // 或者 where: { slug: null }
+    where: {
+      OR: [
+        { slug: '' },
+        { slug: null },
+      ],
+    },
   });
 
   for (const article of articles) {
     const allSlugs = await prisma.newsArticle.findMany({
       select: { slug: true },
-      where: { slug: { not: '' } },
+      where: {
+        slug: { not: '' },
+        AND: { slug: { not: null } },
+      },
     });
-    const slugSet = new Set(allSlugs.map((a) => a.slug));
+    const slugSet = new Set(allSlugs.map((a) => a.slug).filter(Boolean));
 
     const slug = generateSlug(article.title, Array.from(slugSet));
     await prisma.newsArticle.update({
@@ -1715,7 +1753,6 @@ export function NewsDetailClient({ article }: { article: NewsArticle }) {
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { NewsDetailClient } from '@/components/NewsDetailClient';
-import { NewsArticle } from '@/lib/data';
 
 export const dynamic = 'force-dynamic';
 
@@ -1751,7 +1788,7 @@ export default async function NewsDetailPage({
         <NewsDetailClient
           article={{
             ...article,
-            date: article.date.toISOString(),
+            date: article.date.toISOString().slice(0, 10),
           }}
         />
       </div>
@@ -1837,60 +1874,32 @@ git commit -m "fix: update homepage news links to detail pages"
 
 ---
 
-## Task 14: 移除案例管理"大保存"按钮
+## Task 14: 更新后台管理页面
 
 **Files:**
 - Modify: `src/app/admin/page.tsx`
 
-- [ ] **Step 1: 修改保存按钮显示逻辑**
+- [ ] **Step 1: 合并修改 - 移除案例大保存按钮 + 更新新闻管理入口**
 
-找到 `AdminPage` 组件中渲染保存按钮的部分：
+由于两项修改都在同一文件，合并处理：
 
 ```typescript
-// 修改前
-<button onClick={handleSave} disabled={saving || loading}>
-  {saving ? "保存中..." : "保存"}
-</button>
-
-// 修改后
+// 1. 修改保存按钮显示逻辑（移除 cases 的保存按钮）
+// 找到渲染保存按钮的部分
 {activeSection !== "cases" && (
   <button onClick={handleSave} disabled={saving || loading}>
     {saving ? "保存中..." : "保存"}
   </button>
 )}
-```
 
-- [ ] **Step 2: Commit**
-
-```bash
-git add src/app/admin/page.tsx
-git commit -m "refactor: hide save button for cases section"
-```
-
----
-
-## Task 15: 更新后台导航
-
-**Files:**
-- Modify: `src/app/admin/page.tsx`
-
-- [ ] **Step 1: 在侧边栏添加新闻管理入口**
-
-在 `NAV_ITEMS` 数组中添加新闻管理，或者修改现有的"新闻管理"项链接：
-
-```typescript
-const NAV_ITEMS: NavItem[] = [
-  { key: "home", label: "首页内容" },
-  { key: "news", label: "新闻管理" }, // 修改为跳转到独立页面
-  // ...
-];
-
-// 或者在点击时处理
+// 2. 修改新闻管理导航项（跳转到独立页面）
+// 找到 NAV_ITEMS 点击处理
 onClick={() => {
   if (item.key === "news") {
     window.location.href = '/admin/news';
   } else {
     setActiveSection(item.key);
+    setSidebarOpen(false);
   }
 }}
 ```
@@ -1899,12 +1908,12 @@ onClick={() => {
 
 ```bash
 git add src/app/admin/page.tsx
-git commit -m "feat: add news management link to admin sidebar"
+git commit -m "refactor: update admin page - hide cases save button, link news to separate page"
 ```
 
 ---
 
-## Task 16: 测试与验证
+## Task 15: 测试与验证
 
 - [ ] **Step 1: 测试新闻创建流程**
   1. 访问 `/admin/news`
