@@ -12,6 +12,7 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "prisma:seed": "prisma db seed",
+    "prisma:check": "sh scripts/check-migrations.sh",
     "migrate:data": "tsx scripts/migrate-data.ts"
   },
   "dependencies": {

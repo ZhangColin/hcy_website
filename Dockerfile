@@ -50,8 +50,16 @@ COPY --from=builder /app/node_modules/postgres-date ./node_modules/postgres-date
 COPY --from=builder /app/node_modules/postgres-interval ./node_modules/postgres-interval
 COPY --from=builder /app/prisma ./prisma
 
-# 复制 seed 脚本
+# 复制 seed 脚本和入口脚本
 COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
+
+# 复制额外的 Prisma 依赖（迁移需要）
+COPY --from=builder /app/node_modules/@prisma/adapter-pg ./node_modules/@prisma/adapter-pg
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+
+# 给入口脚本执行权限（在切换用户之前）
+RUN chmod +x /app/docker-entrypoint.sh
 
 USER nextjs
 
@@ -60,4 +68,8 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+# 从 DATABASE_URL 中提取数据库主机和端口（用于迁移前的连接检查）
+ENV DB_HOST=${DB_HOST:-localhost}
+ENV DB_PORT=${DB_PORT:-5432}
+
+CMD ["/app/docker-entrypoint.sh"]

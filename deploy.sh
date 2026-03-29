@@ -54,6 +54,15 @@ echo -e "${YELLOW}数据库: ${DB_DISPLAY}${NC}"
 echo -e "${YELLOW}网站地址: ${NEXT_PUBLIC_SITE_URL:-未设置}${NC}"
 echo ""
 
+# 检查迁移状态
+echo -e "${YELLOW}检查数据库迁移状态...${NC}"
+DATABASE_URL="$DATABASE_URL" npm run prisma:check || {
+  echo -e "${RED}✗ 迁移检查失败！${NC}"
+  echo -e "${YELLOW}请先运行 npm run prisma:migrate 创建迁移文件${NC}"
+  exit 1
+}
+echo ""
+
 # 停止旧容器
 echo -e "${YELLOW}停止旧容器...${NC}"
 docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
