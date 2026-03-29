@@ -122,9 +122,9 @@ export default async function Footer() {
             {/* Company information */}
             <div className="space-y-2 text-sm text-white/50">
               <p className="text-base font-medium text-white/80">
-                北京海创元人工智能教育科技有限公司
+                {site.companyName}
               </p>
-              <p>地址：北京市海淀区中关村大街1号</p>
+              <p>地址：{site.address}</p>
               <p>
                 <a
                   href="https://beian.miit.gov.cn/"
@@ -132,12 +132,11 @@ export default async function Footer() {
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-white"
                 >
-                  京ICP备XXXXXXXX号-X
+                  {site.icp}
                 </a>
               </p>
               <p>
-                Copyright &copy; {new Date().getFullYear()}{" "}
-                北京海创元人工智能教育科技有限公司 版权所有
+                Copyright &copy; {new Date().getFullYear()} {site.copyright}
               </p>
             </div>
 
