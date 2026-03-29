@@ -53,25 +53,31 @@ model AboutContent {
 }
 
 model SchoolCase {
-  id        String   @id @default(cuid())
-  name      String
-  type      String
-  region    String
-  stage     String
-  summary   String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  region      String
+  grade       String   @default("[]")
+  abbr        String   @default("")
+  partnership String   @default("")
+  results     String   @default("")
+  color       String   @default("from-[#1A3C8A] to-[#2B6CB0]")
+  coverImage  String?
+  schoolLogo  String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model CompetitionHonor {
-  id        String   @id @default(cuid())
-  title     String
-  level     String
-  year      String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  title        String
+  level        String
+  year         String
+  achievements String   @default("")
+  image        String?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model ContactInfo {
