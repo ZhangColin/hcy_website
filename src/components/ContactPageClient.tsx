@@ -300,32 +300,61 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {contactData.contacts.map((c) => {
               const style = contactStyles[c.department] || defaultStyle;
+              const hasAvatar = c.avatar && c.avatar.length > 0;
+
               return (
                 <div
                   key={c.department}
                   className="group rounded-2xl bg-[#F5F7FA] hover:bg-white hover:shadow-lg transition-all duration-300 p-6 border border-transparent hover:border-gray-100 text-center"
                 >
-                  {/* icon circle */}
-                  <div
-                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${style.gradient} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                      <path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
-                      <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-                    </svg>
+                  {/* 头像 */}
+                  <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 bg-gradient-to-br from-[#1A3C8A]/10 to-[#2B6CB0]/10 flex items-center justify-center">
+                    {hasAvatar ? (
+                      <img
+                        src={c.avatar!.startsWith('http') ? c.avatar! : `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${c.avatar!}`}
+                        alt={c.person}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${style.gradient} flex items-center justify-center`}>
+                        <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
 
-                  <h3 className="font-bold text-[#333333] text-lg mb-2 leading-snug min-h-[3.5rem] flex items-center justify-center">
+                  {/* 部门名称 */}
+                  <h3 className="font-bold text-[#333333] text-lg mb-2 leading-snug">
                     {c.department}
                   </h3>
 
-                  <div className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4 text-[#D4A843]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
+                  {/* 联系人姓名 */}
+                  <div className="flex items-center justify-center gap-2 mb-2">
                     <span className="text-[#1A3C8A] font-semibold">{c.person}</span>
                   </div>
+
+                  {/* 电话 */}
+                  {c.phone && c.phone.length > 0 && (
+                    <div className="flex items-center justify-center gap-1.5 text-sm text-gray-600 mb-1">
+                      <svg className="w-3.5 h-3.5 text-[#D4A843]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                      </svg>
+                      <span>{c.phone}</span>
+                    </div>
+                  )}
+
+                  {/* 邮箱 */}
+                  {c.email && c.email.length > 0 && (
+                    <div className="flex items-center justify-center gap-1.5 text-sm text-gray-600">
+                      <svg className="w-3.5 h-3.5 text-[#D4A843]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <path d="M22 6l-10 7L2 6" />
+                      </svg>
+                      <span className="truncate max-w-[150px]" title={c.email}>{c.email}</span>
+                    </div>
+                  )}
                 </div>
               );
             })}
