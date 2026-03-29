@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+function safeParseJson<T>(json: string, fallback: T): T {
+  try {
+    return JSON.parse(json);
+  } catch {
+    return fallback;
+  }
+}
+
 export async function GET() {
   try {
     const [schoolCases, competitionHonors] = await Promise.all([
@@ -15,7 +23,7 @@ export async function GET() {
     // 转换 grade 从 JSON 字符串到数组
     const formattedCases = schoolCases.map((c) => ({
       ...c,
-      grade: JSON.parse(c.grade || "[]"),
+      grade: safeParseJson(c.grade || "[]", []),
     }));
 
     return NextResponse.json({
