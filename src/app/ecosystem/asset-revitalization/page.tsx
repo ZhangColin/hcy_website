@@ -118,38 +118,47 @@ export default function AssetRevitalizationPage() {
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-[1200px] mx-auto px-6 py-3">
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-[#1A3C8A] transition-colors">首页</Link>
-            <span>/</span>
-            <span className="text-gray-400">产融生态矩阵</span>
-            <span>/</span>
-            <span className="text-[#00796B] font-medium">不良资产盘活</span>
+            <Link href="/" className="hover:text-[#D4A843] transition-colors flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              首页
+            </Link>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <Link href="/ecosystem" className="text-gray-400 hover:text-[#D4A843] transition-colors">产融生态矩阵</Link>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-[#D4A843] font-semibold">不良资产盘活</span>
           </nav>
         </div>
-      </div>
+      </nav>
 
       {/* Hero Banner */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#004d40] via-[#00796B] to-[#2B6CB0] text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#D4A843] via-[#B8860B] to-[#8B6914] text-white">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 right-20 w-80 h-80 bg-[#D4A843] rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl" />
+          <div className="absolute top-10 left-20 w-72 h-72 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-20 w-96 h-96 bg-[#1A3C8A] rounded-full blur-3xl" />
         </div>
-        <div className="max-w-[1200px] mx-auto px-6 py-20 md:py-28 relative z-10">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
           <div className="max-w-3xl">
             <div className="inline-block px-4 py-1.5 bg-white/15 backdrop-blur-sm rounded-full text-sm font-medium mb-6 border border-white/20">
               产融生态矩阵 · 不良资产盘活
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
               不良资产盘活
-              <span className="text-[#D4A843]"> · 价值重塑</span>
+              <span className="text-white"> · 价值重塑</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/85 mb-8 leading-relaxed">
               三角稳定架构驱动，AI轻资产运营赋能，让沉睡资产焕发新生
             </p>
             <div className="flex flex-wrap gap-4">
-              <a href="#cta" className="inline-flex items-center px-8 py-3 bg-[#D4A843] hover:bg-[#c49a38] text-white font-semibold rounded-lg transition-colors shadow-lg">
+              <a href="#cta" className="inline-flex items-center px-8 py-3 bg-white hover:bg-gray-100 text-[#8B6914] font-semibold rounded-lg transition-colors shadow-lg">
                 洽谈合作
               </a>
               <a href="#triangle" className="inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20">

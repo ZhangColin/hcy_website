@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -456,10 +457,10 @@ export default function Header() {
       {/* ============================================================= */}
       <header
         className={`
-          fixed top-0 inset-x-0 z-30 transition-all duration-300
+          fixed top-0 inset-x-0 z-30 transition-all duration-300 border-b border-gray-200
           ${
             scrolled
-              ? "header-scrolled h-16 bg-white/90 backdrop-blur-lg shadow-sm"
+              ? "header-scrolled h-16 bg-white shadow-sm"
               : "h-20 bg-white"
           }
         `}
@@ -470,25 +471,16 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2.5 shrink-0"
           >
-            {/* Abstract logo mark */}
-            <div
+            <Image
+              src="/logo-light-200.png"
+              alt="海创元AI教育"
+              width={200}
+              height={200}
               className={`
-                flex items-center justify-center rounded-lg bg-[#1A3C8A] text-white font-black
                 transition-all duration-300
-                ${scrolled ? "w-8 h-8 text-sm" : "w-9 h-9 text-base"}
+                ${scrolled ? "h-10 w-auto" : "h-12 w-auto"}
               `}
-            >
-              H
-            </div>
-            <span
-              className={`
-                font-bold text-[#1A3C8A] whitespace-nowrap transition-all duration-300
-                ${scrolled ? "text-lg" : "text-xl"}
-              `}
-            >
-              海创元
-              <span className="text-gray-400 font-normal ml-0.5">AI教育</span>
-            </span>
+            />
           </Link>
 
           {/* ---- Desktop Navigation ---- */}

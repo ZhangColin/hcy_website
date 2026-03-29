@@ -87,7 +87,7 @@ export default async function Home() {
   const dataStrip = homeData.dataStrip.map((item: any) => ({
     label: item.title || item.label || "",
     value: typeof item.value === 'number' ? item.value : parseInt(item.value?.replace(/\D/g, '') || '0'),
-    suffix: typeof item.value === 'string' && item.value?.includes('+') ? '+' : '',
+    suffix: item.suffix || (typeof item.value === 'string' && item.value?.includes('+') ? '+' : ''),
   }));
   const highlights = homeData.highlights;
   const partners = homeData.partners;

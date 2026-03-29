@@ -58,8 +58,7 @@ body {
 
 /* Sticky header transition */
 .header-scrolled {
-  backdrop-filter: blur(12px);
-  background-color: rgba(26, 60, 138, 0.92) !important;
+  background-color: rgb(255, 255, 255) !important;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
 }
 

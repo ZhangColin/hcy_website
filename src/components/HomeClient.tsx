@@ -118,7 +118,7 @@ function CounterCell({
   return (
     <div className="flex flex-col items-center gap-2 px-4 py-6 min-w-[140px]">
       <DataIcon type={item.icon} />
-      <span className="text-3xl font-bold text-[#1A3C8A]">
+      <span className="text-3xl font-bold text-[#1A3C8A] flex items-center">
         {count}
         <span className="text-lg font-normal text-[#D4A843]">{item.suffix}</span>
       </span>
@@ -158,6 +158,11 @@ export function RevealSection({
   );
 }
 
+/* ─── Helper to check if URL is external ─── */
+function isExternalUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
 /* ─── Hero Carousel ─── */
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -184,29 +189,37 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <section className="relative h-screen hero-gradient overflow-hidden">
-      {slides.map((slide, i) => (
-        <div
-          key={i}
-          className={`absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ${
-            i === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-          }`}
-        >
-          <div className="max-w-[1200px] w-full mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              {slide.title}
-            </h1>
-            <p className="text-lg md:text-xl text-[#D4A843] mb-10 max-w-2xl mx-auto">
-              {slide.subtitle}
-            </p>
-            <Link
-              href={slide.href}
-              className="inline-block px-8 py-3 rounded-full border-2 border-[#D4A843] text-[#D4A843] font-medium hover:bg-[#D4A843] hover:text-white transition-colors duration-300 text-lg"
-            >
-              {slide.cta}
-            </Link>
+      {slides.map((slide, i) => {
+        const isExternal = isExternalUrl(slide.href);
+        const LinkComponent = isExternal ? 'a' : Link;
+        const linkProps = isExternal
+          ? { href: slide.href, target: '_blank', rel: 'noopener noreferrer' as const }
+          : { href: slide.href };
+
+        return (
+          <div
+            key={i}
+            className={`absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ${
+              i === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <div className="max-w-[1200px] w-full mx-auto px-6 text-center">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                {slide.title}
+              </h1>
+              <p className="text-lg md:text-xl text-[#D4A843] mb-10 max-w-2xl mx-auto">
+                {slide.subtitle}
+              </p>
+              <LinkComponent
+                {...linkProps}
+                className="inline-block px-8 py-3 rounded-full border-2 border-[#D4A843] text-[#D4A843] font-medium hover:bg-[#D4A843] hover:text-white transition-colors duration-300 text-lg"
+              >
+                {slide.cta}
+              </LinkComponent>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* Dots */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-20">

@@ -63,21 +63,22 @@ export default function TeacherTrainingPage() {
       {/* Breadcrumb */}
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <ol className="flex items-center gap-2 text-sm text-gray-500">
-            <li>
-              <Link href="/" className="hover:text-[#1A3C8A] transition-colors">
-                首页
-              </Link>
-            </li>
-            <li>/</li>
-            <li>
-              <Link href="/services" className="hover:text-[#1A3C8A] transition-colors">
-                智教服务集群
-              </Link>
-            </li>
-            <li>/</li>
-            <li className="text-[#1565C0] font-medium">AI师资培训与等级认证</li>
-          </ol>
+          <nav className="flex items-center gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-[#1A3C8A] transition-colors flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              首页
+            </Link>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <Link href="/services" className="text-gray-400 hover:text-[#1A3C8A] transition-colors">智教服务集群</Link>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-[#1A3C8A] font-semibold">AI师资培训与等级认证</span>
+          </nav>
         </div>
       </nav>
 
@@ -87,7 +88,7 @@ export default function TeacherTrainingPage() {
           <div className="absolute top-20 right-20 w-80 h-80 bg-[#D4A843] rounded-full blur-3xl" />
           <div className="absolute bottom-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
           <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm mb-6">
             智教服务集群 · 配套刚需
           </div>

@@ -102,25 +102,34 @@ export default function EnterpriseTrainingPage() {
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-[1200px] mx-auto px-6 py-3">
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-[#1A3C8A] transition-colors">首页</Link>
-            <span>/</span>
-            <span className="text-gray-400">产融生态矩阵</span>
-            <span>/</span>
-            <span className="text-[#00796B] font-medium">政企AI赋能培训</span>
+            <Link href="/" className="hover:text-[#00796B] transition-colors flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              首页
+            </Link>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <Link href="/ecosystem" className="text-gray-400 hover:text-[#00796B] transition-colors">产融生态矩阵</Link>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-[#00796B] font-semibold">政企AI赋能培训</span>
           </nav>
         </div>
-      </div>
+      </nav>
 
       {/* Hero Banner */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#004d40] via-[#00796B] to-[#009688] text-white">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#D4A843] rounded-full blur-3xl" />
+          <div className="absolute top-10 left-20 w-72 h-72 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-20 w-96 h-96 bg-[#D4A843] rounded-full blur-3xl" />
         </div>
-        <div className="max-w-[1200px] mx-auto px-6 py-20 md:py-28 relative z-10">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
           <div className="max-w-3xl">
             <div className="inline-block px-4 py-1.5 bg-white/15 backdrop-blur-sm rounded-full text-sm font-medium mb-6 border border-white/20">
               产融生态矩阵 · 政企培训

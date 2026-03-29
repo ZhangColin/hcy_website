@@ -137,16 +137,27 @@ const opcBenefits = [
 export default function JoinPageClient({ data }: { data: JoinData }) {
   return (
     <>
-      {/* Hero */}
-      <section className="hero-gradient text-white pt-32 pb-20">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <nav className="text-sm text-blue-200 mb-6">
-            <Link href="/" className="hover:text-white">
+      {/* Breadcrumb */}
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <nav className="flex items-center gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-[#1A3C8A] transition-colors flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
               首页
             </Link>
-            <span className="mx-2">&gt;</span>
-            <span className="text-white">加入我们</span>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-[#1A3C8A] font-semibold">加入我们</span>
           </nav>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="hero-gradient text-white py-20">
+        <div className="max-w-[1200px] mx-auto px-6">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">加入我们</h1>
           <p className="text-xl text-blue-100">
             与海创元共创AI教育未来，成就非凡事业

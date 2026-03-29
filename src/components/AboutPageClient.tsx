@@ -195,22 +195,31 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] text-gray-800">
+      {/* Breadcrumb */}
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <nav className="flex items-center gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-[#1A3C8A] transition-colors flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              首页
+            </Link>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-[#1A3C8A] font-semibold">关于海创元</span>
+          </nav>
+        </div>
+      </nav>
+
       {/* ====== Hero Banner ====== */}
       <div className="relative w-full bg-gradient-to-br from-[#1A3C8A] via-[#1e4a9e] to-[#2B6CB0] text-white overflow-hidden">
         {/* decorative circles */}
         <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-white/5" />
         <div className="absolute bottom-0 left-10 w-48 h-48 rounded-full bg-white/5" />
 
-        <div className="relative mx-auto max-w-[1200px] px-6 pt-28 pb-20 md:pt-36 md:pb-28">
-          {/* breadcrumb */}
-          <nav className="mb-6 text-sm text-blue-200">
-            <Link href="/" className="hover:text-white transition-colors">
-              首页
-            </Link>
-            <span className="mx-2">&gt;</span>
-            <span className="text-white font-medium">关于海创元</span>
-          </nav>
-
+        <div className="relative mx-auto max-w-[1200px] px-6 py-20 md:py-28">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{data.intro.title}</h1>
           <p className="mt-4 text-lg md:text-xl text-blue-100 max-w-2xl leading-relaxed">
             {data.intro.subtitle}
