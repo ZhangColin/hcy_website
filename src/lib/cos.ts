@@ -1,5 +1,5 @@
-import { COS } from 'cos-nodejs-sdk-v5';
-import crypto from 'node:crypto';
+import COS from 'cos-nodejs-sdk-v5';
+import { randomUUID } from 'node:crypto';
 
 // COS 客户端配置
 const cos = new COS({
@@ -37,7 +37,7 @@ export async function uploadFile(
   }
 
   // 生成唯一文件名
-  const randomId = crypto.randomUUID();
+  const randomId = randomUUID();
   const key = `${type}/${date}-${randomId}.${ext}`;
 
   // Convert File to Buffer if necessary
