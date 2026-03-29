@@ -89,6 +89,12 @@ export default async function Home() {
     value: typeof item.value === 'number' ? item.value : parseInt(item.value?.replace(/\D/g, '') || '0'),
     suffix: item.suffix || (typeof item.value === 'string' && item.value?.includes('+') ? '+' : ''),
   }));
+  // highlights 现在包含可选的 image 字段
+  interface HighlightItem {
+    title: string;
+    text: string;
+    image?: string;
+  }
   const highlights = homeData.highlights;
   const partners = homeData.partners;
   const newsItems = newsData.articles.slice(0, 3);
@@ -189,21 +195,29 @@ export default async function Home() {
           </RevealSection>
 
           <div className="flex flex-col gap-16">
-            {highlights.map((item: { title: string; text: string }, i: number) => (
+            {highlights.map((item: HighlightItem, i: number) => (
               <RevealSection key={item.title}>
                 <div
                   className={`flex flex-col md:flex-row items-center gap-8 ${
                     i % 2 === 1 ? "md:flex-row-reverse" : ""
                   }`}
                 >
-                  {/* Placeholder image */}
-                  <div
-                    className={`w-full md:w-1/2 aspect-[16/10] rounded-2xl bg-gradient-to-br ${highlightGradients[i] || highlightGradients[0]} flex items-center justify-center shrink-0`}
-                  >
-                    <span className="text-white/80 text-6xl font-bold opacity-30">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
+                  {/* Image or placeholder */}
+                  {item.image ? (
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${item.image}`}
+                      alt={item.title}
+                      className="w-full md:w-1/2 aspect-[16/10] rounded-2xl object-cover shadow-lg"
+                    />
+                  ) : (
+                    <div
+                      className={`w-full md:w-1/2 aspect-[16/10] rounded-2xl bg-gradient-to-br ${highlightGradients[i] || highlightGradients[0]} flex items-center justify-center shrink-0`}
+                    >
+                      <span className="text-white/80 text-6xl font-bold opacity-30">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+                  )}
                   {/* Text */}
                   <div className="w-full md:w-1/2">
                     <h3 className="text-2xl font-bold text-[#1A3C8A] mb-4">
