@@ -422,32 +422,30 @@ function ContactEditor({ data, setData }: { data: Record<string, unknown>; setDa
   const contacts = (data.contacts as Record<string, string>[]) ?? [];
 
   return (
-    <>
-      <SectionCard title="地址信息">
-        <FieldEditor
-          label="公司地址"
-          value={(data.address as string) ?? ""}
-          onChange={(v) => setData({ ...data, address: v })}
-        />
-      </SectionCard>
-
-      <SectionCard title="联系人">
-        <ListEditor
-          title="联系人列表"
-          items={contacts}
-          onChange={(v) => setData({ ...data, contacts: v })}
-          createItem={() => ({ department: "", person: "", phone: "", email: "" })}
-          renderItem={(item, _i, update) => (
+    <SectionCard title="联系人">
+      <ListEditor
+        title="联系人列表"
+        items={contacts}
+        onChange={(v) => setData({ ...data, contacts: v })}
+        createItem={() => ({ department: "", person: "", phone: "", email: "", avatar: "" })}
+        renderItem={(item, _i, update) => (
+          <>
+            <ImageButton
+              label="头像"
+              value={(item.avatar as string) || ""}
+              onChange={(v) => update("avatar", v)}
+              type="contacts"
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <FieldEditor label="部门" value={item.department} onChange={(v) => update("department", v)} />
               <FieldEditor label="联系人" value={item.person} onChange={(v) => update("person", v)} />
               <FieldEditor label="电话" value={item.phone} onChange={(v) => update("phone", v)} />
               <FieldEditor label="邮箱" value={item.email} onChange={(v) => update("email", v)} />
             </div>
-          )}
-        />
-      </SectionCard>
-    </>
+          </>
+        )}
+      />
+    </SectionCard>
   );
 }
 
