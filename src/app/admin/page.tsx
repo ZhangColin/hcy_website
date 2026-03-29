@@ -12,6 +12,11 @@ interface NavItem {
   label: string;
 }
 
+interface SocialLink {
+  platform: 'weibo' | 'douyin' | 'bilibili' | 'xiaohongshu' | 'zhihu' | 'weixin';
+  url: string;
+}
+
 const NAV_ITEMS: NavItem[] = [
   { key: "home", label: "首页内容" },
   { key: "news", label: "新闻管理" },
@@ -453,10 +458,7 @@ function ContactEditor({ data, setData }: { data: Record<string, unknown>; setDa
 
 function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
   const links = (data.friendlyLinks as Record<string, string>[]) ?? [];
-  const social = (data.social as Record<string, string>) ?? { weibo: "", douyin: "", bilibili: "" };
-
-  const setSocial = (field: string, value: string) =>
-    setData({ ...data, social: { ...social, [field]: value } });
+  const socialLinks = (data.socialLinks as SocialLink[]) ?? [];
 
   return (
     <>
@@ -488,9 +490,73 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
       </SectionCard>
 
       <SectionCard title="社交媒体">
-        <FieldEditor label="微博" value={social.weibo ?? ""} onChange={(v) => setSocial("weibo", v)} placeholder="微博链接" />
-        <FieldEditor label="抖音" value={social.douyin ?? ""} onChange={(v) => setSocial("douyin", v)} placeholder="抖音链接" />
-        <FieldEditor label="哔哩哔哩" value={social.bilibili ?? ""} onChange={(v) => setSocial("bilibili", v)} placeholder="B站链接" />
+        <ListEditor
+          title="社交媒体链接"
+          items={socialLinks}
+          onChange={(v) => setData({ ...data, socialLinks: v })}
+          createItem={() => ({ platform: 'weibo' as const, url: '' })}
+          renderItem={(item, index, update) => (
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">平台</label>
+                  <select
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={item.platform}
+                    onChange={(e) => update('platform', e.target.value as SocialLink['platform'])}
+                  >
+                    <option value="weibo">微博</option>
+                    <option value="douyin">抖音</option>
+                    <option value="bilibili">哔哩哔哩</option>
+                    <option value="xiaohongshu">小红书</option>
+                    <option value="zhihu">知乎</option>
+                    <option value="weixin">微信视频号</option>
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">链接</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={item.url}
+                    onChange={(e) => update('url', e.target.value)}
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newLinks = [...socialLinks];
+                    if (index > 0) {
+                      [newLinks[index - 1], newLinks[index]] = [newLinks[index], newLinks[index - 1]];
+                      setData({ ...data, socialLinks: newLinks });
+                    }
+                  }}
+                  disabled={index === 0}
+                  className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+                >
+                  上移
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newLinks = [...socialLinks];
+                    if (index < socialLinks.length - 1) {
+                      [newLinks[index], newLinks[index + 1]] = [newLinks[index + 1], newLinks[index]];
+                      setData({ ...data, socialLinks: newLinks });
+                    }
+                  }}
+                  disabled={index === socialLinks.length - 1}
+                  className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+                >
+                  下移
+                </button>
+              </div>
+            </div>
+          )}
+        />
       </SectionCard>
     </>
   );
