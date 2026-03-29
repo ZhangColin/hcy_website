@@ -500,13 +500,34 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
           title="荣誉列表"
           items={competitions}
           onChange={(v) => setData({ ...data, competitionHonors: v })}
-          createItem={() => ({ title: "", level: "", year: "" })}
+          createItem={() => ({ title: "", level: "", year: "", achievements: "", image: "" })}
           renderItem={(item, _i, update) => (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <FieldEditor label="荣誉名称" value={item.title} onChange={(v) => update("title", v)} />
-              <FieldEditor label="级别" value={item.level} onChange={(v) => update("level", v)} />
-              <FieldEditor label="年份" value={item.year} onChange={(v) => update("year", v)} />
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FieldEditor label="赛事名称" value={(item.title as string) || ""} onChange={(v) => update("title", v)} />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">级别</label>
+                  <select
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent"
+                    value={(item.level as string) || ""}
+                    onChange={(e) => update("level", e.target.value)}
+                  >
+                    <option value="国际">国际</option>
+                    <option value="全国">全国</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FieldEditor label="年份" value={(item.year as string) || ""} onChange={(v) => update("year", v)} />
+                <FieldEditor label="获奖成果" value={(item.achievements as string) || ""} onChange={(v) => update("achievements", v)} />
+              </div>
+              <ImageButton
+                label="奖杯图片 (可选)"
+                value={(item.image as string) || ""}
+                onChange={(v) => update("image", v)}
+                type="cases/trophy"
+              />
+            </>
           )}
         />
       </SectionCard>
