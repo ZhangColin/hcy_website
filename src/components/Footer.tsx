@@ -78,6 +78,7 @@ const sitemapColumns = [
       { label: "发展历程", href: "/about#timeline" },
       { label: "荣誉资质", href: "/about#honors" },
       { label: "合作伙伴", href: "/about#partners" },
+      { label: "加入我们", href: "/join" },
     ],
   },
   {
