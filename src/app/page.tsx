@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { loadData } from "@/lib/data";
-import { HeroCarousel, CounterStrip, RevealSection } from "@/components/HomeClient";
+import { HeroCarousel, CounterStrip, RevealSection, PartnersWall } from "@/components/HomeClient";
 
 // Force dynamic rendering - this page fetches data from the database at request time
 export const dynamic = 'force-dynamic';
@@ -250,18 +250,7 @@ export default async function Home() {
           <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#F5F7FA] to-transparent z-10" />
           <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#F5F7FA] to-transparent z-10" />
 
-          <div className="animate-scroll flex w-max">
-            {[...partners, ...partners].map((name: string, i: number) => (
-              <div
-                key={i}
-                className="flex items-center justify-center mx-6 px-8 py-4 bg-white rounded-xl shadow-sm min-w-[160px] h-20"
-              >
-                <span className="text-lg font-bold text-[#1A3C8A]/70 whitespace-nowrap">
-                  {name}
-                </span>
-              </div>
-            ))}
-          </div>
+          <PartnersWall partners={partners} />
         </div>
       </section>
 

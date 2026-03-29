@@ -9,6 +9,12 @@ interface HeroSlide {
   subtitle: string;
   cta: string;
   href: string;
+  image?: string;
+}
+
+interface PartnerItem {
+  name: string;
+  logo?: string;
 }
 
 interface DataStripItem {
@@ -188,13 +194,16 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   };
 
   return (
-    <section className="relative h-screen hero-gradient overflow-hidden">
+    <section className="relative h-screen overflow-hidden">
       {slides.map((slide, i) => {
         const isExternal = isExternalUrl(slide.href);
         const LinkComponent = isExternal ? 'a' : Link;
         const linkProps = isExternal
           ? { href: slide.href, target: '_blank', rel: 'noopener noreferrer' as const }
           : { href: slide.href };
+        const bgImage = slide.image
+          ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${slide.image}`
+          : undefined;
 
         return (
           <div
@@ -203,7 +212,22 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               i === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
           >
-            <div className="max-w-[1200px] w-full mx-auto px-6 text-center">
+            {/* Background image or gradient */}
+            {bgImage ? (
+              <>
+                <img
+                  src={bgImage}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
+              </>
+            ) : (
+              <div className="absolute inset-0 hero-gradient" />
+            )}
+
+            {/* Content */}
+            <div className="relative z-10 max-w-[1200px] w-full mx-auto px-6 text-center">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 {slide.title}
               </h1>
@@ -276,5 +300,42 @@ export function CounterStrip({ items }: { items: DataStripItem[] }) {
         </div>
       </div>
     </section>
+  );
+}
+
+/* ─── Partners Wall ─── */
+export function PartnersWall({ partners }: { partners: Array<string | PartnerItem> }) {
+  // Normalize to PartnerItem array
+  const normalizedPartners = partners.map((p) =>
+    typeof p === "string" ? { name: p, logo: "" } : p
+  );
+
+  return (
+    <div className="animate-scroll flex w-max">
+      {[...normalizedPartners, ...normalizedPartners].map((partner, i) => {
+        const logoUrl = partner.logo
+          ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${partner.logo}`
+          : undefined;
+
+        return (
+          <div
+            key={i}
+            className="flex items-center justify-center mx-6 px-8 py-4 bg-white rounded-xl shadow-sm min-w-[160px] h-20"
+          >
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt={partner.name}
+                className="max-w-full max-h-full object-contain"
+              />
+            ) : (
+              <span className="text-lg font-bold text-[#1A3C8A]/70 whitespace-nowrap">
+                {partner.name}
+              </span>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }

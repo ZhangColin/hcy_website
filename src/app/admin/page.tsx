@@ -144,7 +144,11 @@ function HomeEditor({ data, setData }: { data: Record<string, unknown>; setData:
   const slides = (data.heroSlides as Record<string, string>[]) ?? [];
   const dataStrip = (data.dataStrip as Record<string, string>[]) ?? [];
   const highlights = (data.highlights as Record<string, string>[]) ?? [];
-  const partners = (data.partners as string[]) ?? [];
+  const partners = (data.partners as Array<{ name: string; logo?: string }> | string[]) ?? [];
+  // 兼容旧格式：如果是字符串数组，转换为对象数组
+  const normalizedPartners = partners.map((p) =>
+    typeof p === "string" ? { name: p, logo: "" } : p
+  );
 
   return (
     <>
@@ -153,13 +157,21 @@ function HomeEditor({ data, setData }: { data: Record<string, unknown>; setData:
           title="轮播内容"
           items={slides}
           onChange={(v) => setData({ ...data, heroSlides: v })}
-          createItem={() => ({ title: "", subtitle: "", cta: "", href: "" })}
+          createItem={() => ({ title: "", subtitle: "", cta: "", href: "", image: "" })}
           renderItem={(item, _i, update) => (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <FieldEditor label="标题" value={item.title} onChange={(v) => update("title", v)} />
-              <FieldEditor label="副标题" value={item.subtitle} onChange={(v) => update("subtitle", v)} />
-              <FieldEditor label="按钮文字" value={item.cta} onChange={(v) => update("cta", v)} />
-              <FieldEditor label="链接" value={item.href} onChange={(v) => update("href", v)} />
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FieldEditor label="标题" value={item.title} onChange={(v) => update("title", v)} />
+                <FieldEditor label="副标题" value={item.subtitle} onChange={(v) => update("subtitle", v)} />
+                <FieldEditor label="按钮文字" value={item.cta} onChange={(v) => update("cta", v)} />
+                <FieldEditor label="链接" value={item.href} onChange={(v) => update("href", v)} />
+              </div>
+              <ImageButton
+                label="背景图片"
+                value={(item.image as string) || ""}
+                onChange={(v) => update("image", v)}
+                type="hero"
+              />
             </div>
           )}
         />
@@ -203,37 +215,24 @@ function HomeEditor({ data, setData }: { data: Record<string, unknown>; setData:
       </SectionCard>
 
       <SectionCard title="合作伙伴">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-gray-800">合作伙伴列表</h3>
-          <button
-            type="button"
-            onClick={() => setData({ ...data, partners: [...partners, ""] })}
-            className="text-sm bg-[#1A3C8A] text-white px-3 py-1 rounded hover:bg-[#15306e] transition-colors"
-          >
-            + 添加
-          </button>
-        </div>
-        {partners.map((p, i) => (
-          <div key={i} className="flex items-center gap-2 mb-2">
-            <input
-              className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
-              value={p}
-              onChange={(e) => {
-                const next = [...partners];
-                next[i] = e.target.value;
-                setData({ ...data, partners: next });
-              }}
-              placeholder="合作伙伴名称"
-            />
-            <button
-              type="button"
-              onClick={() => setData({ ...data, partners: partners.filter((_, idx) => idx !== i) })}
-              className="text-red-500 hover:text-red-700 font-bold"
-            >
-              &times;
-            </button>
-          </div>
-        ))}
+        <ListEditor
+          title="合作伙伴列表"
+          items={normalizedPartners}
+          onChange={(v) => setData({ ...data, partners: v })}
+          createItem={() => ({ name: "", logo: "" })}
+          renderItem={(item, _i, update) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <FieldEditor label="名称" value={item.name} onChange={(v) => update("name", v)} />
+              <ImageButton
+                label="Logo"
+                value={(item.logo as string) || ""}
+                onChange={(v) => update("logo", v)}
+                type="partners"
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              />
+            </div>
+          )}
+        />
       </SectionCard>
     </>
   );
