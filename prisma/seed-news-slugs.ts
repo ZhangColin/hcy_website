@@ -21,21 +21,30 @@ async function main() {
 
   console.log(`Found ${articles.length} articles without slugs.`);
 
-  for (const article of articles) {
-    const allSlugs = await prisma.newsArticle.findMany({
-      select: { slug: true },
-      where: {
-        slug: { not: '' },
-        AND: { slug: { not: null } },
-      },
-    });
-    const slugSet = new Set(allSlugs.map((a) => a.slug).filter(Boolean));
+  if (articles.length === 0) {
+    console.log('No articles without slugs found.');
+    await prisma.$disconnect();
+    return;
+  }
 
+  // Fetch all existing slugs ONCE before the loop (fix N+1 query issue)
+  const allSlugs = await prisma.newsArticle.findMany({
+    select: { slug: true },
+    where: {
+      slug: { not: '' },
+      AND: { slug: { not: null } },
+    },
+  });
+  const slugSet = new Set(allSlugs.map((a) => a.slug).filter(Boolean));
+
+  for (const article of articles) {
     const slug = generateSlug(article.title, Array.from(slugSet));
     await prisma.newsArticle.update({
       where: { id: article.id },
       data: { slug },
     });
+    // Add the newly generated slug to the set to avoid collisions in the same batch
+    slugSet.add(slug);
     console.log(`Updated slug for "${article.title}": ${slug}`);
   }
 
