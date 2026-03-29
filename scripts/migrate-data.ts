@@ -137,10 +137,13 @@ async function migrate() {
       await tx.schoolCase.create({
         data: {
           name: String(item.name),
-          type: String(item.type),
           region: String(item.region),
-          stage: String(item.stage),
-          summary: String(item.summary),
+          grade: JSON.stringify((item.grades as string[]) || []),
+          abbr: String(item.abbr || ""),
+          partnership: String(item.partnership || ""),
+          results: String(item.results || ""),
+          color: String(item.color || "from-[#1A3C8A] to-[#2B6CB0]"),
+          order: Number(item.order || 0),
         },
       })
     }

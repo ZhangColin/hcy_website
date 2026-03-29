@@ -38,80 +38,16 @@ interface SchoolCase {
   partnership: string;
   results: string;
   color: string;
+  coverImage?: string | null;
+  schoolLogo?: string | null;
 }
 
-const schoolCases: SchoolCase[] = [
-  {
-    name: "北京中学",
-    region: "北京",
-    grade: ["初中", "高中"],
-    abbr: "北中",
-    partnership: "共建青少年AI创新学院，打造人工智能创新人才培养基地",
-    results: "培养学生获全国赛事一等奖12项，AI课程纳入校本必修课",
-    color: "from-[#1A3C8A] to-[#2B6CB0]",
-  },
-  {
-    name: "上外附中",
-    region: "上海",
-    grade: ["初中", "高中"],
-    abbr: "上外",
-    partnership: "5年深度合作，AI课程入校全学段覆盖",
-    results: "师生满意度98%，学生竞赛获奖率提升200%",
-    color: "from-[#2B6CB0] to-blue-500",
-  },
-  {
-    name: "海亮教育",
-    region: "浙江",
-    grade: ["小学", "初中", "高中"],
-    abbr: "海亮",
-    partnership: "120所院校签约，集团化AI教育解决方案落地",
-    results: "覆盖学生超10万人，教师AI素养认证通过率95%",
-    color: "from-[#D4A843] to-amber-500",
-  },
-  {
-    name: "绵阳南山中学",
-    region: "其他",
-    grade: ["高中"],
-    abbr: "南山",
-    partnership: "AI创客实验室共建，赛事培训一体化服务",
-    results: "学生获省级以上奖项8项，学校获评AI教育示范校",
-    color: "from-purple-600 to-indigo-600",
-  },
-  {
-    name: "北京开放大学",
-    region: "北京",
-    grade: ["高中"],
-    abbr: "北开",
-    partnership: "政企AI赋能培训基地，师资认证考核中心",
-    results: "年培训教师500+人次，认证体系获行业认可",
-    color: "from-teal-600 to-cyan-600",
-  },
-  {
-    name: "其他代表院校",
-    region: "其他",
-    grade: ["小学", "初中", "高中"],
-    abbr: "更多",
-    partnership: "覆盖全国30+省市，70+合作渠道共建AI教育生态",
-    results: "累计服务130+所院校，授课1000+课时",
-    color: "from-rose-500 to-pink-600",
-  },
-];
-
 interface Competition {
-  name: string;
+  title: string;
   level: string;
   achievements: string;
   year: string;
 }
-
-const competitions: Competition[] = [
-  { name: "Intel AI全球影响力嘉年华", level: "国际", achievements: "全球总冠军", year: "2023" },
-  { name: "丘成桐中学科学奖", level: "国际", achievements: "全球总冠军", year: "2024" },
-  { name: "ISEF 国际科学与工程大奖赛", level: "国际", achievements: "全球总冠军", year: "2024" },
-  { name: "全国青少年人工智能创新挑战赛", level: "全国", achievements: "全国总冠军 x3", year: "2022-2024" },
-  { name: "全国中小学信息技术创新与实践大赛", level: "全国", achievements: "全国总冠军 x2", year: "2023-2024" },
-  { name: "世界机器人大赛", level: "国际", achievements: "全国总冠军 x2", year: "2023" },
-];
 
 const timelineAwards = [
   { year: "2021", awards: ["Intel灯塔校认证", "上海市级标准课程认证"] },
@@ -167,6 +103,27 @@ export default function CasesPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("全部");
   const [regionFilter, setRegionFilter] = useState<Region>("全部");
   const [gradeFilter, setGradeFilter] = useState<Grade>("全部");
+  const [schoolCases, setSchoolCases] = useState<SchoolCase[]>([]);
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch data from API on mount
+  useEffect(() => {
+    async function fetchCasesData() {
+      try {
+        const res = await fetch('/api/cases');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        setSchoolCases(data.schoolCases || []);
+        setCompetitions(data.competitionHonors || []);
+      } catch (error) {
+        console.error('Failed to fetch cases:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCasesData();
+  }, []);
 
   const heroReveal = useScrollReveal();
   const casesReveal = useScrollReveal();
@@ -287,42 +244,67 @@ export default function CasesPage() {
             </div>
 
             {/* case cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCases.map((c, i) => (
-                <div
-                  key={c.name}
-                  className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-transparent hover:-translate-y-1"
-                  style={{ animationDelay: `${i * 80}ms` }}
-                >
-                  {/* logo placeholder */}
-                  <div className={`h-32 bg-gradient-to-br ${c.color} flex items-center justify-center relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDgpIi8+PC9zdmc+')] opacity-40" />
-                    <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-white text-2xl font-bold border border-white/30">
-                      {c.abbr.slice(0, 2)}
+            {isLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="text-center">
+                  <div className="inline-block w-8 h-8 border-3 border-[#1A3C8A] border-t-transparent rounded-full animate-spin mb-4" />
+                  <p className="text-[#666666]">加载中...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredCases.map((c, i) => (
+                  <div
+                    key={c.name}
+                    className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-transparent hover:-translate-y-1"
+                    style={{ animationDelay: `${i * 80}ms` }}
+                  >
+                    {/* logo placeholder */}
+                    <div className={`h-32 bg-gradient-to-br ${c.color} flex items-center justify-center relative overflow-hidden`}>
+                      {c.coverImage ? (
+                        <img
+                          src={c.coverImage}
+                          alt={c.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDgpIi8+PC9zdmc+')] opacity-40" />
+                      )}
+                      {c.schoolLogo ? (
+                        <img
+                          src={c.schoolLogo}
+                          alt={`${c.name} logo`}
+                          className="w-16 h-16 rounded-xl object-cover border-2 border-white/30 relative z-10"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-white text-2xl font-bold border border-white/30 relative z-10">
+                          {c.abbr.slice(0, 2)}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <h3 className="text-lg font-bold text-[#333333]">{c.name}</h3>
-                      <div className="flex gap-1">
-                        {c.grade.map((g) => (
-                          <span key={g} className="text-xs bg-blue-50 text-[#2B6CB0] px-2 py-0.5 rounded-full">{g}</span>
-                        ))}
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <h3 className="text-lg font-bold text-[#333333]">{c.name}</h3>
+                        <div className="flex gap-1">
+                          {c.grade.map((g) => (
+                            <span key={g} className="text-xs bg-blue-50 text-[#2B6CB0] px-2 py-0.5 rounded-full">{g}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-sm text-[#666666] mb-3 leading-relaxed">{c.partnership}</p>
+                      <div className="pt-3 border-t border-gray-100">
+                        <p className="text-sm text-[#1A3C8A] font-medium flex items-start gap-2">
+                          <svg className="w-4 h-4 mt-0.5 text-[#D4A843] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                          </svg>
+                          {c.results}
+                        </p>
                       </div>
                     </div>
-                    <p className="text-sm text-[#666666] mb-3 leading-relaxed">{c.partnership}</p>
-                    <div className="pt-3 border-t border-gray-100">
-                      <p className="text-sm text-[#1A3C8A] font-medium flex items-start gap-2">
-                        <svg className="w-4 h-4 mt-0.5 text-[#D4A843] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        {c.results}
-                      </p>
-                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {filteredCases.length === 0 && (
               <div className="text-center py-16 text-[#666666]">
@@ -370,12 +352,12 @@ export default function CasesPage() {
             {/* competition list */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
               {competitions.map((comp) => (
-                <div key={comp.name} className="group flex items-start gap-4 p-5 bg-[#F5F7FA] rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 border border-transparent hover:border-gray-100">
+                <div key={comp.title} className="group flex items-start gap-4 p-5 bg-[#F5F7FA] rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 border border-transparent hover:border-gray-100">
                   <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm ${comp.level === "国际" ? "bg-gradient-to-br from-[#D4A843] to-amber-600" : "bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0]"}`}>
                     {comp.level}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-[#333333] mb-1">{comp.name}</h4>
+                    <h4 className="font-bold text-[#333333] mb-1">{comp.title}</h4>
                     <p className="text-sm text-[#2B6CB0] font-medium">{comp.achievements}</p>
                     <p className="text-xs text-[#666666] mt-1">{comp.year}</p>
                   </div>
