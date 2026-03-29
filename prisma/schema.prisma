@@ -27,18 +27,24 @@ model HomeContent {
 }
 
 model NewsArticle {
-  id        String   @id @default(cuid())
-  title     String
-  excerpt   String
-  content   String
-  category  String
-  date      DateTime
-  image     String?
-  published Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  slug          String   @unique           // 新增: URL 友好标识
+  title         String
+  excerpt       String
+  content       String
+  category      String
+  date          DateTime
+  image         String?
+  featured      Boolean  @default(false)   // 新增: 是否置顶
+  showOnHomepage Boolean @default(true)    // 新增: 是否首页显示
+  published     Boolean  @default(true)    // 修改: 默认值改为 true
+  views         Int      @default(0)       // 新增: 浏览量
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([date, published])
+  @@index([featured, date])                // 新增索引
+  @@index([showOnHomepage])                // 新增索引
 }
 
 model AboutContent {
