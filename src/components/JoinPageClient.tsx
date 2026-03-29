@@ -11,11 +11,16 @@ interface JobPosition {
   location: string;
   type: string;
   description: string;
-  requirements: string[];
+  requirements: string[] | unknown; // 支持从数据库的 JsonValue 类型
 }
 
 interface JoinData {
   jobPositions: JobPosition[];
+}
+
+interface JoinPageClientProps {
+  data: JoinData;
+  hrEmail?: string | null;
 }
 
 /* ───────── reveal hook ───────── */
@@ -134,7 +139,10 @@ const opcBenefits = [
 ];
 
 /* ───────── main client component ───────── */
-export default function JoinPageClient({ data }: { data: JoinData }) {
+export default function JoinPageClient({ data, hrEmail }: JoinPageClientProps) {
+  const defaultHrEmail = "hr@aieducenter.com"; // 默认 HR 邮箱
+  const displayHrEmail = hrEmail || defaultHrEmail;
+
   return (
     <>
       {/* Breadcrumb */}
@@ -259,14 +267,17 @@ export default function JoinPageClient({ data }: { data: JoinData }) {
                         任职要求
                       </h4>
                       <ul className="list-disc list-inside text-[#666] space-y-1">
-                        {job.requirements.map((req, i) => (
-                          <li key={i}>{req}</li>
+                        {Array.isArray(job.requirements) && job.requirements.map((req, i) => (
+                          <li key={i}>{String(req)}</li>
                         ))}
                       </ul>
                     </div>
-                    <button className="px-6 py-2.5 bg-[#1A3C8A] text-white rounded hover:bg-[#2B6CB0] transition-colors">
+                    <a
+                      href={`mailto:${displayHrEmail}?subject=应聘${encodeURIComponent(job.title)}-${encodeURIComponent(job.department)}`}
+                      className="px-6 py-2.5 bg-[#1A3C8A] text-white rounded hover:bg-[#2B6CB0] transition-colors inline-block"
+                    >
                       投递简历
-                    </button>
+                    </a>
                   </div>
                 </details>
               </RevealSection>
@@ -277,10 +288,10 @@ export default function JoinPageClient({ data }: { data: JoinData }) {
             <p className="text-[#666]">
               投递简历请发送至：
               <a
-                href="mailto:hr@aieducenter.com"
+                href={`mailto:${displayHrEmail}`}
                 className="text-[#2B6CB0] hover:underline"
               >
-                hr@aieducenter.com
+                {displayHrEmail}
               </a>
             </p>
           </RevealSection>

@@ -83,7 +83,7 @@ function FieldEditor({
 
 // ─── Generic List Editor ─────────────────────────────────────────────────────
 
-function ListEditor<T extends Record<string, unknown>>({
+function ListEditor<T extends object>({
   title,
   items,
   onChange,
@@ -468,7 +468,8 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
         <FieldEditor label="公司简称" value={(data.shortName as string) ?? ""} onChange={(v) => setData({ ...data, shortName: v })} />
         <FieldEditor label="公司地址" value={(data.address as string) ?? ""} onChange={(v) => setData({ ...data, address: v })} />
         <FieldEditor label="联系电话" value={(data.phone as string) ?? ""} onChange={(v) => setData({ ...data, phone: v })} />
-        <FieldEditor label="电子邮箱" value={(data.email as string) ?? ""} onChange={(v) => setData({ ...data, email: v })} />
+        <FieldEditor label="电子邮箱" value={(data.email as string) ?? ""} onChange={(v) => setData({ ...data, email: v })} placeholder="通用联系邮箱" />
+        <FieldEditor label="HR简历邮箱" value={(data.hrEmail as string) ?? ""} onChange={(v) => setData({ ...data, hrEmail: v })} placeholder="接收简历的邮箱地址" />
         <FieldEditor label="地图经度" value={(data.mapLng as string) ?? ""} onChange={(v) => setData({ ...data, mapLng: v })} placeholder="如：116.397428" />
         <FieldEditor label="地图纬度" value={(data.mapLat as string) ?? ""} onChange={(v) => setData({ ...data, mapLat: v })} placeholder="如：39.90923" />
         <FieldEditor label="ICP备案号" value={(data.icp as string) ?? ""} onChange={(v) => setData({ ...data, icp: v })} />
@@ -581,14 +582,14 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
 // ─── Join Editor ─────────────────────────────────────────────────────────────
 
 function JoinEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
-  const positions = (data.positions as Record<string, unknown>[]) ?? [];
+  const positions = (data.jobPositions as Record<string, unknown>[]) ?? [];
 
   return (
     <SectionCard title="招聘岗位">
       <ListEditor
         title="岗位列表"
         items={positions as Record<string, unknown>[]}
-        onChange={(v) => setData({ ...data, positions: v })}
+        onChange={(v) => setData({ ...data, jobPositions: v })}
         createItem={() => ({
           title: "",
           department: "",
@@ -596,6 +597,7 @@ function JoinEditor({ data, setData }: { data: Record<string, unknown>; setData:
           type: "",
           description: "",
           requirements: [] as string[],
+          order: positions.length,
         })}
         renderItem={(item, _i, update) => {
           const reqs = (item.requirements as string[]) ?? [];
@@ -1374,9 +1376,13 @@ export default function AdminPage() {
       if (res.ok) {
         showToast("已保存", "success");
       } else {
-        showToast("保存失败", "error");
+        // 获取详细错误信息
+        const errorData = await res.json().catch(() => ({ error: "未知错误" }));
+        console.error("保存失败:", errorData);
+        showToast(`保存失败: ${errorData.error || "未知错误"}`, "error");
       }
-    } catch {
+    } catch (err) {
+      console.error("保存异常:", err);
       showToast("保存失败，请检查网络", "error");
     } finally {
       setSaving(false);

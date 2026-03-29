@@ -12,7 +12,7 @@ const FIELD_WHITELISTS = {
   competitionHonor: ["title", "level", "year", "order"],
   contact: ["address", "contacts"],
   jobPosition: ["title", "department", "location", "type", "description", "requirements", "active", "order"],
-  site: ["companyName", "shortName", "address", "phone", "email", "mapLng", "mapLat", "icp", "copyright", "friendlyLinks", "socialLinks", "wechatOfficialQr", "wechatServiceQr"],
+  site: ["companyName", "shortName", "address", "phone", "email", "hrEmail", "mapLng", "mapLat", "icp", "copyright", "friendlyLinks", "socialLinks", "wechatOfficialQr", "wechatServiceQr"],
 } as const;
 
 // 提取允许的字段
@@ -74,10 +74,11 @@ export async function GET(
 
     // socialLinks 数据格式迁移：对象转数组
     if (collection === "site" && data && typeof data === "object") {
-      const siteData = data as any;
+      const siteData = data as { socialLinks?: unknown };
       if (siteData.socialLinks && typeof siteData.socialLinks === 'object' && !Array.isArray(siteData.socialLinks)) {
         // 从 { weibo: "url" } 转换为 [{ platform: "weibo", url: "url" }]
-        siteData.socialLinks = Object.entries(siteData.socialLinks)
+        const oldLinks = siteData.socialLinks as Record<string, string>;
+        siteData.socialLinks = Object.entries(oldLinks)
           .filter(([_, url]) => typeof url === 'string' && url.trim().length > 0)
           .map(([platform, url]) => ({ platform, url: url.trim() }));
       }
@@ -205,14 +206,63 @@ export async function PUT(
         break;
       }
       case "join": {
-        if (!body.id) {
-          return NextResponse.json({ error: "缺少必需参数: id" }, { status: 400 });
+        // 支持批量保存 jobPositions 数组
+        if ("jobPositions" in body && Array.isArray(body.jobPositions)) {
+          const positions = body.jobPositions as Array<{ id?: string; order?: number } & Record<string, unknown>>;
+
+          // 获取数据库中所有现有的 active 记录
+          const existingPositions = await prisma.jobPosition.findMany({
+            where: { active: true },
+            select: { id: true },
+          });
+          const existingIds = new Set(existingPositions.map((p) => p.id));
+          const incomingIds = new Set(positions.filter((p) => p.id).map((p) => p.id as string));
+
+          // 1. 更新现有记录
+          for (const pos of positions) {
+            if (pos.id) {
+              const allowedData = extractAllowedFields("jobPosition", pos);
+              // 保留 id 用于更新
+              (allowedData as any).id = pos.id;
+              await prisma.jobPosition.update({
+                where: { id: pos.id },
+                data: allowedData,
+              });
+            }
+          }
+
+          // 2. 创建新记录（没有 id 的）
+          for (const pos of positions) {
+            if (!pos.id) {
+              const allowedData = extractAllowedFields("jobPosition", pos);
+              await prisma.jobPosition.create({
+                data: {
+                  ...allowedData,
+                  active: true,
+                  order: pos.order ?? 0,
+                } as any,
+              });
+            }
+          }
+
+          // 3. 标记不在前端数据中的记录为 inactive（软删除）
+          const idsToDelete = [...existingIds].filter((id) => !incomingIds.has(id));
+          if (idsToDelete.length > 0) {
+            await prisma.jobPosition.updateMany({
+              where: { id: { in: idsToDelete } },
+              data: { active: false },
+            });
+          }
+        } else if (body.id) {
+          // 单条记录更新（向后兼容）
+          const allowedData = extractAllowedFields("jobPosition", body);
+          await prisma.jobPosition.update({
+            where: { id: body.id },
+            data: allowedData,
+          });
+        } else {
+          return NextResponse.json({ error: "缺少必需参数: id 或 jobPositions" }, { status: 400 });
         }
-        const allowedData = extractAllowedFields("jobPosition", body);
-        await prisma.jobPosition.update({
-          where: { id: body.id },
-          data: allowedData,
-        });
         break;
       }
       default:
@@ -222,6 +272,8 @@ export async function PUT(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(`[API Error] PUT /admin/${collection}:`, error);
-    return NextResponse.json({ error: "保存数据失败" }, { status: 500 });
+    // 返回更详细的错误信息
+    const errorMessage = error instanceof Error ? error.message : "保存数据失败";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

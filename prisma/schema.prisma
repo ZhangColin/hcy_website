@@ -110,6 +110,7 @@ model SiteConfig {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   email            String?
+  hrEmail          String?
   mapLat           String?
   mapLng           String?
   phone            String?
