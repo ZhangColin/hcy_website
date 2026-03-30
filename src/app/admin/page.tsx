@@ -2407,7 +2407,7 @@ export default function AdminPage() {
               <h2 className="text-xl font-bold text-gray-900">
                 {NAV_ITEMS.find((n) => n.key === activeSection)?.label}
               </h2>
-              {activeSection !== "cases" && (
+              {activeSection !== "cases" && activeSection !== "users" && (
                 <button
                   onClick={handleSave}
                   disabled={saving || loading}
