@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslation } from "@/hooks/useTranslation";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -23,65 +24,6 @@ interface NavItem {
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
 /* ------------------------------------------------------------------ */
-
-const NAV_ITEMS: NavItem[] = [
-  { label: "关于海创元", href: "/about" },
-  {
-    label: "智教服务集群",
-    href: "/services",
-    children: [
-      {
-        label: "AI课程入校",
-        href: "/services/ai-curriculum",
-        description: "将前沿AI课程体系引入校园，赋能基础教育与高等教育",
-      },
-      {
-        label: "AI师资培训与认证",
-        href: "/services/teacher-training",
-        description: "面向教师的AI能力提升培训及专业资质认证",
-      },
-      {
-        label: "AI研学",
-        href: "/services/ai-research-study",
-        description: "沉浸式AI主题研学旅行与实践项目",
-      },
-      {
-        label: "生态产品联盟",
-        href: "/services/ecosystem-alliance",
-        description: "联合优质AI教育产品，构建开放生态",
-      },
-    ],
-  },
-  {
-    label: "产融生态矩阵",
-    href: "/ecosystem",
-    children: [
-      {
-        label: "政企AI赋能培训",
-        href: "/ecosystem/enterprise-training",
-        description: "为政府与企业定制AI转型培训方案",
-      },
-      {
-        label: "OPC生态",
-        href: "/ecosystem/opc",
-        description: "开放产业合作平台，连接教育与产业资源",
-      },
-      {
-        label: "智创专项服务",
-        href: "/ecosystem/smart-services",
-        description: "AI技术咨询与定制化智能解决方案",
-      },
-      {
-        label: "不良资产盘活",
-        href: "/ecosystem/asset-revitalization",
-        description: "以AI技术赋能资产价值重塑与运营优化",
-      },
-    ],
-  },
-  { label: "案例与成果", href: "/cases" },
-  { label: "新闻动态", href: "/news" },
-  { label: "联系我们", href: "/contact" },
-];
 
 /* ------------------------------------------------------------------ */
 /*  Inline SVG Icons                                                   */
@@ -264,9 +206,17 @@ function MegaMenu({
 function MobileNav({
   isOpen,
   onClose,
+  navItems,
+  t,
+  lang,
+  setLang,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  navItems: NavItem[];
+  t: (key: string) => string;
+  lang: "zh" | "en";
+  setLang: (lang: "zh" | "en") => void;
 }) {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
@@ -299,12 +249,12 @@ function MobileNav({
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <span className="text-lg font-bold text-[#1A3C8A]">
-            海创元AI教育
+            {t("header.brand")}
           </span>
           <button
             onClick={onClose}
             className="p-2 -mr-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-            aria-label="关闭菜单"
+            aria-label={t("common.close")}
           >
             <CloseIcon />
           </button>
@@ -313,7 +263,7 @@ function MobileNav({
         {/* Nav Items */}
         <nav className="flex-1 overflow-y-auto px-4 py-3">
           <ul className="space-y-1">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <li key={item.label}>
                 {item.children ? (
                   <div>
@@ -372,14 +322,12 @@ function MobileNav({
             className="flex items-center justify-center gap-2 w-full rounded-lg bg-[#1A3C8A] px-4 py-3 text-sm font-semibold text-white hover:bg-[#15306E] transition-colors"
           >
             <ChatIcon className="w-4 h-4" />
-            在线咨询
+            {t("header.onlineConsultation")}
           </Link>
           <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
-            <button className="font-medium text-[#1A3C8A]">中</button>
+            <button onClick={() => setLang("zh")} className={`font-medium ${lang === "zh" ? "text-[#1A3C8A]" : ""}`}>中</button>
             <span>/</span>
-            <button className="text-gray-500 hover:text-[#1A3C8A] transition-colors">
-              EN
-            </button>
+            <button onClick={() => setLang("en")} className={`font-medium transition-colors ${lang === "en" ? "text-[#1A3C8A]" : "hover:text-[#1A3C8A]"}`}>EN</button>
           </div>
         </div>
       </div>
@@ -392,15 +340,75 @@ function MobileNav({
 /* ------------------------------------------------------------------ */
 
 export default function Header() {
+  const { lang, setLang, t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [lang, setLang] = useState<"zh" | "en">("zh");
 
   const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  /* ---- Navigation Items ---- */
+  const NAV_ITEMS: NavItem[] = [
+    { label: t("header.about"), href: "/about" },
+    {
+      label: t("header.services"),
+      href: "/services",
+      children: [
+        {
+          label: t("header.aiCurriculum"),
+          href: "/services/ai-curriculum",
+          description: t("header.aiCurriculumDesc"),
+        },
+        {
+          label: t("header.teacherTraining"),
+          href: "/services/teacher-training",
+          description: t("header.teacherTrainingDesc"),
+        },
+        {
+          label: t("header.aiResearchStudy"),
+          href: "/services/ai-research-study",
+          description: t("header.aiResearchStudyDesc"),
+        },
+        {
+          label: t("header.ecosystemAlliance"),
+          href: "/services/ecosystem-alliance",
+          description: t("header.ecosystemAllianceDesc"),
+        },
+      ],
+    },
+    {
+      label: t("header.ecosystem"),
+      href: "/ecosystem",
+      children: [
+        {
+          label: t("header.enterpriseTraining"),
+          href: "/ecosystem/enterprise-training",
+          description: t("header.enterpriseTrainingDesc"),
+        },
+        {
+          label: t("header.opc"),
+          href: "/ecosystem/opc",
+          description: t("header.opcDesc"),
+        },
+        {
+          label: t("header.smartServices"),
+          href: "/ecosystem/smart-services",
+          description: t("header.smartServicesDesc"),
+        },
+        {
+          label: t("header.assetRevitalization"),
+          href: "/ecosystem/asset-revitalization",
+          description: t("header.assetRevitalizationDesc"),
+        },
+      ],
+    },
+    { label: t("header.cases"), href: "/cases" },
+    { label: t("header.news"), href: "/news" },
+    { label: t("header.onlineConsultation"), href: "/contact" },
+  ];
 
   /* ---- Scroll listener ---- */
   const handleScroll = useCallback(() => {
@@ -473,7 +481,7 @@ export default function Header() {
           >
             <Image
               src="/logo-light-200.png"
-              alt="海创元AI教育"
+              alt={t("header.brand")}
               width={200}
               height={200}
               className={`
@@ -535,7 +543,7 @@ export default function Header() {
                   <input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="搜索..."
+                    placeholder={t("common.searchPlaceholder")}
                     className="w-48 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm outline-none focus:border-[#1A3C8A] focus:ring-2 focus:ring-[#1A3C8A]/20 transition-all"
                     onKeyDown={(e) => {
                       if (e.key === "Escape") setSearchOpen(false);
@@ -544,7 +552,7 @@ export default function Header() {
                   <button
                     onClick={() => setSearchOpen(false)}
                     className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
-                    aria-label="关闭搜索"
+                    aria-label={t("common.close")}
                   >
                     <CloseIcon className="w-4 h-4" />
                   </button>
@@ -553,7 +561,7 @@ export default function Header() {
                 <button
                   onClick={() => setSearchOpen(true)}
                   className="p-2 rounded-lg text-gray-500 hover:text-[#1A3C8A] hover:bg-[#1A3C8A]/[0.06] transition-colors"
-                  aria-label="搜索"
+                  aria-label={t("common.search")}
                 >
                   <SearchIcon className="w-5 h-5" />
                 </button>
@@ -590,14 +598,14 @@ export default function Header() {
               className="inline-flex items-center gap-1.5 rounded-lg bg-[#1A3C8A] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#15306E] hover:shadow-md active:scale-[0.97] transition-all duration-150"
             >
               <ChatIcon className="w-4 h-4" />
-              <span className="hidden sm:inline">在线咨询</span>
+              <span className="hidden sm:inline">{t("header.onlineConsultation")}</span>
             </Link>
 
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileOpen(true)}
               className="lg:hidden p-2 -mr-2 rounded-lg text-gray-600 hover:text-[#1A3C8A] hover:bg-gray-100 transition-colors"
-              aria-label="打开菜单"
+              aria-label={t("common.openMenu")}
             >
               <HamburgerIcon />
             </button>
@@ -611,14 +619,14 @@ export default function Header() {
       {/* ============================================================= */}
       {/*  MOBILE NAV                                                    */}
       {/* ============================================================= */}
-      <MobileNav isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <MobileNav isOpen={mobileOpen} onClose={() => setMobileOpen(false)} navItems={NAV_ITEMS} t={t} lang={lang} setLang={setLang} />
 
       {/* ============================================================= */}
       {/*  BACK TO TOP                                                   */}
       {/* ============================================================= */}
       <button
         onClick={scrollToTop}
-        aria-label="返回顶部"
+        aria-label={t("common.backToTop")}
         className={`
           fixed bottom-24 right-6 z-20
           flex items-center justify-center w-11 h-11
@@ -636,7 +644,7 @@ export default function Header() {
       {/* ============================================================= */}
       <Link
         href="/contact#form"
-        aria-label="在线咨询"
+        aria-label={t("header.onlineConsultation")}
         className="
           fixed bottom-8 right-6 z-20
           flex items-center justify-center w-14 h-14
