@@ -1,0 +1,260 @@
+{
+  "common": {
+    "home": "Home",
+    "learnMore": "Learn More",
+    "contactUs": "Contact Us",
+    "consultNow": "Consult Now",
+    "search": "Search",
+    "searchPlaceholder": "Search...",
+    "close": "Close",
+    "openMenu": "Open Menu",
+    "backToTop": "Back to Top"
+  },
+  "header": {
+    "brand": "Haichuangyuan AI Education",
+    "about": "About Us",
+    "services": "Education Services",
+    "aiCurriculum": "AI Curriculum",
+    "aiCurriculumDesc": "Bringing cutting-edge AI curriculum to campuses, empowering K-12 and higher education",
+    "teacherTraining": "Teacher Training",
+    "teacherTrainingDesc": "AI capability enhancement training and professional certification for teachers",
+    "aiResearchStudy": "AI Research Study",
+    "aiResearchStudyDesc": "Immersive AI-themed study tours and practical programs",
+    "ecosystemAlliance": "Ecosystem Alliance",
+    "ecosystemAllianceDesc": "Uniting quality AI education products to build an open ecosystem",
+    "ecosystem": "Industry Ecosystem",
+    "enterpriseTraining": "Enterprise Training",
+    "enterpriseTrainingDesc": "Customized AI transformation training for government and enterprises",
+    "opc": "OPC Ecosystem",
+    "opcDesc": "Open industry cooperation platform connecting education and industrial resources",
+    "smartServices": "Smart Services",
+    "smartServicesDesc": "AI technical consulting and customized intelligent solutions",
+    "assetRevitalization": "Asset Revitalization",
+    "assetRevitalizationDesc": "Empowering asset value reshaping and operational optimization with AI",
+    "cases": "Cases & Achievements",
+    "news": "News",
+    "onlineConsultation": "Online Consultation"
+  },
+  "footer": {
+    "aboutSection": "About Us",
+    "companyIntro": "Company Profile",
+    "timeline": "Timeline",
+    "honors": "Honors",
+    "partners": "Partners",
+    "joinUs": "Join Us",
+    "friendlyLinks": "Friendly Links",
+    "address": "Address: ",
+    "followUs": "Follow Us",
+    "wechatOfficial": "WeChat Official Account",
+    "wechatService": "WeChat Service",
+    "socialPlatforms": {
+      "weibo": "Weibo",
+      "douyin": "Douyin",
+      "bilibili": "Bilibili",
+      "xiaohongshu": "Xiaohongshu",
+      "zhihu": "Zhihu",
+      "weixin": "WeChat"
+    }
+  },
+  "home": {
+    "heroDefaultTitle": "Haichuangyuan AI Education",
+    "heroDefaultSubtitle": "Empowering Industries with AI, Leading the Future",
+    "dataStrip": {
+      "coverage": "Provinces Covered",
+      "schools": "Schools Served",
+      "channels": "Partnership Channels",
+      "champions": "Global Champions",
+      "nationalChampions": "National Champions",
+      "hours": "Hours Taught"
+    },
+    "businessOverview": "Dual-Drive Business Overview",
+    "eduServices": "Education Services",
+    "ecoMatrix": "Industry Ecosystem",
+    "highlights": "Core Highlights",
+    "partners": "Partners",
+    "news": "News",
+    "viewMore": "View More",
+    "cta": {
+      "slogan": "Empowering Industries with AI",
+      "tagline": "State-Owned Enterprise Leading the Future",
+      "eduServices": "Education Services",
+      "ecoMatrix": "Industry Ecosystem",
+      "enterpriseTraining": "Enterprise Training",
+      "opc": "OPC Ecosystem",
+      "aiPartyBuilding": "AI Party Building"
+    }
+  },
+  "services": {
+    "title": "Education Services",
+    "aiCurriculum": {
+      "title": "AI Curriculum",
+      "desc": "1+N comprehensive solution covering K-12 education"
+    },
+    "teacherTraining": {
+      "title": "Teacher Training & Certification",
+      "desc": "Authorized by MIIT, three-level certification system"
+    },
+    "aiResearchStudy": {
+      "title": "AI Research Study",
+      "desc": "Immersive AI technology study experience camps"
+    },
+    "ecosystemAlliance": {
+      "title": "Ecosystem Alliance",
+      "desc": "Integration and recommendation of quality AI education products"
+    }
+  },
+  "ecosystem": {
+    "title": "Industry Ecosystem",
+    "enterpriseTraining": {
+      "title": "Enterprise AI Training",
+      "desc": "Customized AI transformation training programs"
+    },
+    "opc": {
+      "title": "OPC Ecosystem",
+      "desc": "Training for employment, driven by real orders"
+    },
+    "smartServices": {
+      "title": "Smart Services",
+      "desc": "AI innovation project incubation and technical support"
+    },
+    "assetRevitalization": {
+      "title": "Asset Revitalization",
+      "desc": "AI-empowered asset disposal and value reshaping"
+    }
+  },
+  "about": {
+    "breadcrumb": {
+      "home": "Home",
+      "current": "About Us"
+    },
+    "companyIntro": "Company Profile",
+    "subsidiary": "A Wholly-Owned Enterprise of Haidian State Investment",
+    "culture": "Corporate Culture",
+    "cultureDesc": "Mission-driven, innovation-focused, building a sustainable AI education ecosystem",
+    "mission": "Mission",
+    "vision": "Vision",
+    "values": {
+      "stateOwned": "State-Owned Responsibility",
+      "stateOwnedDesc": "Upholding social responsibility as a state-owned enterprise, committed to educational equity",
+      "innovation": "Innovation-Driven",
+      "innovationDesc": "AI technology as the core driver, continuously leading educational transformation",
+      "ecosystem": "Ecosystem Win-Win",
+      "ecosystemDesc": "Building an open cooperation ecosystem, sharing development dividends with partners",
+      "practical": "Practice-Oriented",
+      "practicalDesc": "Focusing on real application scenarios, cultivating new quality productivity talent",
+      "education": "Education-Focused",
+      "educationDesc": "Focusing on the essence of education, cultivating innovative talent for the future"
+    },
+    "timeline": "Timeline",
+    "timelineDesc": "From inception to nationwide presence, Haichuangyuan keeps moving forward",
+    "honors": "Honors & Qualifications",
+    "honorsDesc": "Multiple industry certifications and competition achievements demonstrating professional strength",
+    "honorTabs": {
+      "all": "All",
+      "industry": "Industry Honors",
+      "competition": "Competition Achievements",
+      "certification": "Partnership Certifications",
+      "patent": "Software Patents"
+    },
+    "partners": "Partners",
+    "partnersDesc": "Collaborating with leading enterprises and quality institutions to build a new AI education ecosystem",
+    "strategicPartners": "Strategic Partners",
+    "ecosystemPartners": "Ecosystem Brands",
+    "stats": {
+      "coverage": "Provinces Covered",
+      "schools": "Schools Served",
+      "channels": "Partnership Channels"
+    }
+  },
+  "contact": {
+    "breadcrumb": {
+      "home": "Home",
+      "current": "Contact Us"
+    },
+    "title": "Contact Us",
+    "subtitle": "Looking forward to working with you to explore the infinite possibilities of AI in education and industry",
+    "address": "Office Address",
+    "addressDesc": "Welcome to visit us, looking forward to face-to-face communication",
+    "officeAddress": "Office Address",
+    "phone": "Contact Phone",
+    "email": "Email",
+    "mapNotConfigured": "Map Not Configured",
+    "mapNotConfiguredDesc": "Please set map coordinates in the admin panel",
+    "contacts": "Business Line Contacts",
+    "contactsDesc": "Contact the relevant business contact person directly based on your needs",
+    "onlineConsultation": "Online Consultation",
+    "onlineConsultationDesc": "Fill in the information below and we will contact you as soon as possible",
+    "form": {
+      "name": "Name",
+      "company": "Organization",
+      "phone": "Phone",
+      "email": "Email",
+      "needType": "Requirement Type",
+      "message": "Message",
+      "submit": "Submit",
+      "continue": "Continue",
+      "required": "Required",
+      "placeholder": {
+        "name": "Enter your name",
+        "company": "Enter your organization name",
+        "phone": "Enter your contact number",
+        "email": "Enter your email address",
+        "needType": "Select requirement type",
+        "message": "Briefly describe your requirements or questions"
+      },
+      "needTypes": {
+        "aiCurriculum": "AI Curriculum",
+        "teacherTraining": "Teacher Training",
+        "aiResearchStudy": "AI Research Study",
+        "ecosystemAlliance": "Ecosystem Alliance",
+        "enterpriseTraining": "Enterprise Training",
+        "opc": "OPC Ecosystem",
+        "smartServices": "Smart Services",
+        "assetRevitalization": "Asset Revitalization",
+        "aiPartyBuilding": "AI Party Building",
+        "other": "Other"
+      },
+      "success": {
+        "title": "Submitted Successfully",
+        "message": "Thank you for your inquiry. We will contact you within 1-2 business days."
+      },
+      "errors": {
+        "networkError": "Network error, please try again later"
+      },
+      "wechat": {
+        "title": "WeChat Service",
+        "desc": "Scan to add our WeChat service for instant consultation",
+        "workHours": "Weekdays 9:00 - 18:00",
+        "responseTime": "Response within 24 hours",
+        "qrNotConfigured": "QR Code Not Configured"
+      }
+    }
+  },
+  "join": {
+    "breadcrumb": {
+      "home": "Home",
+      "current": "Join Us"
+    },
+    "title": "Join Us",
+    "subtitle": "Looking forward to your joining, creating the future of AI education together"
+  },
+  "news": {
+    "breadcrumb": {
+      "home": "Home",
+      "current": "News"
+    },
+    "title": "News",
+    "categories": {
+      "all": "All",
+      "company": "Company News",
+      "industry": "Industry Insights",
+      "media": "Media Coverage"
+    }
+  },
+  "cases": {
+    "title": "Cases & Achievements",
+    "schools": "School Cases",
+    "honors": "Competition Honors",
+    "coverage": "Service Coverage"
+  }
+}
