@@ -1739,6 +1739,7 @@ function ConsultationsEditor() {
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
+  const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
@@ -1770,7 +1771,7 @@ export default function AdminPage() {
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
       if (res.ok) {
         const result = await res.json();
@@ -1790,6 +1791,7 @@ export default function AdminPage() {
   const handleLogout = () => {
     sessionStorage.removeItem("admin_token");
     setAuthed(false);
+    setUsername("admin");
     setPassword("");
   };
 
@@ -1896,9 +1898,17 @@ export default function AdminPage() {
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-[#1A3C8A]">海创元后台管理</h1>
-            <p className="text-sm text-gray-500 mt-1">请输入管理密码登录</p>
+            <p className="text-sm text-gray-500 mt-1">请输入用户名和密码登录</p>
           </div>
           <div className="mb-4">
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent mb-3"
+              placeholder="请输入用户名"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+            />
             <input
               type="password"
               className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] focus:border-transparent"
@@ -1911,7 +1921,7 @@ export default function AdminPage() {
           {loginError && <p className="text-red-500 text-sm mb-3">{loginError}</p>}
           <button
             onClick={handleLogin}
-            disabled={loginLoading || !password}
+            disabled={loginLoading || !username || !password}
             className="w-full bg-[#1A3C8A] text-white py-3 rounded-lg font-medium hover:bg-[#15306e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loginLoading ? "登录中..." : "登录"}
