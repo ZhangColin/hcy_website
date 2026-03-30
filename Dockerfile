@@ -9,9 +9,14 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# 接收 DATABASE_URL 作为构建参数（Prisma 7 需要）
+# 接收构建参数（Prisma 7 和 Next.js 需要）
 ARG DATABASE_URL
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_IMAGE_BASE_URL
+
 ENV DATABASE_URL=${DATABASE_URL}
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+ENV NEXT_PUBLIC_IMAGE_BASE_URL=${NEXT_PUBLIC_IMAGE_BASE_URL}
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

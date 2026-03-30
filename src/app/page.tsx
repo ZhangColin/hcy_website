@@ -266,7 +266,7 @@ export default async function Home() {
           </RevealSection>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {newsItems.map((news) => (
+            {newsItems.map((news: any) => (
               <RevealSection key={news.id}>
                 <Link href={`/news/${news.slug}`}>
                   <article className="bg-[#F5F7FA] rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group h-full">

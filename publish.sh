@@ -51,9 +51,20 @@ rsync -av --exclude='node_modules' \
   --exclude='.next' \
   --exclude='*.log' \
   --exclude='.DS_Store' \
-  ./ "$TEMP_DIR/" > /dev/null
+  ./ "$TEMP_DIR/"
 
 echo -e "${GREEN}✓ 打包完成${NC}"
+
+# 验证关键文件
+echo -e "${YELLOW}验证关键文件...${NC}"
+for file in package.json package-lock.json Dockerfile docker-compose.prod.yml; do
+  if [ -f "$TEMP_DIR/$file" ]; then
+    echo -e "  ✓ $file"
+  else
+    echo -e "${RED}  ✗ $file 缺失！${NC}"
+    exit 1
+  fi
+done
 
 # 创建服务器目录
 echo -e "${YELLOW}正在连接服务器...${NC}"
@@ -61,7 +72,7 @@ $SSH ${SERVER_USER}@${SERVER_HOST} "mkdir -p ${SERVER_PATH}"
 
 # 拷贝文件到服务器
 echo -e "${YELLOW}正在上传文件到服务器...${NC}"
-$SCP -r "$TEMP_DIR/"* ${SERVER_USER}@${SERVER_HOST}:${SERVER_PATH}/
+rsync -avz -e "sshpass -p $SERVER_PASSWORD ssh -o StrictHostKeyChecking=no" "$TEMP_DIR/" ${SERVER_USER}@${SERVER_HOST}:${SERVER_PATH}/
 
 # 清理临时目录
 rm -rf "$TEMP_DIR"

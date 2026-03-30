@@ -11,6 +11,8 @@ services:
       args:
         STANDALONE: true
         DATABASE_URL: ${DATABASE_URL}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        NEXT_PUBLIC_IMAGE_BASE_URL: ${NEXT_PUBLIC_IMAGE_BASE_URL}
     container_name: hcy-website
     ports:
       - "3000:3000"
