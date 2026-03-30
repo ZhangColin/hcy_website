@@ -373,13 +373,16 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
 
                   {/* 邮箱 */}
                   {c.email && c.email.length > 0 && (
-                    <div className="flex items-center justify-center gap-1.5 text-sm text-gray-600">
+                    <a
+                      href={`mailto:${c.email}`}
+                      className="flex items-center justify-center gap-1.5 text-sm text-gray-600 hover:text-[#1A3C8A] transition-colors"
+                    >
                       <svg className="w-3.5 h-3.5 text-[#D4A843]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                         <path d="M22 6l-10 7L2 6" />
                       </svg>
-                      <span className="truncate max-w-[150px]" title={c.email}>{c.email}</span>
-                    </div>
+                      <span>邮件联系</span>
+                    </a>
                   )}
                 </div>
               );
