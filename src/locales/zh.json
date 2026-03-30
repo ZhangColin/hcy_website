@@ -204,14 +204,14 @@
       },
       "needTypes": {
         "aiCurriculum": "AI课程入校",
-        "teacherTraining": "AI师资培训与认证",
+        "teacherTraining": "AI师资培训",
         "aiResearchStudy": "AI研学",
         "ecosystemAlliance": "生态产品联盟",
-        "enterpriseTraining": "政企AI赋能培训",
+        "enterpriseTraining": "政企培训",
         "opc": "OPC生态",
-        "smartServices": "智创专项服务",
-        "assetRevitalization": "不良资产盘活",
-        "aiPartyBuilding": "AI党建业务",
+        "smartServices": "智创服务",
+        "assetRevitalization": "资产盘活",
+        "aiPartyBuilding": "AI党建",
         "other": "其他"
       },
       "success": {

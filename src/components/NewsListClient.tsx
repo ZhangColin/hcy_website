@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useTranslation } from "@/hooks/useTranslation";
 
 type NewsArticle = {
   id: string;
@@ -15,12 +16,13 @@ type NewsArticle = {
 };
 
 const categoryLabels: Record<string, string> = {
-  company: '公司新闻',
-  industry: '行业资讯',
-  media: '媒体报道',
+  company: 'company',
+  industry: 'industry',
+  media: 'media',
 };
 
 export function NewsListClient() {
+  const { t } = useTranslation();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -144,7 +146,7 @@ export function NewsListClient() {
                     {article.title}
                   </td>
                   <td className="py-3 px-4">{new Date(article.date).toLocaleDateString('zh-CN')}</td>
-                  <td className="py-3 px-4">{categoryLabels[article.category] || article.category}</td>
+                  <td className="py-3 px-4">{t(`news.categories.${categoryLabels[article.category] || article.category}`)}</td>
                   <td className="py-3 px-4">
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       article.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'

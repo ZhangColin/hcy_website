@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 /* ───────── types ───────── */
 interface JobPosition {
@@ -140,6 +141,7 @@ const opcBenefits = [
 
 /* ───────── main client component ───────── */
 export default function JoinPageClient({ data, hrEmail }: JoinPageClientProps) {
+  const { t } = useTranslation();
   const defaultHrEmail = "hr@aieducenter.com"; // 默认 HR 邮箱
   const displayHrEmail = hrEmail || defaultHrEmail;
 
@@ -153,12 +155,12 @@ export default function JoinPageClient({ data, hrEmail }: JoinPageClientProps) {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-              首页
+              {t("common.home")}
             </Link>
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-[#1A3C8A] font-semibold">加入我们</span>
+            <span className="text-[#1A3C8A] font-semibold">{t("join.breadcrumb.current")}</span>
           </nav>
         </div>
       </nav>
@@ -166,9 +168,9 @@ export default function JoinPageClient({ data, hrEmail }: JoinPageClientProps) {
       {/* Hero */}
       <section className="hero-gradient text-white py-20">
         <div className="max-w-[1200px] mx-auto px-6">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">加入我们</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("join.title")}</h1>
           <p className="text-xl text-blue-100">
-            与海创元共创AI教育未来，成就非凡事业
+            {t("join.subtitle")}
           </p>
         </div>
       </section>

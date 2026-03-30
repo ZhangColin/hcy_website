@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { AMap } from "@/components/AMap";
 import { validateConsultationForm } from "@/lib/validators";
+import { useTranslation } from "@/hooks/useTranslation";
 
 /* ───────── types ───────── */
 interface ContactData {
@@ -85,16 +86,16 @@ const defaultStyle = { gradient: "from-[#1A3C8A] to-[#2B6CB0]", color: "#1A3C8A"
 
 /* ───────── need type options ───────── */
 const needTypes = [
-  "AI课程入校",
-  "AI师资培训与认证",
-  "AI研学",
-  "生态产品联盟",
-  "政企AI赋能培训",
-  "OPC生态",
-  "智创专项服务",
-  "不良资产盘活",
-  "AI党建业务",
-  "其他",
+  "aiCurriculum",
+  "teacherTraining",
+  "aiResearchStudy",
+  "ecosystemAlliance",
+  "enterpriseTraining",
+  "opc",
+  "smartServices",
+  "assetRevitalization",
+  "aiPartyBuilding",
+  "other",
 ];
 
 /* ───────── form state type ───────── */
@@ -121,6 +122,7 @@ interface FormErrors {
    CONTACT PAGE CLIENT
    ═══════════════════════════════════════════════════════════ */
 export default function ContactPageClient({ contactData, siteData }: { contactData: ContactData; siteData: SiteData }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<FormData>({
     name: "",
     company: "",
@@ -216,12 +218,12 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-              首页
+              {t("common.home")}
             </Link>
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-[#1A3C8A] font-semibold">联系我们</span>
+            <span className="text-[#1A3C8A] font-semibold">{t("contact.breadcrumb.current")}</span>
           </nav>
         </div>
       </nav>
@@ -233,9 +235,9 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
         <div className="absolute bottom-0 left-10 w-48 h-48 rounded-full bg-white/5" />
 
         <div className="relative mx-auto max-w-[1200px] px-6 py-20 md:py-28">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">联系我们</h1>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{t("contact.title")}</h1>
           <p className="mt-4 text-lg md:text-xl text-blue-100 max-w-2xl leading-relaxed">
-            期待与您携手，共同探索AI赋能教育与产业的无限可能
+            {t("contact.subtitle")}
           </p>
         </div>
       </div>
@@ -243,9 +245,9 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
       {/* ====== Company Address + Map ====== */}
       <Section className="py-20 md:py-28" id="address">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">公司地址</h2>
+          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("contact.address")}</h2>
           <p className="text-center text-gray-500 mb-14 max-w-xl mx-auto">
-            欢迎莅临指导，期待与您面对面交流
+            {t("contact.addressDesc")}
           </p>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -259,7 +261,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#333333] text-lg mb-1">办公地址</h3>
+                  <h3 className="font-bold text-[#333333] text-lg mb-1">{t("contact.officeAddress")}</h3>
                   <p className="text-[#666666] leading-relaxed">
                     {siteData.address || contactData.address}
                   </p>
@@ -273,7 +275,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#333333] text-lg mb-1">联系电话</h3>
+                  <h3 className="font-bold text-[#333333] text-lg mb-1">{t("contact.phone")}</h3>
                   <p className="text-[#666666]">{siteData.phone || "010-XXXX-XXXX"}</p>
                 </div>
               </div>
@@ -286,7 +288,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#333333] text-lg mb-1">电子邮箱</h3>
+                  <h3 className="font-bold text-[#333333] text-lg mb-1">{t("contact.email")}</h3>
                   <p className="text-[#666666]">{siteData.email || "contact@haichuangyuan.com"}</p>
                 </div>
               </div>
@@ -307,8 +309,8 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                   <path d="M9 2v17" />
                   <path d="M15 5v17" />
                 </svg>
-                <span className="text-[#1A3C8A]/50 font-medium text-lg">地图未配置</span>
-                <span className="text-[#666666]/50 text-sm mt-1">请在后台设置地图坐标</span>
+                <span className="text-[#1A3C8A]/50 font-medium text-lg">{t("contact.mapNotConfigured")}</span>
+                <span className="text-[#666666]/50 text-sm mt-1">{t("contact.mapNotConfiguredDesc")}</span>
               </div>
             )}
           </div>
@@ -318,9 +320,9 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
       {/* ====== Business Line Contacts ====== */}
       <Section className="py-20 md:py-28 bg-white" id="contacts">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">分业务线联系人</h2>
+          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("contact.contacts")}</h2>
           <p className="text-center text-gray-500 mb-14 max-w-xl mx-auto">
-            根据您的需求，直接联系对应业务负责人
+            {t("contact.contactsDesc")}
           </p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -394,9 +396,9 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
       {/* ====== Online Consultation Form ====== */}
       <Section className="py-20 md:py-28" id="form">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">在线咨询</h2>
+          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("contact.onlineConsultation")}</h2>
           <p className="text-center text-gray-500 mb-14 max-w-xl mx-auto">
-            填写以下信息，我们将尽快与您取得联系
+            {t("contact.onlineConsultationDesc")}
           </p>
 
           <div className="grid lg:grid-cols-3 gap-10">
@@ -409,9 +411,9 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-[#1A3C8A] mb-3">提交成功</h3>
+                  <h3 className="text-2xl font-bold text-[#1A3C8A] mb-3">{t("contact.form.success.title")}</h3>
                   <p className="text-[#666666] mb-8">
-                    感谢您的咨询，我们将在1-2个工作日内与您联系。
+                    {t("contact.form.success.message")}
                   </p>
                   <button
                     onClick={() => {
@@ -422,7 +424,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                     }}
                     className="px-8 py-3 rounded-full bg-[#1A3C8A] text-white font-medium hover:bg-[#2B6CB0] transition-colors duration-300"
                   >
-                    继续咨询
+                    {t("contact.form.continue")}
                   </button>
                 </div>
               ) : (
@@ -435,7 +437,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                     {/* Name */}
                     <div>
                       <label className="block text-sm font-semibold text-[#333333] mb-2">
-                        姓名 <span className="text-red-500">*</span>
+                        {t("contact.form.name")} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -443,7 +445,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                         value={form.name}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        placeholder="请输入您的姓名"
+                        placeholder={t("contact.form.placeholder.name")}
                         className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors duration-200 bg-[#F5F7FA] focus:bg-white focus:border-[#1A3C8A] focus:ring-2 focus:ring-[#1A3C8A]/10 ${
                           touched.name && errors.name
                             ? "border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100"
@@ -464,7 +466,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                     {/* Company */}
                     <div>
                       <label className="block text-sm font-semibold text-[#333333] mb-2">
-                        单位 <span className="text-red-500">*</span>
+                        {t("contact.form.company")} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -472,7 +474,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                         value={form.company}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        placeholder="请输入您的单位名称"
+                        placeholder={t("contact.form.placeholder.company")}
                         className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors duration-200 bg-[#F5F7FA] focus:bg-white focus:border-[#1A3C8A] focus:ring-2 focus:ring-[#1A3C8A]/10 ${
                           touched.company && errors.company
                             ? "border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100"
@@ -493,7 +495,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                     {/* Phone */}
                     <div>
                       <label className="block text-sm font-semibold text-[#333333] mb-2">
-                        电话 <span className="text-red-500">*</span>
+                        {t("contact.form.phone")} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="tel"
@@ -501,7 +503,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                         value={form.phone}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        placeholder="请输入您的联系电话"
+                        placeholder={t("contact.form.placeholder.phone")}
                         className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors duration-200 bg-[#F5F7FA] focus:bg-white focus:border-[#1A3C8A] focus:ring-2 focus:ring-[#1A3C8A]/10 ${
                           touched.phone && errors.phone
                             ? "border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100"
@@ -522,7 +524,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                     {/* Email */}
                     <div>
                       <label className="block text-sm font-semibold text-[#333333] mb-2">
-                        邮箱 <span className="text-red-500">*</span>
+                        {t("contact.form.email")} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="email"
@@ -530,7 +532,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                         value={form.email}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        placeholder="请输入您的邮箱地址"
+                        placeholder={t("contact.form.placeholder.email")}
                         className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors duration-200 bg-[#F5F7FA] focus:bg-white focus:border-[#1A3C8A] focus:ring-2 focus:ring-[#1A3C8A]/10 ${
                           touched.email && errors.email
                             ? "border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100"
@@ -552,7 +554,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                   {/* Need Type */}
                   <div className="mb-6">
                     <label className="block text-sm font-semibold text-[#333333] mb-2">
-                      需求类型 <span className="text-red-500">*</span>
+                      {t("contact.form.needType")} <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="needType"
@@ -571,12 +573,16 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                         backgroundSize: "20px",
                       }}
                     >
-                      <option value="">请选择需求类型</option>
-                      {needTypes.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
+                      <option value="">{t("contact.form.placeholder.needType")}</option>
+                      {needTypes.map((nt) => {
+                        const key = `contact.form.needTypes.${nt}`;
+                        const translated = t(key);
+                        return (
+                          <option key={nt} value={nt}>
+                            {translated}
+                          </option>
+                        );
+                      })}
                     </select>
                     {touched.needType && errors.needType && (
                       <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
@@ -592,14 +598,14 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                   {/* Message */}
                   <div className="mb-8">
                     <label className="block text-sm font-semibold text-[#333333] mb-2">
-                      留言 <span className="text-red-500">*</span>
+                      {t("contact.form.message")} <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       name="message"
                       value={form.message}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      placeholder="请简要描述您的需求或问题"
+                      placeholder={t("contact.form.placeholder.message")}
                       rows={5}
                       className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors duration-200 bg-[#F5F7FA] focus:bg-white focus:border-[#1A3C8A] focus:ring-2 focus:ring-[#1A3C8A]/10 resize-none ${
                         touched.message && errors.message
@@ -636,7 +642,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                     type="submit"
                     className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#1A3C8A] text-white font-bold text-base hover:bg-[#2B6CB0] transition-colors duration-300 shadow-lg shadow-[#1A3C8A]/20"
                   >
-                    提交咨询
+                    {t("contact.form.submit")}
                   </button>
                 </form>
               )}
@@ -645,8 +651,8 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
             {/* WeChat QR Code placeholder */}
             <div className="lg:col-span-1">
               <div className="rounded-2xl bg-white shadow-sm border border-gray-100 p-8 text-center sticky top-28">
-                <h3 className="font-bold text-[#333333] text-lg mb-2">微信客服</h3>
-                <p className="text-sm text-[#666666] mb-6">扫码添加微信客服，获取即时咨询服务</p>
+                <h3 className="font-bold text-[#333333] text-lg mb-2">{t("contact.form.wechat.title")}</h3>
+                <p className="text-sm text-[#666666] mb-6">{t("contact.form.wechat.desc")}</p>
 
                 {/* WeChat QR Code */}
                 {siteData.wechatServiceQr ? (
@@ -681,7 +687,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                       <rect x="17" y="5" width="2" height="2" fill="currentColor" />
                       <rect x="5" y="17" width="2" height="2" fill="currentColor" />
                     </svg>
-                    <span className="text-xs text-gray-400">二维码未配置</span>
+                    <span className="text-xs text-gray-400">{t("contact.form.wechat.qrNotConfigured")}</span>
                   </div>
                 )}
 
@@ -693,13 +699,13 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                       <circle cx="12" cy="12" r="10" />
                       <path d="M12 6v6l4 2" />
                     </svg>
-                    工作日 9:00 - 18:00
+                    {t("contact.form.wechat.workHours")}
                   </p>
                   <p className="flex items-center justify-center gap-2">
                     <svg className="w-4 h-4 text-[#D4A843]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
                     </svg>
-                    24小时内响应
+                    {t("contact.form.wechat.responseTime")}
                   </p>
                 </div>
               </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 /* ───────── types ───────── */
 interface AboutData {
@@ -196,6 +197,7 @@ function TimelineItem({
 
 /* ───────── main client component ───────── */
 export default function AboutPageClient({ data }: { data: AboutData }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<HonorTab>("全部");
 
   const honorsWithGradient = data.honors.map((h) => ({
@@ -224,12 +226,12 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
-              首页
+              {t("common.home")}
             </Link>
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-[#1A3C8A] font-semibold">关于海创元</span>
+            <span className="text-[#1A3C8A] font-semibold">{t("about.breadcrumb.current")}</span>
           </nav>
         </div>
       </nav>
@@ -254,10 +256,10 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
           <div className="grid md:grid-cols-5 gap-12 items-start">
             {/* text */}
             <div className="md:col-span-3 space-y-6">
-              <h2 className="text-3xl font-bold text-[#1A3C8A]">公司简介</h2>
+              <h2 className="text-3xl font-bold text-[#1A3C8A]">{t("about.companyIntro")}</h2>
 
               <span className="inline-block rounded-full bg-[#D4A843]/15 text-[#b8922e] px-4 py-1.5 text-sm font-semibold border border-[#D4A843]/30">
-                海淀国投集团全资企业
+                {t("about.subsidiary")}
               </span>
 
               <p className="text-gray-600 leading-8 text-[15px]">
@@ -275,7 +277,7 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
                   <div className="text-3xl md:text-4xl font-extrabold text-[#1A3C8A]">
                     {s.value}
                   </div>
-                  <div className="mt-1 text-sm text-gray-500">{s.label}</div>
+                  <div className="mt-1 text-sm text-gray-500">{t(`about.stats.${s.label === "覆盖省市" ? "coverage" : s.label === "服务院校" ? "schools" : "channels"}`)}</div>
                 </div>
               ))}
             </div>
@@ -286,16 +288,16 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
       {/* ====== Culture & Mission ====== */}
       <Section className="py-20 md:py-28 bg-white" id="culture">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">企业文化</h2>
+          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("about.culture")}</h2>
           <p className="text-center text-gray-500 mb-14 max-w-xl mx-auto">
-            以使命为引领，以创新为驱动，构建可持续发展的AI教育生态
+            {t("about.cultureDesc")}
           </p>
 
           {/* mission & vision */}
           <div className="grid md:grid-cols-2 gap-6 mb-14">
             <div className="rounded-2xl bg-gradient-to-br from-[#1A3C8A] to-[#2B6CB0] text-white p-8 md:p-10">
               <div className="text-sm font-medium text-blue-200 mb-2 tracking-wider uppercase">
-                使命 Mission
+                {t("about.mission")} Mission
               </div>
               <div className="text-2xl md:text-3xl font-bold leading-snug">
                 {data.culture.mission}
@@ -303,7 +305,7 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
             </div>
             <div className="rounded-2xl bg-gradient-to-br from-[#D4A843] to-[#c49530] text-white p-8 md:p-10">
               <div className="text-sm font-medium text-yellow-100 mb-2 tracking-wider uppercase">
-                愿景 Vision
+                {t("about.vision")} Vision
               </div>
               <div className="text-2xl md:text-3xl font-bold leading-snug">
                 {data.culture.vision}
@@ -330,9 +332,9 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
       {/* ====== Development Timeline ====== */}
       <Section className="py-20 md:py-28" id="timeline">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">发展历程</h2>
+          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("about.timeline")}</h2>
           <p className="text-center text-gray-500 mb-16 max-w-xl mx-auto">
-            从创立之初到业务遍布全国，海创元始终砥砺前行
+            {t("about.timelineDesc")}
           </p>
 
           <div className="relative">
@@ -354,9 +356,9 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
       {/* ====== Honors ====== */}
       <Section className="py-20 md:py-28 bg-white" id="honors">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">荣誉资质</h2>
+          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("about.honors")}</h2>
           <p className="text-center text-gray-500 mb-10 max-w-xl mx-auto">
-            多项行业认证与赛事成就，彰显专业实力
+            {t("about.honorsDesc")}
           </p>
 
           {/* tabs */}
@@ -431,16 +433,16 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
       {/* ====== Partners ====== */}
       <Section className="py-20 md:py-28" id="partners">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">合作伙伴</h2>
+          <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("about.partners")}</h2>
           <p className="text-center text-gray-500 mb-16 max-w-xl mx-auto">
-            携手行业领军企业与优质院校，共建AI教育新生态
+            {t("about.partnersDesc")}
           </p>
 
           {/* strategic */}
           <div className="mb-14">
             <h3 className="text-lg font-bold text-[#1A3C8A] mb-6 flex items-center gap-2">
               <span className="w-1 h-5 rounded-full bg-[#D4A843] inline-block" />
-              战略合作伙伴
+              {t("about.strategicPartners")}
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {data.partners.strategic.map((partner) => (
@@ -453,7 +455,7 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
           <div className="mb-14">
             <h3 className="text-lg font-bold text-[#1A3C8A] mb-6 flex items-center gap-2">
               <span className="w-1 h-5 rounded-full bg-[#2B6CB0] inline-block" />
-              生态代理品牌
+              {t("about.ecosystemPartners")}
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {data.partners.ecosystem.map((partner) => (
