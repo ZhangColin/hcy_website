@@ -38,18 +38,20 @@ model AdminUser {
 
 ### 2. API 端点
 
-| 端点 | 方法 | 功能 | 权限 |
-|------|------|------|------|
-| `/api/admin/users` | GET | 获取所有管理员列表 | 已登录 |
-| `/api/admin/users` | POST | 创建新管理员 | 已登录 |
-| `/api/admin/users/[id]` | PUT | 更新管理员信息 | 已登录 |
-| `/api/admin/users/[id]` | DELETE | 删除管理员 | 已登录 |
-| `/api/admin/users/[id]/password` | POST | 重置密码 | 已登录 |
+**权限说明**：所有已登录的管理员具有相同权限，可执行所有操作（受安全规则限制）。
+
+| 端点 | 方法 | 功能 |
+|------|------|------|
+| `/api/admin/users` | GET | 获取所有管理员列表 |
+| `/api/admin/users` | POST | 创建新管理员 |
+| `/api/admin/users/[id]` | PUT | 更新管理员信息（用户名不可修改） |
+| `/api/admin/users/[id]` | DELETE | 删除管理员 |
+| `/api/admin/users/[id]/password` | POST | 重置密码 |
 
 ### 3. 前端组件
 
-**导航项**：
-- 在 `NAV_ITEMS` 中添加 `{ key: "users", label: "账号管理" }`
+**导航项**（位于 `src/app/admin/page.tsx` 中的 `NAV_ITEMS` 常量）：
+- 添加 `{ key: "users", label: "账号管理" }`
 
 **UsersEditor 组件**：
 - 表格展示：用户名、显示名称、创建时间、操作
@@ -58,9 +60,10 @@ model AdminUser {
 - 删除按钮：删除账号（带确认）
 - 重置密码按钮：打开密码重置弹窗
 
-**登录界面更新**：
-- 添加用户名输入框
-- 修改登录逻辑，同时验证用户名和密码
+**登录界面更新**（位于 `src/app/admin/page.tsx`）：
+- 当前登录表单只有一个密码输入框（用户名默认为 'admin'）
+- 修改：添加用户名输入框，支持输入任意管理员账号
+- 登录逻辑保持不变：用户名 + 密码验证，生成 token 存入 sessionStorage
 
 ### 4. 安全规则
 
@@ -97,13 +100,15 @@ src/
 
 ## 实施步骤
 
-1. 创建 API 路由
-2. 在 admin/page.tsx 中添加 UsersEditor 组件
+1. 创建 API 路由（users CRUD + password reset）
+2. 在 `src/app/admin/page.tsx` 中添加 UsersEditor 组件和导航项
 3. 更新登录界面支持用户名输入
-4. 测试所有功能
-5. 部署
+4. 确保现有 AdminUser 数据可以正常使用（无需迁移）
+5. 测试所有功能
+6. 部署
 
-## 待确认事项
+## 设计决策
 
-- 是否需要密码复杂度校验？
-- 是否需要记录操作日志（谁创建了/删除了哪个账号）？
+- **密码复杂度**：暂不强制校验，仅要求非空（后续可扩展）
+- **操作日志**：暂不记录，保持功能简单（后续可扩展）
+- **角色权限**：所有管理员权限相同，role 字段保留以备未来扩展
