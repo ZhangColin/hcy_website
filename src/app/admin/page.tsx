@@ -5,7 +5,7 @@ import { ImageButton } from "@/components/ImageButton";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join" | "consultations";
+type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join" | "consultations" | "users";
 
 interface NavItem {
   key: CollectionKey;
@@ -27,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "site", label: "站点设置" },
   { key: "join", label: "招聘管理" },
   { key: "consultations", label: "咨询管理" },
+  { key: "users", label: "账号管理" },
 ];
 
 // ─── Toast ───────────────────────────────────────────────────────────────────
