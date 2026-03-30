@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String?
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HomeContent {
+  id         String   @id @default(cuid())
+  heroSlides Json
+  dataStrip  Json
+  highlights Json
+  partners   Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model NewsArticle {
+  id        String   @id @default(cuid())
+  title     String
+  excerpt   String
+  content   String
+  category  String
+  date      DateTime
+  image     String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date, published])
+}
+
+model AboutContent {
+  id        String   @id @default(cuid())
+  intro     Json
+  culture   Json
+  timeline  Json
+  honors    Json
+  partners  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SchoolCase {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  region    String
+  stage     String
+  summary   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CompetitionHonor {
+  id        String   @id @default(cuid())
+  title     String
+  level     String
+  year      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactInfo {
+  id        String   @id @default(cuid())
+  address   String
+  contacts  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JobPosition {
+  id           String   @id @default(cuid())
+  title        String
+  department   String
+  location     String
+  type         String
+  description  String
+  requirements Json
+  active       Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model SiteConfig {
+  id               String   @id @default(cuid())
+  companyName      String
+  shortName        String
+  address          String
+  icp              String
+  copyright        String
+  friendlyLinks    Json
+  socialLinks      Json
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  email            String?
+  hrEmail          String?
+  mapLat           String?
+  mapLng           String?
+  phone            String?
+  wechatOfficialQr String?
+  wechatServiceQr  String?
+}
+
+model ContactSubmission {
+  id         String    @id @default(cuid())
+  name       String
+  company    String?
+  phone      String
+  email      String?
+  needType   String
+  message    String
+  handled    Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  repliedAt  DateTime?
+  replyNotes String?
+  updatedAt  DateTime  @updatedAt
+}
