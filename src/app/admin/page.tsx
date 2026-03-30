@@ -17,6 +17,14 @@ interface SocialLink {
   url: string;
 }
 
+interface AdminUser {
+  id: string;
+  username: string;
+  name: string | null;
+  role: string;
+  createdAt: string;
+}
+
 const NAV_ITEMS: NavItem[] = [
   { key: "home", label: "首页内容" },
   { key: "news", label: "新闻管理" },
@@ -1736,6 +1744,393 @@ function ConsultationsEditor() {
   );
 }
 
+// ─── Users Editor ────────────────────────────────────────────────────────────
+
+function UsersEditor() {
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+  const [passwordUser, setPasswordUser] = useState<AdminUser | null>(null);
+
+  // 表单数据
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    name: "",
+  });
+  const [passwordForm, setPasswordForm] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  const getToken = () => sessionStorage.getItem("admin_token") ?? "";
+
+  // 加载用户列表
+  const loadUsers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(data.users);
+      }
+    } catch {
+      console.error("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  // 打开添加/编辑弹窗
+  const openModal = (user?: AdminUser) => {
+    if (user) {
+      setEditingUser(user);
+      setFormData({
+        username: user.username,
+        password: "",
+        name: user.name || "",
+      });
+    } else {
+      setEditingUser(null);
+      setFormData({ username: "", password: "", name: "" });
+    }
+    setModalOpen(true);
+  };
+
+  // 保存用户
+  const saveUser = async () => {
+    if (!formData.username || (editingUser ? false : !formData.password)) {
+      alert("请填写必填项");
+      return;
+    }
+
+    try {
+      const token = getToken();
+      let res;
+
+      if (editingUser) {
+        // 更新用户（只允许修改 name）
+        res = await fetch(`/api/admin/users/${editingUser.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name: formData.name }),
+        });
+      } else {
+        // 创建新用户
+        res = await fetch("/api/admin/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            username: formData.username,
+            password: formData.password,
+            name: formData.name || formData.username,
+          }),
+        });
+      }
+
+      if (res.ok) {
+        setModalOpen(false);
+        loadUsers();
+      } else {
+        const error = await res.json().catch(() => ({ error: "未知错误" }));
+        alert(`操作失败: ${error.error}`);
+      }
+    } catch {
+      alert("操作失败，请检查网络");
+    }
+  };
+
+  // 删除用户
+  const deleteUser = async (user: AdminUser) => {
+    if (!confirm(`确定要删除用户 "${user.name || user.username}" 吗？`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+
+      if (res.ok) {
+        loadUsers();
+      } else {
+        const error = await res.json().catch(() => ({ error: "未知错误" }));
+        alert(`删除失败: ${error.error}`);
+      }
+    } catch {
+      alert("删除失败，请检查网络");
+    }
+  };
+
+  // 打开密码重置弹窗
+  const openPasswordModal = (user: AdminUser) => {
+    setPasswordUser(user);
+    setPasswordForm({ password: "", confirmPassword: "" });
+    setPasswordModalOpen(true);
+  };
+
+  // 重置密码
+  const resetPassword = async () => {
+    if (!passwordForm.password || !passwordForm.confirmPassword) {
+      alert("请填写密码和确认密码");
+      return;
+    }
+    if (passwordForm.password !== passwordForm.confirmPassword) {
+      alert("两次输入的密码不一致");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/users/${passwordUser!.id}/password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ password: passwordForm.password }),
+      });
+
+      if (res.ok) {
+        setPasswordModalOpen(false);
+        alert("密码已重置");
+      } else {
+        const error = await res.json().catch(() => ({ error: "未知错误" }));
+        alert(`重置失败: ${error.error}`);
+      }
+    } catch {
+      alert("重置失败，请检查网络");
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-gray-400">加载中...</div>;
+  }
+
+  return (
+    <>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">管理员账号</h3>
+          <button
+            onClick={() => openModal()}
+            className="bg-[#1A3C8A] text-white px-4 py-2 rounded-md text-sm hover:bg-[#15306e] transition-colors"
+          >
+            + 添加账号
+          </button>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-3 px-4 font-medium text-gray-700">用户名</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">显示名称</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">创建时间</th>
+                <th className="text-right py-3 px-4 font-medium text-gray-700">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-3 px-4">{user.username}</td>
+                  <td className="py-3 px-4">{user.name || "-"}</td>
+                  <td className="py-3 px-4">
+                    {new Date(user.createdAt).toLocaleDateString("zh-CN")}
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <button
+                      onClick={() => openModal(user)}
+                      className="text-[#1A3C8A] hover:underline mr-3"
+                    >
+                      编辑
+                    </button>
+                    <button
+                      onClick={() => openPasswordModal(user)}
+                      className="text-amber-600 hover:underline mr-3"
+                    >
+                      重置密码
+                    </button>
+                    <button
+                      onClick={() => deleteUser(user)}
+                      className="text-red-500 hover:underline"
+                    >
+                      删除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* 添加/编辑弹窗 */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">
+                  {editingUser ? "编辑账号" : "添加账号"}
+                </h3>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    用户名 *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    disabled={!!editingUser}
+                    placeholder="请输入用户名"
+                  />
+                  {editingUser && (
+                    <p className="text-xs text-gray-400 mt-1">用户名不可修改</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    显示名称
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="请输入显示名称"
+                  />
+                </div>
+
+                {!editingUser && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      初始密码 *
+                    </label>
+                    <input
+                      type="password"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="请输入初始密码"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={saveUser}
+                  className="px-4 py-2 text-sm bg-[#1A3C8A] text-white rounded hover:bg-[#15306e] transition-colors"
+                >
+                  保存
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 密码重置弹窗 */}
+      {passwordModalOpen && passwordUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">重置密码</h3>
+                <button
+                  onClick={() => setPasswordModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-4">
+                正在重置用户 <strong>{passwordUser.name || passwordUser.username}</strong> 的密码
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    新密码 *
+                  </label>
+                  <input
+                    type="password"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={passwordForm.password}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, password: e.target.value })}
+                    placeholder="请输入新密码"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    确认新密码 *
+                  </label>
+                  <input
+                    type="password"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                    placeholder="请再次输入新密码"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setPasswordModalOpen(false)}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={resetPassword}
+                  className="px-4 py-2 text-sm bg-[#1A3C8A] text-white rounded hover:bg-[#15306e] transition-colors"
+                >
+                  确认重置
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ─── Main Admin Page ─────────────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -1887,6 +2282,8 @@ export default function AdminPage() {
         return <JoinEditor {...props} />;
       case "consultations":
         return <ConsultationsEditor />;
+      case "users":
+        return <UsersEditor />;
       default:
         return null;
     }
