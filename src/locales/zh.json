@@ -1,0 +1,260 @@
+{
+  "common": {
+    "home": "首页",
+    "learnMore": "了解更多",
+    "contactUs": "联系我们",
+    "consultNow": "立即咨询",
+    "search": "搜索",
+    "searchPlaceholder": "搜索...",
+    "close": "关闭",
+    "openMenu": "打开菜单",
+    "backToTop": "返回顶部"
+  },
+  "header": {
+    "brand": "海创元AI教育",
+    "about": "关于海创元",
+    "services": "智教服务集群",
+    "aiCurriculum": "AI课程入校",
+    "aiCurriculumDesc": "将前沿AI课程体系引入校园，赋能基础教育与高等教育",
+    "teacherTraining": "AI师资培训与认证",
+    "teacherTrainingDesc": "面向教师的AI能力提升培训及专业资质认证",
+    "aiResearchStudy": "AI研学",
+    "aiResearchStudyDesc": "沉浸式AI主题研学旅行与实践项目",
+    "ecosystemAlliance": "生态产品联盟",
+    "ecosystemAllianceDesc": "联合优质AI教育产品，构建开放生态",
+    "ecosystem": "产融生态矩阵",
+    "enterpriseTraining": "政企AI赋能培训",
+    "enterpriseTrainingDesc": "为政府与企业定制AI转型培训方案",
+    "opc": "OPC生态",
+    "opcDesc": "开放产业合作平台，连接教育与产业资源",
+    "smartServices": "智创专项服务",
+    "smartServicesDesc": "AI技术咨询与定制化智能解决方案",
+    "assetRevitalization": "不良资产盘活",
+    "assetRevitalizationDesc": "以AI技术赋能资产价值重塑与运营优化",
+    "cases": "案例与成果",
+    "news": "新闻动态",
+    "onlineConsultation": "在线咨询"
+  },
+  "footer": {
+    "aboutSection": "关于海创元",
+    "companyIntro": "公司简介",
+    "timeline": "发展历程",
+    "honors": "荣誉资质",
+    "partners": "合作伙伴",
+    "joinUs": "加入我们",
+    "friendlyLinks": "友情链接",
+    "address": "地址：",
+    "followUs": "关注我们",
+    "wechatOfficial": "微信公众号",
+    "wechatService": "微信客服",
+    "socialPlatforms": {
+      "weibo": "微博",
+      "douyin": "抖音",
+      "bilibili": "哔哩哔哩",
+      "xiaohongshu": "小红书",
+      "zhihu": "知乎",
+      "weixin": "微信视频号"
+    }
+  },
+  "home": {
+    "heroDefaultTitle": "海创元AI教育",
+    "heroDefaultSubtitle": "赋能千行万业 AI引领未来",
+    "dataStrip": {
+      "coverage": "覆盖省市",
+      "schools": "服务院校",
+      "channels": "合作渠道",
+      "champions": "全球总冠军",
+      "nationalChampions": "全国总冠军",
+      "hours": "累计授课"
+    },
+    "businessOverview": "双轮驱动业务全景",
+    "eduServices": "智教服务集群",
+    "ecoMatrix": "产融生态矩阵",
+    "highlights": "核心亮点",
+    "partners": "合作伙伴",
+    "news": "新闻动态",
+    "viewMore": "查看更多",
+    "cta": {
+      "slogan": "AI赋能千行万业",
+      "tagline": "国企担当引领未来",
+      "eduServices": "智教服务",
+      "ecoMatrix": "产融生态",
+      "enterpriseTraining": "政企培训",
+      "opc": "OPC生态",
+      "aiPartyBuilding": "AI党建"
+    }
+  },
+  "services": {
+    "title": "智教服务集群",
+    "aiCurriculum": {
+      "title": "AI课程入校",
+      "desc": "1+N综合解决方案，覆盖小初高全学段"
+    },
+    "teacherTraining": {
+      "title": "AI师资培训与认证",
+      "desc": "工信部权威认证，初/中/高三级体系"
+    },
+    "aiResearchStudy": {
+      "title": "AI研学",
+      "desc": "沉浸式AI科技研学体验营"
+    },
+    "ecosystemAlliance": {
+      "title": "生态产品联盟",
+      "desc": "优质AI教育产品集成与推荐"
+    }
+  },
+  "ecosystem": {
+    "title": "产融生态矩阵",
+    "enterpriseTraining": {
+      "title": "政企AI赋能培训",
+      "desc": "定制化AI转型培训方案"
+    },
+    "opc": {
+      "title": "OPC生态",
+      "desc": "培训即就业，真实订单驱动"
+    },
+    "smartServices": {
+      "title": "智创专项服务",
+      "desc": "AI创新项目孵化与技术支持"
+    },
+    "assetRevitalization": {
+      "title": "不良资产盘活",
+      "desc": "AI赋能资产处置与价值重塑"
+    }
+  },
+  "about": {
+    "breadcrumb": {
+      "home": "首页",
+      "current": "关于海创元"
+    },
+    "companyIntro": "公司简介",
+    "subsidiary": "海淀国投集团全资企业",
+    "culture": "企业文化",
+    "cultureDesc": "以使命为引领，以创新为驱动，构建可持续发展的AI教育生态",
+    "mission": "使命",
+    "vision": "愿景",
+    "values": {
+      "stateOwned": "国企担当",
+      "stateOwnedDesc": "秉承国有企业社会责任，以教育公平为己任",
+      "innovation": "创新驱动",
+      "innovationDesc": "以AI技术为核心驱动力，持续引领教育变革",
+      "ecosystem": "生态共赢",
+      "ecosystemDesc": "构建开放合作生态，与伙伴共享发展红利",
+      "practical": "实战为本",
+      "practicalDesc": "聚焦实际应用场景，培养新质生产力人才",
+      "education": "教育为本",
+      "educationDesc": "聚焦教育本质，培养面向未来的创新人才"
+    },
+    "timeline": "发展历程",
+    "timelineDesc": "从创立之初到业务遍布全国，海创元始终砥砺前行",
+    "honors": "荣誉资质",
+    "honorsDesc": "多项行业认证与赛事成就，彰显专业实力",
+    "honorTabs": {
+      "all": "全部",
+      "industry": "行业荣誉",
+      "competition": "赛事成就",
+      "certification": "合作认证",
+      "patent": "软著专利"
+    },
+    "partners": "合作伙伴",
+    "partnersDesc": "携手行业领军企业与优质院校，共建AI教育新生态",
+    "strategicPartners": "战略合作伙伴",
+    "ecosystemPartners": "生态代理品牌",
+    "stats": {
+      "coverage": "覆盖省市",
+      "schools": "服务院校",
+      "channels": "合作渠道"
+    }
+  },
+  "contact": {
+    "breadcrumb": {
+      "home": "首页",
+      "current": "联系我们"
+    },
+    "title": "联系我们",
+    "subtitle": "期待与您携手，共同探索AI赋能教育与产业的无限可能",
+    "address": "公司地址",
+    "addressDesc": "欢迎莅临指导，期待与您面对面交流",
+    "officeAddress": "办公地址",
+    "phone": "联系电话",
+    "email": "电子邮箱",
+    "mapNotConfigured": "地图未配置",
+    "mapNotConfiguredDesc": "请在后台设置地图坐标",
+    "contacts": "分业务线联系人",
+    "contactsDesc": "根据您的需求，直接联系对应业务负责人",
+    "onlineConsultation": "在线咨询",
+    "onlineConsultationDesc": "填写以下信息，我们将尽快与您取得联系",
+    "form": {
+      "name": "姓名",
+      "company": "单位",
+      "phone": "电话",
+      "email": "邮箱",
+      "needType": "需求类型",
+      "message": "留言",
+      "submit": "提交咨询",
+      "continue": "继续咨询",
+      "required": "必填",
+      "placeholder": {
+        "name": "请输入您的姓名",
+        "company": "请输入您的单位名称",
+        "phone": "请输入您的联系电话",
+        "email": "请输入您的邮箱地址",
+        "needType": "请选择需求类型",
+        "message": "请简要描述您的需求或问题"
+      },
+      "needTypes": {
+        "aiCurriculum": "AI课程入校",
+        "teacherTraining": "AI师资培训与认证",
+        "aiResearchStudy": "AI研学",
+        "ecosystemAlliance": "生态产品联盟",
+        "enterpriseTraining": "政企AI赋能培训",
+        "opc": "OPC生态",
+        "smartServices": "智创专项服务",
+        "assetRevitalization": "不良资产盘活",
+        "aiPartyBuilding": "AI党建业务",
+        "other": "其他"
+      },
+      "success": {
+        "title": "提交成功",
+        "message": "感谢您的咨询，我们将在1-2个工作日内与您联系。"
+      },
+      "errors": {
+        "networkError": "网络错误，请稍后重试"
+      },
+      "wechat": {
+        "title": "微信客服",
+        "desc": "扫码添加微信客服，获取即时咨询服务",
+        "workHours": "工作日 9:00 - 18:00",
+        "responseTime": "24小时内响应",
+        "qrNotConfigured": "二维码未配置"
+      }
+    }
+  },
+  "join": {
+    "breadcrumb": {
+      "home": "首页",
+      "current": "加入我们"
+    },
+    "title": "加入我们",
+    "subtitle": "期待你的加入，共同创造AI教育的未来"
+  },
+  "news": {
+    "breadcrumb": {
+      "home": "首页",
+      "current": "新闻动态"
+    },
+    "title": "新闻动态",
+    "categories": {
+      "all": "全部",
+      "company": "公司新闻",
+      "industry": "行业资讯",
+      "media": "媒体报道"
+    }
+  },
+  "cases": {
+    "title": "案例与成果",
+    "schools": "服务院校案例",
+    "honors": "赛事荣誉",
+    "coverage": "业务覆盖版图"
+  }
+}
