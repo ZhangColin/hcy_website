@@ -23,7 +23,7 @@ const bilibiliConfig: VideoPlatformConfig = {
   name: 'bilibili',
   displayName: 'B站',
   patterns: [
-    /bilibili\.com\/video\/(BV[\w]+)(?:\?|$)/,
+    /bilibili\.com\/video\/(BV[\w]+)(?:\/|\?|$)/,
     /b23\.tv\/([a-zA-Z0-9]+)/,
   ],
   parseId: (url: string) => {
