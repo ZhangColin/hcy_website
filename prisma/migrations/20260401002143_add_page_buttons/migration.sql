@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "PageButton" (
+CREATE TABLE "page_buttons" (
     "id" TEXT NOT NULL,
     "pageKey" TEXT NOT NULL,
     "pageName" TEXT NOT NULL,
@@ -12,11 +12,11 @@ CREATE TABLE "PageButton" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "PageButton_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "page_buttons_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PageButton_pageKey_positionKey_order_key" ON "PageButton"("pageKey", "positionKey", "order");
+CREATE UNIQUE INDEX "page_buttons_pageKey_positionKey_order_key" ON "page_buttons"("pageKey", "positionKey", "order");
 
 -- CreateIndex
-CREATE INDEX "PageButton_pageKey_positionKey_idx" ON "PageButton"("pageKey", "positionKey");
+CREATE INDEX "page_buttons_pageKey_positionKey_idx" ON "page_buttons"("pageKey", "positionKey");
