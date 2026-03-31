@@ -1,4 +1,13 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const services = [
   {
@@ -32,6 +41,15 @@ const services = [
 ];
 
 export default function ServicesPage() {
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/services')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
+
   return (
     <main>
       {/* Breadcrumb */}
@@ -59,6 +77,21 @@ export default function ServicesPage() {
           <p className="text-xl text-blue-100 max-w-2xl">
             以AI课程入校为核心引擎，融合师资培训、AI研学与生态产品联盟，构建完整的智慧教育服务体系。
           </p>
+          {buttons.hero && buttons.hero.length > 0 && (
+            <div className="flex flex-wrap gap-4 mt-8">
+              {buttons.hero.map((btn, i) => (
+                <a
+                  key={i}
+                  href={btn.href}
+                  target={btn.openNewTab ? '_blank' : undefined}
+                  rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                  className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
+                >
+                  {btn.label}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const serviceTabs = [
   {
@@ -134,6 +140,14 @@ const showcaseProjects = [
 
 export default function AIResearchStudyPage() {
   const [activeTab, setActiveTab] = useState("school");
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/ai-research-study')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
 
   const currentTab = serviceTabs.find((t) => t.id === activeTab)!;
 
@@ -178,18 +192,17 @@ export default function AIResearchStudyPage() {
             多层次、多场景研学服务体系
           </p>
           <div className="flex flex-wrap gap-4">
-            <a
-              href="#contact"
-              className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
-            >
-              定制研学方案
-            </a>
-            <a
-              href="#showcase"
-              className="inline-flex items-center px-6 py-3 bg-white/10 border border-white/30 text-white font-medium rounded-lg hover:bg-white/20 transition-colors"
-            >
-              查看精选案例
-            </a>
+            {buttons.hero?.map((btn, i) => (
+              <a
+                key={i}
+                href={btn.href}
+                target={btn.openNewTab ? '_blank' : undefined}
+                rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
+              >
+                {btn.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -362,12 +375,21 @@ export default function AIResearchStudyPage() {
             无论您是学校、企业还是机构，我们都能为您量身定制AI研学方案
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="w-full sm:w-auto px-8 py-4 bg-[#D4A843] text-white font-semibold rounded-xl hover:bg-[#c49a3a] transition-colors">
-              定制研学方案
-            </button>
-            <button className="w-full sm:w-auto px-8 py-4 bg-white text-[#1A3C8A] font-semibold rounded-xl hover:bg-gray-100 transition-colors">
-              咨询报名
-            </button>
+            {buttons.cta?.map((btn, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (btn.openNewTab) {
+                    window.open(btn.href, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = btn.href;
+                  }
+                }}
+                className="w-full sm:w-auto px-8 py-4 bg-[#D4A843] text-white font-semibold rounded-xl hover:bg-[#c49a3a] transition-colors"
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
