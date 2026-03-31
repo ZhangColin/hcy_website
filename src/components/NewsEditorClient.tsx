@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { TiptapEditor } from '@/components/TiptapEditor';
 import { ImageButton } from '@/components/ImageButton';
 import { isValidSlug } from '@/lib/slug';
+import { convertVideoTagsToIframe } from '@/components/video/VideoHtmlConverter';
 
 interface NewsArticle {
   id?: string;
@@ -110,13 +111,16 @@ export function NewsEditorClient({ article }: NewsEditorClientProps) {
       const url = article ? `/api/admin/news/${article.id}` : '/api/admin/news';
       const method = article ? 'PUT' : 'POST';
 
+      // 将 video-platform 标签转换为 iframe
+      const contentToSave = convertVideoTagsToIframe(formData.content);
+
       const res = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, content: contentToSave }),
       });
 
       if (res.ok) {
