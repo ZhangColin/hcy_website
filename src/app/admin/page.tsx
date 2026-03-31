@@ -5,7 +5,7 @@ import { ImageButton } from "@/components/ImageButton";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join" | "consultations" | "users" | "experts";
+type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join" | "consultations" | "users" | "experts" | "buttons";
 
 interface NavItem {
   key: CollectionKey;
@@ -37,6 +37,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "consultations", label: "咨询管理" },
   { key: "users", label: "账号管理" },
   { key: "experts", label: "专家团队" },
+  { key: "buttons", label: "按钮管理" },
 ];
 
 // ─── Toast ───────────────────────────────────────────────────────────────────
@@ -2533,6 +2534,202 @@ function ExpertsEditor() {
   );
 }
 
+// ─── Buttons Editor ────────────────────────────────────────────────────────────
+
+interface PageButton {
+  id: string;
+  pageKey: string;
+  pageName: string;
+  positionKey: string;
+  positionName: string;
+  label: string;
+  href: string;
+  openNewTab: boolean;
+  order: number;
+}
+
+interface ButtonGroup {
+  pageKey: string;
+  pageName: string;
+  positions: {
+    key: string;
+    name: string;
+    buttons: PageButton[];
+  }[];
+}
+
+function ButtonsEditor() {
+  const [groups, setGroups] = useState<ButtonGroup[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const getToken = () => sessionStorage.getItem("admin_token") ?? "";
+
+  // 加载按钮配置
+  const loadButtons = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/buttons", {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // 按页面和位置分组
+        const grouped: Record<string, ButtonGroup> = {};
+
+        for (const btn of data.buttons) {
+          if (!grouped[btn.pageKey]) {
+            grouped[btn.pageKey] = {
+              pageKey: btn.pageKey,
+              pageName: btn.pageName,
+              positions: [],
+            };
+          }
+
+          let position = grouped[btn.pageKey].positions.find(p => p.key === btn.positionKey);
+          if (!position) {
+            position = { key: btn.positionKey, name: btn.positionName, buttons: [] };
+            grouped[btn.pageKey].positions.push(position);
+          }
+
+          position.buttons.push(btn);
+        }
+
+        // 对每个位置的按钮按 order 排序
+        for (const group of Object.values(grouped)) {
+          for (const pos of group.positions) {
+            pos.buttons.sort((a, b) => a.order - b.order);
+          }
+        }
+
+        setGroups(Object.values(grouped));
+      }
+    } catch {
+      console.error("Failed to load buttons");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadButtons();
+  }, [loadButtons]);
+
+  // 更新按钮字段
+  const updateButton = (groupIndex: number, posIndex: number, btnIndex: number, field: string, value: unknown) => {
+    const newGroups = [...groups];
+    newGroups[groupIndex].positions[posIndex].buttons[btnIndex] = {
+      ...newGroups[groupIndex].positions[posIndex].buttons[btnIndex],
+      [field]: value,
+    };
+    setGroups(newGroups);
+  };
+
+  // 保存所有更改
+  const saveButtons = async () => {
+    setSaving(true);
+    try {
+      const allButtons = groups.flatMap(g =>
+        g.positions.flatMap(p => p.buttons)
+      );
+
+      const res = await fetch("/api/admin/buttons", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ buttons: allButtons }),
+      });
+
+      if (res.ok) {
+        alert("保存成功");
+        loadButtons();
+      } else {
+        alert("保存失败");
+      }
+    } catch {
+      alert("保存失败，请检查网络");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-gray-400">加载中...</div>;
+  }
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-gray-800">页面按钮配置</h3>
+        <button
+          onClick={saveButtons}
+          disabled={saving}
+          className="bg-[#1A3C8A] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#15306e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+        >
+          {saving ? "保存中..." : "保存全部"}
+        </button>
+      </div>
+
+      {groups.map((group, gi) => (
+        <div key={group.pageKey} className="mb-8">
+          <h4 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 bg-[#D4A843] rounded-full"></span>
+            {group.pageName}
+          </h4>
+
+          {group.positions.map((pos, pi) => (
+            <div key={pos.key} className="mb-6 ml-4">
+              <h5 className="text-sm font-semibold text-gray-700 mb-3">{pos.name}</h5>
+              <div className="space-y-3">
+                {pos.buttons.map((btn, bi) => (
+                  <div key={btn.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                      <div className="md:col-span-1">
+                        <label className="block text-xs font-medium text-gray-500 mb-1">按钮文字</label>
+                        <input
+                          type="text"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                          value={btn.label}
+                          onChange={(e) => updateButton(gi, pi, bi, "label", e.target.value)}
+                        />
+                      </div>
+                      <div className="md:col-span-1">
+                        <label className="block text-xs font-medium text-gray-500 mb-1">跳转链接</label>
+                        <input
+                          type="text"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                          value={btn.href}
+                          onChange={(e) => updateButton(gi, pi, bi, "href", e.target.value)}
+                        />
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={btn.openNewTab}
+                            onChange={(e) => updateButton(gi, pi, bi, "openNewTab", e.target.checked)}
+                            className="rounded border-gray-300 text-[#1A3C8A] focus:ring-[#1A3C8A]"
+                          />
+                          <span className="text-sm text-gray-700">新窗口打开</span>
+                        </label>
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        顺序: {btn.order}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </>
+  );
+}
+
 // ─── Main Admin Page ─────────────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -2688,6 +2885,8 @@ export default function AdminPage() {
         return <UsersEditor />;
       case "experts":
         return <ExpertsEditor />;
+      case "buttons":
+        return <ButtonsEditor />;
       default:
         return null;
     }
