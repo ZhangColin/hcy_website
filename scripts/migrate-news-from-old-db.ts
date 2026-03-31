@@ -159,6 +159,41 @@ function parseChineseDate(dateStr: string): Date {
   return new Date();
 }
 
+/**
+ * Generate URL-friendly slug from Chinese title
+ * Uses pinyin-pro to convert Chinese to pinyin, then formats for URL
+ *
+ * Example: "海创元AI研学科创营纪实" → "hai-chuang-yuan-ai-yan-xue-ke-chuang-ying-ji-shi"
+ */
+function generateSlug(title: string, existingSlugs: Set<string>): string {
+  // Convert to pinyin (first letter of each character)
+  const pinyinStr = pinyin(title, {
+    pattern: 'first',
+    toneType: 'none',
+  })
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-')  // Replace non-alphanumeric with dashes
+    .replace(/-+/g, '-')          // Replace multiple dashes with single dash
+    .replace(/^-|-$/g, '');       // Remove leading/trailing dashes
+
+  // Generate date suffix from current date
+  const dateSuffix = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
+  // Add random suffix for uniqueness
+  const randomSuffix = Math.random().toString(36).substring(2, 7);
+
+  let slug = `${pinyinStr}-${dateSuffix}-${randomSuffix}`;
+
+  // Ensure uniqueness
+  let counter = 1;
+  while (existingSlugs.has(slug)) {
+    slug = `${pinyinStr}-${dateSuffix}-${randomSuffix}-${counter}`;
+    counter++;
+  }
+
+  return slug;
+}
+
 // ============================================================================
 // MAIN SCRIPT
 // ============================================================================
