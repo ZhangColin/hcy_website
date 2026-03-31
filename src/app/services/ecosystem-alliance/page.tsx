@@ -3,6 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
+/* ───────── types ───────── */
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
+
 /* ───────── animation hook ───────── */
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -125,6 +132,15 @@ const valueProps = [
 
 /* ───────── page ───────── */
 export default function EcosystemAlliancePage() {
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/ecosystem-alliance')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
@@ -166,18 +182,17 @@ export default function EcosystemAlliancePage() {
             海创元作为&ldquo;总集成商&rdquo;，以1+N主干+生态代理补全模式，联合行业优质品牌，一站式补全AI教育完整生态
           </p>
           <div className="flex flex-wrap gap-4">
-            <a
-              href="#cta"
-              className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
-            >
-              成为生态合作伙伴
-            </a>
-            <a
-              href="#partners"
-              className="inline-flex items-center px-6 py-3 bg-white/10 border border-white/30 text-white font-medium rounded-lg hover:bg-white/20 transition-colors"
-            >
-              了解生态品牌
-            </a>
+            {buttons.hero?.map((btn, i) => (
+              <a
+                key={i}
+                href={btn.href}
+                target={btn.openNewTab ? '_blank' : undefined}
+                rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
+              >
+                {btn.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -449,12 +464,21 @@ export default function EcosystemAlliancePage() {
             加入海创元生态产品联盟，共享渠道资源与品牌背书，携手打造AI教育完整生态
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="w-full sm:w-auto px-8 py-4 bg-[#D4A843] text-white font-semibold rounded-xl hover:bg-[#c49a3a] transition-colors">
-              成为生态合作伙伴
-            </button>
-            <button className="w-full sm:w-auto px-8 py-4 bg-white text-[#1A3C8A] font-semibold rounded-xl hover:bg-gray-100 transition-colors">
-              了解合作详情
-            </button>
+            {buttons.cta?.map((btn, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (btn.openNewTab) {
+                    window.open(btn.href, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = btn.href;
+                  }
+                }}
+                className="w-full sm:w-auto px-8 py-4 bg-[#D4A843] text-white font-semibold rounded-xl hover:bg-[#c49a3a] transition-colors"
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
