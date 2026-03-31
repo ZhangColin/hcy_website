@@ -86,6 +86,32 @@ const COS_CONFIG = {
 };
 
 // ============================================================================
+// DATABASE CONNECTIONS
+// ============================================================================
+
+/**
+ * Create connection pool to old database
+ */
+function createOldDBPool(): Pool {
+  const poolConfig: PoolConfig = {
+    connectionString: OLD_DATABASE_URL,
+  };
+
+  return new Pool(poolConfig);
+}
+
+/**
+ * Create Prisma client for new database
+ */
+function createNewDBClient(): PrismaClient {
+  const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  return new PrismaClient({ adapter });
+}
+
+// ============================================================================
 // MAIN SCRIPT
 // ============================================================================
 
@@ -101,8 +127,36 @@ async function main() {
     console.log('🔍 DRY RUN MODE - No changes will be made\n');
   }
 
-  // Rest of implementation will be added in next tasks...
-  console.log('✅ Script structure created');
+  // Test database connections
+  console.log('📡 Testing database connections...');
+
+  let oldPool: Pool | null = null;
+  let newPrisma: PrismaClient | null = null;
+
+  try {
+    oldPool = createOldDBPool();
+    const oldClient = await oldPool.connect();
+    const result = await oldClient.query('SELECT COUNT(*) as count FROM news');
+    console.log(`   ✓ Old database: ${result.rows[0].count} articles found`);
+    oldClient.release();
+
+    newPrisma = createNewDBClient();
+    const existingCount = await newPrisma.newsArticle.count();
+    console.log(`   ✓ New database: ${existingCount} existing articles`);
+
+    if (existingCount > 0 && !dryRun) {
+      console.log('\n⚠️  WARNING: New database already has articles.');
+      console.log('   Existing articles with matching slugs will be skipped.\n');
+    }
+  } catch (error) {
+    console.error('   ❌ Database connection failed:', error);
+    throw error;
+  } finally {
+    if (oldPool) await oldPool.end();
+    if (newPrisma) await newPrisma.$disconnect();
+  }
+
+  console.log('\n✅ Connections verified');
 }
 
 main().catch((error) => {
