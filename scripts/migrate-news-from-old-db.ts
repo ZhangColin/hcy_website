@@ -112,6 +112,54 @@ function createNewDBClient(): PrismaClient {
 }
 
 // ============================================================================
+// DATA TRANSFORMATION UTILITIES
+// ============================================================================
+
+/**
+ * Parse Chinese date string to Date object
+ * Supports formats:
+ *   - "2025年7月30日"
+ *   - "2025年12月5日"
+ *   - "2025-07-30" (ISO format fallback)
+ *   - "2025/07/30" (fallback)
+ */
+function parseChineseDate(dateStr: string): Date {
+  // Trim whitespace
+  dateStr = dateStr.trim();
+
+  // Try ISO format first (YYYY-MM-DD)
+  const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (isoMatch) {
+    const [, year, month, day] = isoMatch;
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  }
+
+  // Try slash format (YYYY/MM/DD)
+  const slashMatch = dateStr.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+  if (slashMatch) {
+    const [, year, month, day] = slashMatch;
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  }
+
+  // Parse Chinese format: "2025年7月30日" or "2025年12月5日"
+  const chineseMatch = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日?/);
+  if (chineseMatch) {
+    const [, year, month, day] = chineseMatch;
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  }
+
+  // Fallback: try JavaScript's built-in parser
+  const jsDate = new Date(dateStr);
+  if (!isNaN(jsDate.getTime())) {
+    return jsDate;
+  }
+
+  // Last resort: use current date and log warning
+  console.warn(`   ⚠️  Could not parse date: "${dateStr}", using current date`);
+  return new Date();
+}
+
+// ============================================================================
 // MAIN SCRIPT
 // ============================================================================
 
