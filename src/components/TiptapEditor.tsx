@@ -6,7 +6,10 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
-import { useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { VideoExtension } from './extensions/VideoExtension';
+import { parseVideoUrl, type ParsedVideo, type VideoSize } from './video/VideoParser';
+import { VideoInsertDialog } from './video/VideoInsertDialog';
 
 interface TiptapEditorProps {
   content: string;
@@ -21,6 +24,12 @@ export function TiptapEditor({
   placeholder = '请输入内容...',
   editable = true,
 }: TiptapEditorProps) {
+  // 视频插入对话框状态
+  const [videoDialog, setVideoDialog] = useState<{
+    parsedVideo: ParsedVideo | null;
+    isOpen: boolean;
+  }>({ parsedVideo: null, isOpen: false });
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -42,6 +51,7 @@ export function TiptapEditor({
       Placeholder.configure({
         placeholder,
       }),
+      VideoExtension,
     ],
     content,
     editable,
@@ -59,6 +69,48 @@ export function TiptapEditor({
   }, [content, editor]);
 
   if (!editor) return null;
+
+  // 视频插入处理函数
+  const handleInsertVideo = useCallback((parsedVideo: ParsedVideo) => {
+    setVideoDialog({ parsedVideo, isOpen: true });
+  }, []);
+
+  const handleVideoInsert = useCallback((size: VideoSize) => {
+    if (videoDialog.parsedVideo && editor) {
+      editor.commands.insertVideo({
+        platform: videoDialog.parsedVideo.platform,
+        videoId: videoDialog.parsedVideo.videoId,
+        size,
+      });
+    }
+  }, [videoDialog.parsedVideo, editor]);
+
+  const closeVideoDialog = useCallback(() => {
+    setVideoDialog({ parsedVideo: null, isOpen: false });
+  }, []);
+
+  // 粘贴事件监听 - 检测视频 URL
+  useEffect(() => {
+    if (!editor || !editable) return;
+
+    const handlePaste = (event: ClipboardEvent) => {
+      const pastedText = event.clipboardData?.getData('text');
+      if (!pastedText) return;
+
+      const parsed = parseVideoUrl(pastedText);
+      if (parsed) {
+        event.preventDefault();
+        handleInsertVideo(parsed);
+      }
+    };
+
+    const dom = editor.view.dom;
+    dom.addEventListener('paste', handlePaste);
+
+    return () => {
+      dom.removeEventListener('paste', handlePaste);
+    };
+  }, [editor, editable, handleInsertVideo]);
 
   const handleImageUpload = async () => {
     const input = document.createElement('input');
@@ -165,6 +217,23 @@ export function TiptapEditor({
       >
         🖼️
       </button>
+      <button
+        onClick={() => {
+          const url = prompt('请输入视频链接:');
+          if (url) {
+            const parsed = parseVideoUrl(url);
+            if (parsed) {
+              handleInsertVideo(parsed);
+            } else {
+              alert('不支持的视频平台或链接格式无效');
+            }
+          }
+        }}
+        className="px-2 py-1 rounded text-sm hover:bg-gray-100"
+        title="插入视频"
+      >
+        📹
+      </button>
       <div className="w-px bg-gray-300 mx-1" />
       <button
         onClick={() => editor.chain().focus().undo().run()}
@@ -192,6 +261,16 @@ export function TiptapEditor({
         editor={editor}
         className="p-4 min-h-[300px] focus:outline-none"
       />
+
+      {/* 视频插入对话框 */}
+      {videoDialog.isOpen && videoDialog.parsedVideo && (
+        <VideoInsertDialog
+          parsedVideo={videoDialog.parsedVideo}
+          onClose={closeVideoDialog}
+          onInsert={handleVideoInsert}
+        />
+      )}
+
       <style jsx global>{`
         /* Tiptap Editor Styles */
         .ProseMirror {
@@ -310,6 +389,17 @@ export function TiptapEditor({
           background: none;
           padding: 0;
           color: inherit;
+        }
+
+        /* 视频节点样式 */
+        .ProseMirror .video-node-wrapper {
+          margin: 1em 0;
+        }
+
+        .ProseMirror iframe {
+          max-width: 100%;
+          border-radius: 8px;
+          margin: 1em 0;
         }
       `}</style>
     </div>
