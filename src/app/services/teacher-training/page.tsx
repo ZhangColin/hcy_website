@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 const certLevels = [
   {
@@ -30,34 +31,23 @@ const careerPaths = [
   { title: "独立AI教育创客", icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" },
 ];
 
-const experts = [
-  {
-    name: "张教授",
-    title: "教育部长江学者特聘教授",
-    org: "某985高校人工智能学院",
-    focus: "人工智能教育、计算机科学教育",
-  },
-  {
-    name: "李教授",
-    title: "博士生导师",
-    org: "上海交通大学",
-    focus: "AI教育技术、智能教学系统",
-  },
-  {
-    name: "王教授",
-    title: "教育信息化专家",
-    org: "华东师范大学",
-    focus: "教育数字化转型、AI教师培训",
-  },
-  {
-    name: "陈教授",
-    title: "高级研究员",
-    org: "中国科学院计算技术研究所",
-    focus: "青少年AI教育、课程标准研究",
-  },
-];
-
 export default function TeacherTrainingPage() {
+  const [experts, setExperts] = useState<Array<{
+    id: string;
+    name: string;
+    title: string;
+    org: string;
+    focus: string;
+    avatar: string | null;
+  }>>([]);
+
+  useEffect(() => {
+    fetch("/api/public/experts")
+      .then((res) => res.json())
+      .then((data) => setExperts(data))
+      .catch(() => setExperts([]));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
@@ -310,13 +300,20 @@ AI+PBL案例式教学，由资深专家团带队，结合生活场景（如智�
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {experts.map((expert) => (
-              <div key={expert.name} className="bg-[#F5F7FA] rounded-2xl p-6 hover:shadow-md transition-shadow">
-                {/* Avatar placeholder */}
-                <div className="w-20 h-20 bg-gradient-to-br from-[#1565C0]/20 to-[#D4A843]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
+              <div key={expert.id} className="bg-[#F5F7FA] rounded-2xl p-6 hover:shadow-md transition-shadow">
+                {expert.avatar ? (
+                  <img
+                    src={expert.avatar}
+                    alt={expert.name}
+                    className="w-20 h-20 rounded-full object-cover mx-auto mb-4"
+                  />
+                ) : (
+                  <div className="w-20 h-20 bg-gradient-to-br from-[#1565C0]/20 to-[#D4A843]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                )}
                 <div className="text-center">
                   <h4 className="font-bold text-gray-900 mb-1">{expert.name}</h4>
                   <p className="text-[#1565C0] text-sm font-medium mb-1">{expert.title}</p>
