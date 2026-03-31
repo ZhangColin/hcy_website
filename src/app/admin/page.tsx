@@ -2603,6 +2603,9 @@ function ButtonsEditor() {
         }
 
         setGroups(Object.values(grouped));
+      } else {
+        const errorData = await res.json().catch(() => ({ error: "加载失败" }));
+        alert(`加载失败: ${errorData.error}`);
       }
     } catch {
       console.error("Failed to load buttons");
@@ -2646,7 +2649,8 @@ function ButtonsEditor() {
         alert("保存成功");
         loadButtons();
       } else {
-        alert("保存失败");
+        const errorData = await res.json().catch(() => ({ error: "未知错误" }));
+        alert(`保存失败: ${errorData.error || "未知错误"}`);
       }
     } catch {
       alert("保存失败，请检查网络");
@@ -2657,6 +2661,19 @@ function ButtonsEditor() {
 
   if (loading) {
     return <div className="text-center py-8 text-gray-400">加载中...</div>;
+  }
+
+  if (groups.length === 0) {
+    return (
+      <>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-800">页面按钮配置</h3>
+        </div>
+        <div className="text-center py-12 text-gray-400">
+          暂无按钮配置，请先执行数据库初始化脚本
+        </div>
+      </>
+    );
   }
 
   return (
