@@ -2604,11 +2604,12 @@ function ButtonsEditor() {
 
         setGroups(Object.values(grouped));
       } else {
-        const errorData = await res.json().catch(() => ({ error: "加载失败" }));
-        alert(`加载失败: ${errorData.error}`);
+        const errorData = await res.json().catch(() => ({ error: "未知错误" }));
+        alert(`加载失败: ${errorData.error || "未知错误"}`);
       }
     } catch {
       console.error("Failed to load buttons");
+      alert("加载失败，请检查网络连接");
     } finally {
       setLoading(false);
     }
