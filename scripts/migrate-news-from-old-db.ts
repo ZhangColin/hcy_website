@@ -276,6 +276,110 @@ async function processImage(image: string, articleId: string): Promise<string | 
 }
 
 // ============================================================================
+// MIGRATION FUNCTION
+// ============================================================================
+
+/**
+ * Main migration function
+ */
+async function migrateNews(options: MigrateOptions): Promise<MigrationResult> {
+  const { dryRun } = options;
+
+  const result: MigrationResult = {
+    total: 0,
+    success: 0,
+    failed: 0,
+    skipped: 0,
+    errors: [],
+  };
+
+  // Create database connections
+  const oldPool = createOldDBPool();
+  const newPrisma = createNewDBClient();
+
+  try {
+    // Fetch existing slugs from new database
+    const existingArticles = await newPrisma.newsArticle.findMany({
+      select: { slug: true, title: true },
+    });
+    const existingSlugs = new Set(existingArticles.map((a) => a.slug));
+
+    console.log(`📥 Fetching articles from old database...`);
+    const oldClient = await oldPool.connect();
+    const { rows } = await oldClient.query(`
+      SELECT id, title, excerpt, content, category, date, image, "order", updated_at
+      FROM news
+      ORDER BY date DESC, "order" ASC
+    `);
+    oldClient.release();
+
+    result.total = rows.length;
+    console.log(`   Found ${rows.length} articles\n`);
+
+    // Process each article
+    for (const row of rows) {
+      const article: OldNewsArticle = row;
+      console.log(`\n📰 [${result.success + result.failed + 1}/${result.total}] ${article.title}`);
+
+      try {
+        // Parse date
+        const dateObj = parseChineseDate(article.date);
+        console.log(`   📅 Date: ${article.date} → ${dateObj.toISOString().slice(0, 10)}`);
+
+        // Generate slug
+        const slug = generateSlug(article.title, existingSlugs);
+        console.log(`   🔖 Slug: ${slug}`);
+        existingSlugs.add(slug);
+
+        // Process image
+        console.log(`   🖼️  Processing image...`);
+        const imageUrl = await processImage(article.image, article.id);
+
+        if (!dryRun) {
+          // Create article in new database
+          await newPrisma.newsArticle.create({
+            data: {
+              slug,
+              title: article.title,
+              excerpt: article.excerpt,
+              content: article.content,
+              category: article.category,
+              date: dateObj,
+              image: imageUrl,
+              featured: false,
+              showOnHomepage: true,
+              published: true,
+              views: 0,
+            },
+          });
+          console.log(`   ✅ Created in database`);
+        } else {
+          console.log(`   🔍 [DRY RUN] Would create article`);
+        }
+
+        result.success++;
+
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        console.error(`   ❌ Error: ${errorMsg}`);
+        result.errors.push({
+          id: article.id,
+          title: article.title,
+          error: errorMsg,
+        });
+        result.failed++;
+      }
+    }
+
+  } finally {
+    await oldPool.end();
+    await newPrisma.$disconnect();
+  }
+
+  return result;
+}
+
+// ============================================================================
 // MAIN SCRIPT
 // ============================================================================
 
@@ -291,36 +395,38 @@ async function main() {
     console.log('🔍 DRY RUN MODE - No changes will be made\n');
   }
 
-  // Test database connections
-  console.log('📡 Testing database connections...');
+  // Run migration
+  console.log(`\n🚀 Starting migration...\n`);
+  const result = await migrateNews({ dryRun });
 
-  let oldPool: Pool | null = null;
-  let newPrisma: PrismaClient | null = null;
+  // Print summary
+  console.log('\n');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('📊 MIGRATION SUMMARY');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log(`   Total articles:   ${result.total}`);
+  console.log(`   ✅ Successful:    ${result.success}`);
+  console.log(`   ⏭️  Skipped:       ${result.skipped}`);
+  console.log(`   ❌ Failed:        ${result.failed}`);
 
-  try {
-    oldPool = createOldDBPool();
-    const oldClient = await oldPool.connect();
-    const result = await oldClient.query('SELECT COUNT(*) as count FROM news');
-    console.log(`   ✓ Old database: ${result.rows[0].count} articles found`);
-    oldClient.release();
-
-    newPrisma = createNewDBClient();
-    const existingCount = await newPrisma.newsArticle.count();
-    console.log(`   ✓ New database: ${existingCount} existing articles`);
-
-    if (existingCount > 0 && !dryRun) {
-      console.log('\n⚠️  WARNING: New database already has articles.');
-      console.log('   Existing articles with matching slugs will be skipped.\n');
+  if (result.errors.length > 0) {
+    console.log('\n❌ Errors:');
+    for (const error of result.errors) {
+      console.log(`   - ${error.title}: ${error.error}`);
     }
-  } catch (error) {
-    console.error('   ❌ Database connection failed:', error);
-    throw error;
-  } finally {
-    if (oldPool) await oldPool.end();
-    if (newPrisma) await newPrisma.$disconnect();
   }
 
-  console.log('\n✅ Connections verified');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+  if (dryRun) {
+    console.log('\n🔍 DRY RUN COMPLETE - No changes were made');
+    console.log('   Run without --dry-run to execute migration');
+  } else if (result.failed === 0) {
+    console.log('\n✨ Migration completed successfully!');
+  } else {
+    console.log('\n⚠️  Migration completed with errors');
+    process.exit(1);
+  }
 }
 
 main().catch((error) => {
