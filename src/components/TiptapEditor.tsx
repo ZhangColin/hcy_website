@@ -68,8 +68,6 @@ export function TiptapEditor({
     }
   }, [content, editor]);
 
-  if (!editor) return null;
-
   // 视频插入处理函数
   const handleInsertVideo = useCallback((parsedVideo: ParsedVideo) => {
     setVideoDialog({ parsedVideo, isOpen: true });
@@ -111,6 +109,8 @@ export function TiptapEditor({
       dom.removeEventListener('paste', handlePaste);
     };
   }, [editor, editable, handleInsertVideo]);
+
+  if (!editor) return null;
 
   const handleImageUpload = async () => {
     const input = document.createElement('input');
