@@ -1,7 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+
+interface SchoolCase {
+  id: string;
+  name: string;
+  schoolLogo: string | null;
+}
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const nModules = [
   {
@@ -79,19 +91,28 @@ const gradeData = [
   },
 ];
 
-const caseSchools = [
-  "北京中学",
-  "海亮教育",
-  "上外附中",
-  "华东师大附中",
-  "复旦附中",
-  "深圳中学",
-  "杭州二中",
-  "南京外国语学校",
-];
-
 export default function AICurriculumPage() {
   const [openModule, setOpenModule] = useState<string | null>("N1");
+  const [schoolCases, setSchoolCases] = useState<SchoolCase[]>([]);
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch("/api/cases")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.schoolCases) {
+          setSchoolCases(data.schoolCases);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch school cases:", err));
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/buttons/ai-curriculum')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
@@ -134,18 +155,17 @@ export default function AICurriculumPage() {
             1+N综合解决方案，覆盖小/初/高全学段
           </p>
           <div className="flex flex-wrap gap-4">
-            <a
-              href="#model"
-              className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
-            >
-              了解1+N模式
-            </a>
-            <a
-              href="#contact"
-              className="inline-flex items-center px-6 py-3 bg-white/10 border border-white/30 text-white font-medium rounded-lg hover:bg-white/20 transition-colors"
-            >
-              预约课程演示
-            </a>
+            {buttons.hero?.map((btn, i) => (
+              <a
+                key={i}
+                href={btn.href}
+                target={btn.openNewTab ? '_blank' : undefined}
+                rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
+              >
+                {btn.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -592,12 +612,10 @@ export default function AICurriculumPage() {
               </div>
             </div>
             <div className="bg-gray-100 rounded-2xl h-80 flex items-center justify-center">
-              <div className="text-center text-gray-400">
-                <svg className="w-20 h-20 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="text-sm">平台截图占位区域</span>
-              </div>
+              <img
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/hero/20260331-042f9812-1f6c-46c6-86e7-58066bb9f466.png`}
+                          className="w-full h-full object-cover"
+                        />
             </div>
           </div>
         </div>
@@ -613,12 +631,19 @@ export default function AICurriculumPage() {
             <p className="text-gray-500 text-lg">覆盖全国多个省市的优质合作院校</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {caseSchools.map((school) => (
+            {schoolCases.map((school) => (
               <div
-                key={school}
-                className="bg-white rounded-xl p-6 flex items-center justify-center border border-gray-100 hover:border-[#1565C0]/30 hover:shadow-md transition-all h-24"
+                key={school.id}
+                className="bg-white rounded-xl p-4 flex flex-col items-center justify-center border border-gray-100 hover:border-[#1565C0]/30 hover:shadow-md transition-all h-28"
               >
-                <span className="text-gray-700 font-medium">{school}</span>
+                {school.schoolLogo && (
+                  <img
+                    src={school.schoolLogo}
+                    alt={school.name}
+                    className="w-12 h-12 object-contain mb-2"
+                  />
+                )}
+                <span className="text-gray-700 font-medium text-sm text-center">{school.name}</span>
               </div>
             ))}
           </div>
@@ -635,15 +660,21 @@ export default function AICurriculumPage() {
             立即预约课程演示，了解1+N综合解决方案如何助力贵校AI教育落地
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="w-full sm:w-auto px-8 py-4 bg-[#D4A843] text-white font-semibold rounded-xl hover:bg-[#c49a3a] transition-colors">
-              预约课程演示
-            </button>
-            <button className="w-full sm:w-auto px-8 py-4 bg-white/10 border border-white/30 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors">
-              下载方案白皮书
-            </button>
-            <button className="w-full sm:w-auto px-8 py-4 bg-white text-[#1A3C8A] font-semibold rounded-xl hover:bg-gray-100 transition-colors">
-              联系我们
-            </button>
+            {buttons.cta?.map((btn, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (btn.openNewTab) {
+                    window.open(btn.href, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = btn.href;
+                  }
+                }}
+                className="w-full sm:w-auto px-8 py-4 bg-[#D4A843] text-white font-semibold rounded-xl hover:bg-[#c49a3a] transition-colors"
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
