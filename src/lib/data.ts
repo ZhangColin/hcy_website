@@ -16,13 +16,32 @@ export async function loadHome() {
 // 新闻
 export async function loadNews() {
   const articles = await prisma.newsArticle.findMany({
-    orderBy: { date: 'desc' }
+    orderBy: { date: 'desc' },
+    // 列表页面不需要 content 字段，避免序列化大量数据
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      excerpt: true,
+      category: true,
+      date: true,
+      image: true,
+      featured: true,
+      showOnHomepage: true,
+      published: true,
+      views: true,
+      createdAt: true,
+      updatedAt: true,
+      // content: false,  // 排除 content 字段
+    }
   })
   // 将 Date 对象转换为 ISO 字符串格式
   return {
     articles: articles.map(a => ({
       ...a,
       date: a.date.toISOString(),
+      createdAt: a.createdAt.toISOString(),
+      updatedAt: a.updatedAt.toISOString(),
     }))
   }
 }
@@ -176,4 +195,19 @@ export async function loadData<T = any>(filename: string): Promise<T> {
 export async function saveData<T = any>(filename: string, data: T): Promise<void> {
   // 实现保存逻辑
   await saveContent(filename, data)
+}
+
+// 加载页面按钮配置
+export async function loadPageButtons(pageKey: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/buttons/${pageKey}`, {
+    // 缓存策略：5分钟
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) {
+    console.error(`Failed to load buttons for page: ${pageKey}`);
+    return { hero: [], cta: [] };
+  }
+
+  return await res.json();
 }
