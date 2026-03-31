@@ -182,4 +182,5 @@ model PageButton {
 
   @@unique([pageKey, positionKey, order])
   @@index([pageKey, positionKey])
+  @@map("page_buttons")
 }
