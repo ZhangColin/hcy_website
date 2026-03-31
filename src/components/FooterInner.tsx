@@ -121,15 +121,15 @@ export default function FooterInner({ site, friendlyLinks, socialLinks }: Footer
       links: [
         { label: t("header.aiCurriculum"), href: "/services/ai-curriculum" },
         { label: t("header.teacherTraining"), href: "/services/teacher-training" },
+        { label: t("header.enterpriseTraining"), href: "/ecosystem/enterprise-training" },
         { label: t("header.aiResearchStudy"), href: "/services/ai-research-study" },
-        { label: t("header.ecosystemAlliance"), href: "/services/ecosystem-alliance" },
       ],
     },
     {
       title: t("header.ecosystem"),
       links: [
-        { label: t("header.enterpriseTraining"), href: "/ecosystem/enterprise-training" },
         { label: t("header.opc"), href: "/ecosystem/opc" },
+        { label: t("header.ecosystemAlliance"), href: "/services/ecosystem-alliance" },
         { label: t("header.smartServices"), href: "/ecosystem/smart-services" },
         { label: t("header.assetRevitalization"), href: "/ecosystem/asset-revitalization" },
       ],

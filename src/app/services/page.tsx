@@ -16,18 +16,18 @@ const services = [
     color: "#1A3C8A",
   },
   {
+    title: "政企AI赋能培训",
+    subtitle: "跨界复制",
+    desc: "AI赋能千行百业，数智人才实战锻造。公文效率提升60%，外包成本降低50%，内容产出提速3-5倍。",
+    href: "/ecosystem/enterprise-training",
+    color: "#00796B",
+  },
+  {
     title: "AI研学",
     subtitle: "场景延伸",
     desc: "多层次、多场景研学服务体系，覆盖学校、企业、高层次领导力及低龄群体。",
     href: "/services/ai-research-study",
     color: "#2B6CB0",
-  },
-  {
-    title: "生态产品联盟",
-    subtitle: "生态闭环",
-    desc: "海创元作为总集成商，联合海亮科技、蜜蜂家校、洋葱学园、宇视科技等品牌，一站式补全AI教育生态。",
-    href: "/services/ecosystem-alliance",
-    color: "#1565C0",
   },
 ];
 

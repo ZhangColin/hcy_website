@@ -1,19 +1,20 @@
 import Link from "next/link";
 
 const services = [
-  {
-    title: "政企AI赋能培训",
-    subtitle: "跨界复制",
-    desc: "AI赋能千行百业，数智人才实战锻造。公文效率提升60%，外包成本降低50%，内容产出提速3-5倍。",
-    href: "/ecosystem/enterprise-training",
-    color: "#00796B",
-  },
+
   {
     title: "OPC生态",
     subtitle: "规模化交付",
     desc: "以真实订单激活超级个体网络，六大订单类型，L1/L2/L3三级养成计划，培训即就业。",
     href: "/ecosystem/opc",
     color: "#00796B",
+  },
+  {
+    title: "生态产品联盟",
+    subtitle: "生态闭环",
+    desc: "海创元作为总集成商，联合海亮科技、蜜蜂家校、洋葱学园、宇视科技等品牌，一站式补全AI教育生态。",
+    href: "/services/ecosystem-alliance",
+    color: "#1565C0",
   },
   {
     title: "智创专项服务",

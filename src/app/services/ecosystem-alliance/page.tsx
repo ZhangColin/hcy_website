@@ -140,7 +140,7 @@ export default function EcosystemAlliancePage() {
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <Link href="/services" className="text-gray-400 hover:text-[#1A3C8A] transition-colors">智教服务集群</Link>
+            <Link href="/ecosystem" className="text-gray-400 hover:text-[#1A3C8A] transition-colors">产融生态矩阵</Link>
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

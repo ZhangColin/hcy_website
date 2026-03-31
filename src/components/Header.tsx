@@ -368,15 +368,16 @@ export default function Header() {
           description: t("header.teacherTrainingDesc"),
         },
         {
+          label: t("header.enterpriseTraining"),
+          href: "/ecosystem/enterprise-training",
+          description: t("header.enterpriseTrainingDesc"),
+        },
+        {
           label: t("header.aiResearchStudy"),
           href: "/services/ai-research-study",
           description: t("header.aiResearchStudyDesc"),
         },
-        {
-          label: t("header.ecosystemAlliance"),
-          href: "/services/ecosystem-alliance",
-          description: t("header.ecosystemAllianceDesc"),
-        },
+        
       ],
     },
     {
@@ -384,14 +385,14 @@ export default function Header() {
       href: "/ecosystem",
       children: [
         {
-          label: t("header.enterpriseTraining"),
-          href: "/ecosystem/enterprise-training",
-          description: t("header.enterpriseTrainingDesc"),
-        },
-        {
           label: t("header.opc"),
           href: "/ecosystem/opc",
           description: t("header.opcDesc"),
+        },
+        {
+          label: t("header.ecosystemAlliance"),
+          href: "/services/ecosystem-alliance",
+          description: t("header.ecosystemAllianceDesc"),
         },
         {
           label: t("header.smartServices"),

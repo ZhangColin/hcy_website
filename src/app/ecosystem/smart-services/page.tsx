@@ -6,25 +6,25 @@ const platforms = [
   {
     title: "AI党建智能平台",
     highlights: ["90秒出报告", "零幻觉", "全流程闭环"],
-    desc: "智能化党建工作管理平台，实现党务工作的自动化与智能化，大幅提升基层党组织工作效率。",
+    desc: "AI交互+综合管理双轮驱动，六大核心功能覆盖党务全流程",
     color: "#D4A843",
   },
   {
     title: "AI教育智能平台",
     highlights: ["个性化学习", "智能评估", "教学辅助"],
-    desc: "面向教育机构的AI教学管理平台，支持个性化学习路径规划、智能考评与教学质量分析。",
+    desc: "AI模型集成+全学段教研员系统+多模态创作中心",
     color: "#1A3C8A",
   },
   {
     title: "AI政务智能平台",
     highlights: ["一站式服务", "智能审批", "数据洞察"],
-    desc: "面向政务服务的AI辅助平台，优化行政审批流程，提升政务服务质量与公众满意度。",
+    desc: "智慧城市、数据治理、政策智能匹配、政务文稿自动化",
     color: "#00796B",
   },
   {
     title: "AI企业管理平台",
     highlights: ["流程优化", "智能决策", "降本增效"],
-    desc: "企业级AI管理系统，覆盖人事、财务、运营等核心模块，推动企业管理智能化升级。",
+    desc: "零代码开发+自动化工作流+数据分析与经营研判",
     color: "#2B6CB0",
   },
 ];
@@ -32,7 +32,7 @@ const platforms = [
 const thinkTankServices = [
   {
     title: "企业AI战略咨询",
-    desc: "为企业量身定制AI转型战略规划，从顶层设计到落地路径，全方位赋能企业数智化升级。",
+    desc: ["企业AI数字化转型路径规划","AI投资决策咨询","新质生产力战略落地方案","AI组织架构与人才体系设计"],
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
@@ -42,7 +42,7 @@ const thinkTankServices = [
   },
   {
     title: "AI创新空间规划咨询",
-    desc: "为院校与地方政府提供AI创新空间的整体规划设计咨询，打造产教融合的实训基地与创新中心。",
+    desc: ["AI实验室空间规划与装修设计方案","功能分区设计与设备造型方案","实验室分级配置"],
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21" />
@@ -52,7 +52,7 @@ const thinkTankServices = [
   },
   {
     title: "白名单赛事辅导咨询",
-    desc: "为学校和学生提供教育部白名单AI赛事的专业辅导，包括赛题解析、项目指导与参赛策略规划。",
+    desc: ["赛前辅导培训","赛事全程陪护与资源对接","名校直通车计划"],
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0 1 16.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.003 6.003 0 0 1-2.4.936m2.4-.936a6 6 0 0 1-2.4.936m-3.84 0a6.003 6.003 0 0 1-2.4-.936m2.4.936v3.086a7.454 7.454 0 0 1-.982 3.172M12 14.25a7.454 7.454 0 0 0 .982-3.172" />
@@ -63,11 +63,11 @@ const thinkTankServices = [
 ];
 
 const advantages = [
-  { title: "国企信用背书", desc: "国有企业资质认证，客户信任有保障" },
-  { title: "技术底座自研", desc: "核心技术自主可控，安全可信赖" },
-  { title: "全链条协同", desc: "从咨询到交付，一站式服务闭环" },
-  { title: "实战案例沉淀", desc: "多行业成功案例积累，方法论可复用" },
-  { title: "复合型专家团队", desc: "AI+行业双重背景，深度理解客户需求" },
+  { title: "国企信用背书", desc: ["政府/国企客户信任基础","党建类项目合规无忧","政府采购直接参与资格"] },
+  { title: "技术底座自研", desc: ["AI智研云平台自主研发","按需定制，灵活部署","区级入库，官方认可"] },
+  { title: "全链条协同", desc: ["咨询出方案，平台做落地","规划、建设、运营一体化","平台开发与咨询双向联动"] },
+  { title: "实战案例沉淀", desc: ["130+所服务院校经验","文化和旅游部标杆案例","多个机关单位党建合作"] },
+  { title: "复合型专家团队", desc: ["既懂技术又懂政策","既懂教育又懂产业","业内知名专家资源"] },
 ];
 
 export default function SmartServicesPage() {
@@ -201,7 +201,10 @@ export default function SmartServicesPage() {
                   {s.icon}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{s.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm mb-4">{s.desc}</p>
+                <p className="text-gray-600 leading-relaxed text-sm mb-4">{s.desc.map((x) => (
+                        <span style={{ display: 'block' }}>{x}</span>
+                      ))}</p>
+                
                 {s.cases.length > 0 && (
                   <div className="pt-4 border-t border-gray-100">
                     <p className="text-xs text-gray-400 font-medium mb-2 uppercase tracking-wider">案例</p>
@@ -229,7 +232,7 @@ export default function SmartServicesPage() {
               <div key={a.title} className="text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/15 hover:bg-white/15 transition-all duration-300">
                 <div className="text-4xl font-extrabold text-[#D4A843] mb-3">{String(i + 1).padStart(2, "0")}</div>
                 <h3 className="text-lg font-bold text-white mb-2">{a.title}</h3>
-                <p className="text-white/70 text-sm">{a.desc}</p>
+                {a.desc.map((x, l) => (<p className="text-white/70 text-sm">{x}</p>))}
               </div>
             ))}
           </div>

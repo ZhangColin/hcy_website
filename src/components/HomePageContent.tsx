@@ -62,27 +62,28 @@ export default function HomePageContent({
       href: "/services/teacher-training",
     },
     {
-      title: t("services.aiResearchStudy.title"),
-      desc: t("services.aiResearchStudy.desc"),
-      href: "/services/ai-research-study",
-    },
-    {
-      title: t("services.ecosystemAlliance.title"),
-      desc: t("services.ecosystemAlliance.desc"),
-      href: "/services/ecosystem-alliance",
-    },
-  ];
-
-  const ecoCards = [
-    {
       title: t("ecosystem.enterpriseTraining.title"),
       desc: t("ecosystem.enterpriseTraining.desc"),
       href: "/ecosystem/enterprise-training",
     },
     {
+      title: t("services.aiResearchStudy.title"),
+      desc: t("services.aiResearchStudy.desc"),
+      href: "/services/ai-research-study",
+    },
+  ];
+
+  const ecoCards = [
+    {
       title: t("ecosystem.opc.title"),
       desc: t("ecosystem.opc.desc"),
       href: "/ecosystem/opc",
+    },
+
+    {
+      title: t("services.ecosystemAlliance.title"),
+      desc: t("services.ecosystemAlliance.desc"),
+      href: "/services/ecosystem-alliance",
     },
     {
       title: t("ecosystem.smartServices.title"),

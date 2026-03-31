@@ -6,43 +6,43 @@ import Link from "next/link";
 const nModules = [
   {
     id: "N1",
-    title: "N1 师资培训",
-    desc: "面向信息科技教师与非信息科技教师的双轨培训体系，涵盖线下专项培训与线上数字人辅导，确保教师具备AI教学能力。",
+    title: "N1 5年免费课程更新",
+    desc: "",
   },
   {
     id: "N2",
     title: "N2 等级认证",
-    desc: "工业和信息化部教育与考试中心权威认证，初级/中级/高级三级体系，全国通用、有效期5年，学完即考即持证。",
+    desc: "三端联动，覆盖课前课中课后全流程超百万播放量",
   },
   {
     id: "N3",
-    title: "N3 教学竞赛",
-    desc: "组织并辅导教师参与各级AI教学竞赛，以赛促教，激发创新教学方法，提升教师专业影响力。",
+    title: "N3 师资解决方案",
+    desc: "信息学科师训+全科素养提升",
   },
   {
     id: "N4",
     title: "N4 AI未来实验室",
-    desc: "面向学校建设AI专用实验室，提供硬件配置方案、空间设计及施工指导，打造沉浸式AI学习空间。",
+    desc: "标准版/进阶版/展陈空间",
   },
   {
     id: "N5",
-    title: "N5 科创赛事",
-    desc: "覆盖NOI、蓝桥杯、全国青少年人工智能创新挑战赛等主流赛事指导与辅导，助力学生竞赛获奖。",
+    title: "N5 AI研学",
+    desc: "学校/企业/领导力/低龄群体",
   },
   {
     id: "N6",
-    title: "N6 AI研学",
-    desc: "提供多层次、多场景的AI研学服务，包括名校参访、科研院所考察、企业定制化研学等多种形式。",
+    title: "N6 白名单赛事",
+    desc: "国内白名单+国际赛事",
   },
   {
     id: "N7",
-    title: "N7 智研云平台",
-    desc: "一站式AI教研云平台，集课程管理、教学分析、资源共享于一体，支持区域教研协同与数据驱动决策。",
+    title: "N7 青少年AI学院",
+    desc: "与示范校共建",
   },
   {
     id: "N8",
-    title: "N8 生态产品联盟",
-    desc: "联合海亮科技、蜜蜂家校、洋葱学园、宇视科技等生态伙伴，一站式补全AI教育完整生态。",
+    title: "N8 智研云平台",
+    desc: "AI模型集成，PC+移动双端打通",
   },
 ];
 
@@ -169,7 +169,7 @@ export default function AICurriculumPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">5年课堂实践打磨</h3>
               <p className="text-gray-600 leading-relaxed">
-                上外附中教育部直属校深度合作，央视新闻深度报道，经过5年真实课堂环境的反复验证与迭代优化。
+                唯一历经教育部直属上海外国语附属中学 5 年真实课堂实践深度打磨的 AI 课程体系，作为国内中小学 AI 教育课程体系核心发源地，依托名校教研积淀，打造兼具专业性、落地性、体系化的基础教育 AI 课程解决方案。
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="text-xs bg-[#1565C0]/10 text-[#1565C0] px-3 py-1 rounded-full">教育部直属</span>
@@ -203,9 +203,9 @@ export default function AICurriculumPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">完整适配教育部六大任务</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">政策适配</h3>
               <p className="text-gray-600 leading-relaxed">
-                全面对标教育部人工智能教育政策要求，从课程建设、师资培养到评价体系，实现六大任务的完整适配与落地。
+                完整适配教育部《关于加强中小学人工智能教育的通知》，从课程建设、师资培养到评价体系，实现六大任务的完整适配与落地。
               </p>
               <div className="mt-4">
                 <span className="text-xs bg-[#2B6CB0]/10 text-[#2B6CB0] px-3 py-1 rounded-full">政策完整适配</span>
@@ -222,7 +222,7 @@ export default function AICurriculumPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               1+N 综合解决方案
             </h2>
-            <p className="text-gray-500 text-lg">以&ldquo;1&rdquo;为核心主干，&ldquo;N&rdquo;个模块灵活扩展</p>
+            <p className="text-gray-500 text-lg">AI课程入校综合解决方案</p>
           </div>
 
           {/* Core "1" */}
@@ -232,20 +232,20 @@ export default function AICurriculumPage() {
                 <span className="bg-[#D4A843] text-white text-2xl font-bold w-12 h-12 rounded-xl flex items-center justify-center">
                   1
                 </span>
-                <h3 className="text-2xl font-bold">核心主干</h3>
+                <h3 className="text-2xl font-bold">核心课程体系</h3>
               </div>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <div className="text-[#D4A843] font-semibold mb-2">人工智能课程</div>
-                  <p className="text-white/80 text-sm">覆盖小/初/高全学段的标准化AI课程体系</p>
+                  <p className="text-white/80 text-sm">覆盖全学段：小学1-3年级综合实践 → 小学4年级MIT科普课 → 小学5-6年级通识 → 初中通识+科创班 → 高中通识+科创班</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <div className="text-[#D4A843] font-semibold mb-2">教学平台</div>
-                  <p className="text-white/80 text-sm">三端联动智慧教学平台，支持课前-课中-课后全流程</p>
+                  <p className="text-white/80 text-sm">SAAS三端联动：教师端-学生端-展示端，课前资料云端同步、课中60+课堂互动、课后作业智能统计</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                   <div className="text-[#D4A843] font-semibold mb-2">课案与学案</div>
-                  <p className="text-white/80 text-sm">配套教师课案与学生学案，开箱即用</p>
+                  <p className="text-white/80 text-sm">针对课程匹配教案、案例、软硬件指导，完整适配教育部《关于加强中小学人工智能教育的通知》六大任务</p>
                 </div>
               </div>
             </div>
@@ -257,7 +257,7 @@ export default function AICurriculumPage() {
               <span className="bg-[#1565C0] text-white text-2xl font-bold w-12 h-12 rounded-xl flex items-center justify-center">
                 N
               </span>
-              <h3 className="text-2xl font-bold text-gray-900">扩展模块</h3>
+              <h3 className="text-2xl font-bold text-gray-900">可配选的增值服务</h3>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               {nModules.map((mod) => (
@@ -464,7 +464,7 @@ export default function AICurriculumPage() {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              硬件终端
+              硬件配套
             </h2>
             <p className="text-gray-500 text-lg">自研AI教学终端设备，满足不同场景需求</p>
           </div>
@@ -488,15 +488,27 @@ export default function AICurriculumPage() {
                 <div className="space-y-2 text-sm text-gray-500">
                   <div className="flex justify-between">
                     <span>处理器</span>
-                    <span className="text-gray-700">详见产品规格</span>
+                    <span className="text-gray-700">英特尔酷睿 i5-12400</span>
                   </div>
                   <div className="flex justify-between">
                     <span>内存</span>
-                    <span className="text-gray-700">详见产品规格</span>
+                    <span className="text-gray-700">16GB DDR4 3200MHz </span>
                   </div>
                   <div className="flex justify-between">
                     <span>存储</span>
-                    <span className="text-gray-700">详见产品规格</span>
+                    <span className="text-gray-700">512GB NVMe M.2</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>GPU</span>
+                    <span className="text-gray-700">NVIDIA RTX 4070 Ti 12GB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>算力</span>
+                    <span className="text-gray-700">单精度浮点算力超 40 TFLOPS</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>显存</span>
+                    <span className="text-gray-700">12GB GDDR6X </span>
                   </div>
                 </div>
               </div>
@@ -519,16 +531,28 @@ export default function AICurriculumPage() {
                 <p className="text-gray-600 text-sm mb-4">适用于AI深度学习与模型训练场景，支持GPU加速计算与大模型推理。</p>
                 <div className="space-y-2 text-sm text-gray-500">
                   <div className="flex justify-between">
+                    <span>处理器</span>
+                    <span className="text-gray-700">英特尔酷睿 i5-12400</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>内存</span>
+                    <span className="text-gray-700">16GB DDR4 3200MHz </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>存储</span>
+                    <span className="text-gray-700">512GB NVMe M.2</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span>GPU</span>
-                    <span className="text-gray-700">详见产品规格</span>
+                    <span className="text-gray-700">NVIDIA RTX 4090 24GB </span>
                   </div>
                   <div className="flex justify-between">
                     <span>算力</span>
-                    <span className="text-gray-700">详见产品规格</span>
+                    <span className="text-gray-700">单精度浮点算力超 80 TFLOPS</span>
                   </div>
                   <div className="flex justify-between">
                     <span>显存</span>
-                    <span className="text-gray-700">详见产品规格</span>
+                    <span className="text-gray-700">24GB GDDR6X</span>
                   </div>
                 </div>
               </div>

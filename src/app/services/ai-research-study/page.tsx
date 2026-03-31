@@ -80,7 +80,7 @@ const serviceTabs = [
           desc: "AI赋能文化旅游产业升级的新模式与新机遇。",
         },
       ],
-      partner: "联合国家开放大学，提供权威学习证明与继续教育学分。",
+      partner: "联合国家开放大学等机构打造定制化研学",
     },
   },
   {
@@ -110,22 +110,25 @@ const serviceTabs = [
 
 const showcaseProjects = [
   {
-    title: "上外附中北京冬令营",
+    title: "上外附中北京科技冬令营",
     tag: "学校研学",
     desc: "联合上海外国语大学附属中学开展为期5天的AI主题冬令营，涵盖名校参访、AI项目实战、学术报告等环节。",
     highlights: ["清华AI实验室参访", "AI项目实战挑战", "学术成果展示"],
+    image: '/hero/20260331-16a96575-2a1c-4b35-813a-3a5e3346ff8a.png'
   },
   {
-    title: "联想新智纪AI科创营",
+    title: "联想AI科创营",
     tag: "企业研学",
     desc: "为联想集团员工子女打造的AI科创夏令营，以智能硬件与AI编程为核心，培养青少年创新实践能力。",
-    highlights: ["智能硬件动手实践", "AI编程工作坊", "科创成果路演"],
+    highlights: ["智能硬件动手实践", "AI编程工作坊", "白名单赛事辅导"],
+    image: '/hero/20260331-4188da05-9914-40f3-ab6d-c9ebb5735ca3.png'
   },
   {
     title: "中欧二代AI科创营",
     tag: "高端研学",
     desc: "面向中欧国际工商学院校友子女的高端AI科创营，融合国际视野与前沿技术，打造精英AI教育体验。",
-    highlights: ["国际化课程体系", "顶尖导师团队", "跨文化交流"],
+    highlights: ["国际化课程体系", "顶尖导师团队", "前沿领域科技交流"],
+    image: '/hero/20260331-c8b53d28-56a2-46ae-97cf-e053c4469dbd.jpg'
   },
 ];
 
@@ -321,12 +324,10 @@ export default function AIResearchStudyPage() {
               >
                 {/* Image placeholder */}
                 <div className="bg-gradient-to-br from-[#1565C0]/10 to-[#D4A843]/10 h-48 flex items-center justify-center">
-                  <div className="text-center text-gray-400">
-                    <svg className="w-12 h-12 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-xs">活动照片占位</span>
-                  </div>
+                  <img
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${project.image}`}
+                          className="w-full h-full object-cover"
+                        />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-3">
