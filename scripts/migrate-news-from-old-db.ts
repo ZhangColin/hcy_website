@@ -194,6 +194,87 @@ function generateSlug(title: string, existingSlugs: Set<string>): string {
   return slug;
 }
 
+/**
+ * Process image field:
+ * - If base64 data URI, upload to COS and return URL
+ * - If http/https URL, validate and use as-is
+ * - Otherwise return null
+ */
+async function processImage(image: string, articleId: string): Promise<string | null> {
+  if (!image || image.trim() === '') {
+    return null;
+  }
+
+  image = image.trim();
+
+  // Check for base64 data URI
+  const base64Match = image.match(/^data:image\/(\w+);base64,(.+)$/);
+  if (base64Match) {
+    const [, format, base64Data] = base64Match;
+
+    try {
+      // Convert base64 to Buffer
+      const buffer = Buffer.from(base64Data, 'base64');
+
+      // Check size (limit to 10MB)
+      if (buffer.length > 10 * 1024 * 1024) {
+        console.warn(`      ⚠️  Image too large (${(buffer.length / 1024 / 1024).toFixed(2)}MB), skipping`);
+        return null;
+      }
+
+      // Generate filename
+      const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const randomId = randomUUID();
+      const key = `news/${date}-${randomId}.${format}`;
+
+      // Upload to COS
+      await new Promise<void>((resolve, reject) => {
+        cos.putObject({
+          Bucket: COS_CONFIG.bucket,
+          Region: COS_CONFIG.region,
+          Key: key,
+          Body: buffer,
+        }, (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      const url = `${COS_CONFIG.domain}/${key}`;
+      console.log(`      ✅ Uploaded base64 image to COS`);
+      return url;
+
+    } catch (error) {
+      console.error(`      ❌ Failed to upload base64 image:`, error instanceof Error ? error.message : String(error));
+      return null;
+    }
+  }
+
+  // Check for http/https URL
+  if (image.startsWith('http://') || image.startsWith('https://')) {
+    // Validate URL format
+    try {
+      new URL(image);
+      // Check for undefined in URL (common bug in old data)
+      if (image.includes('undefined')) {
+        console.warn(`      ⚠️  Image URL contains 'undefined', skipping`);
+        return null;
+      }
+      console.log(`      ✓ Using existing URL`);
+      return image;
+    } catch {
+      console.warn(`      ⚠️  Invalid URL format, skipping`);
+      return null;
+    }
+  }
+
+  console.warn(`      ⚠️  Unrecognized image format, skipping`);
+  return null;
+}
+
 // ============================================================================
 // MAIN SCRIPT
 // ============================================================================
