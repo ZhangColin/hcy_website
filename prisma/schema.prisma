@@ -166,3 +166,20 @@ model Expert {
 
   @@index([order])
 }
+
+model PageButton {
+  id           String   @id @default(cuid())
+  pageKey      String   // 页面标识，如 "ai-curriculum"
+  pageName     String   // 页面中文名称，如 "AI课程入校"
+  positionKey  String   // 位置标识，如 "hero", "cta"
+  positionName String   // 位置中文名称，如 "顶部横幅区域"
+  label        String   // 按钮文字
+  href         String   // 跳转链接
+  openNewTab   Boolean  @default(false)  // 是否新窗口打开
+  order        Int      @default(0)      // 显示顺序
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([pageKey, positionKey, order])
+  @@index([pageKey, positionKey])
+}
