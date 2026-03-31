@@ -5,7 +5,7 @@ import { ImageButton } from "@/components/ImageButton";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join" | "consultations" | "users";
+type CollectionKey = "home" | "news" | "about" | "partners" | "cases" | "contact" | "site" | "join" | "consultations" | "users" | "experts";
 
 interface NavItem {
   key: CollectionKey;
@@ -36,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "join", label: "招聘管理" },
   { key: "consultations", label: "咨询管理" },
   { key: "users", label: "账号管理" },
+  { key: "experts", label: "专家团队" },
 ];
 
 // ─── Toast ───────────────────────────────────────────────────────────────────
@@ -2131,6 +2132,407 @@ function UsersEditor() {
   );
 }
 
+// ─── Experts Editor ────────────────────────────────────────────────────────────
+
+interface Expert {
+  id: string;
+  name: string;
+  title: string;
+  org: string;
+  focus: string;
+  avatar: string | null;
+  order: number;
+}
+
+function ExpertsEditor() {
+  const [experts, setExperts] = useState<Expert[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingExpert, setEditingExpert] = useState<Expert | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    title: "",
+    org: "",
+    focus: "",
+    avatar: "",
+  });
+
+  const getToken = () => sessionStorage.getItem("admin_token") ?? "";
+
+  // 加载专家列表
+  const loadExperts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/experts", {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setExperts(data);
+      }
+    } catch {
+      console.error("Failed to load experts");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadExperts();
+  }, [loadExperts]);
+
+  // 打开添加/编辑弹窗
+  const openModal = (expert?: Expert) => {
+    if (expert) {
+      setEditingExpert(expert);
+      setFormData({
+        name: expert.name,
+        title: expert.title,
+        org: expert.org,
+        focus: expert.focus,
+        avatar: expert.avatar || "",
+      });
+    } else {
+      setEditingExpert(null);
+      setFormData({ name: "", title: "", org: "", focus: "", avatar: "" });
+    }
+    setModalOpen(true);
+  };
+
+  // 保存专家
+  const saveExpert = async () => {
+    if (!formData.name || !formData.title || !formData.org || !formData.focus) {
+      alert("请填写所有必填项");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const token = getToken();
+      let res;
+
+      if (editingExpert) {
+        // 更新
+        res = await fetch(`/api/admin/experts/${editingExpert.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        // 创建
+        res = await fetch("/api/admin/experts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+      }
+
+      if (res.ok) {
+        setModalOpen(false);
+        loadExperts();
+      } else {
+        const error = await res.json().catch(() => ({ error: "未知错误" }));
+        alert(`操作失败: ${error.error}`);
+      }
+    } catch {
+      alert("操作失败，请检查网络");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // 删除专家
+  const deleteExpert = async (expert: Expert) => {
+    if (!confirm(`确定要删除专家 "${expert.name}" 吗？`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/experts/${expert.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+
+      if (res.ok) {
+        loadExperts();
+      } else {
+        alert("删除失败");
+      }
+    } catch {
+      alert("删除失败，请检查网络");
+    }
+  };
+
+  // 上移
+  const moveUp = async (index: number) => {
+    if (index === 0) return;
+    const newExperts = [...experts];
+    [newExperts[index - 1], newExperts[index]] = [newExperts[index], newExperts[index - 1]];
+
+    // 更新 order 值
+    try {
+      const token = getToken();
+      await Promise.all([
+        fetch(`/api/admin/experts/${newExperts[index].id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ order: index }),
+        }),
+        fetch(`/api/admin/experts/${newExperts[index - 1].id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ order: index - 1 }),
+        }),
+      ]);
+      loadExperts();
+    } catch {
+      alert("排序失败");
+    }
+  };
+
+  // 下移
+  const moveDown = async (index: number) => {
+    if (index === experts.length - 1) return;
+    const newExperts = [...experts];
+    [newExperts[index], newExperts[index + 1]] = [newExperts[index + 1], newExperts[index]];
+
+    // 更新 order 值
+    try {
+      const token = getToken();
+      await Promise.all([
+        fetch(`/api/admin/experts/${newExperts[index].id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ order: index }),
+        }),
+        fetch(`/api/admin/experts/${newExperts[index + 1].id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ order: index + 1 }),
+        }),
+      ]);
+      loadExperts();
+    } catch {
+      alert("排序失败");
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-gray-400">加载中...</div>;
+  }
+
+  return (
+    <>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">专家团队</h3>
+          <button
+            onClick={() => openModal()}
+            className="bg-[#1A3C8A] text-white px-4 py-2 rounded-md text-sm hover:bg-[#15306e] transition-colors"
+          >
+            + 添加专家
+          </button>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-3 px-4 font-medium text-gray-700">头像</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">姓名</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">职称</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">机构</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">研究方向</th>
+                <th className="text-right py-3 px-4 font-medium text-gray-700">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {experts.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
+                    暂无专家，点击上方按钮添加
+                  </td>
+                </tr>
+              ) : (
+                experts.map((expert, index) => (
+                  <tr key={expert.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                      {expert.avatar ? (
+                        <img
+                          src={expert.avatar}
+                          alt={expert.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-400 text-xs">无</span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-3 px-4">{expert.name}</td>
+                    <td className="py-3 px-4">{expert.title}</td>
+                    <td className="py-3 px-4">{expert.org}</td>
+                    <td className="py-3 px-4">{expert.focus}</td>
+                    <td className="py-3 px-4 text-right">
+                      <button
+                        onClick={() => moveUp(index)}
+                        disabled={index === 0}
+                        className="text-gray-500 hover:text-gray-700 disabled:opacity-30 mr-2"
+                        title="上移"
+                      >
+                        ?
+                      </button>
+                      <button
+                        onClick={() => moveDown(index)}
+                        disabled={index === experts.length - 1}
+                        className="text-gray-500 hover:text-gray-700 disabled:opacity-30 mr-3"
+                        title="下移"
+                      >
+                        ?
+                      </button>
+                      <button
+                        onClick={() => openModal(expert)}
+                        className="text-[#1A3C8A] hover:underline mr-3"
+                      >
+                        编辑
+                      </button>
+                      <button
+                        onClick={() => deleteExpert(expert)}
+                        className="text-red-500 hover:underline"
+                      >
+                        删除
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* 添加/编辑弹窗 */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">
+                  {editingExpert ? "编辑专家" : "添加专家"}
+                </h3>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    姓名 *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="请输入姓名"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    职称 *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="请输入职称"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    机构 *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={formData.org}
+                    onChange={(e) => setFormData({ ...formData, org: e.target.value })}
+                    placeholder="请输入机构"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    研究方向 *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+                    value={formData.focus}
+                    onChange={(e) => setFormData({ ...formData, focus: e.target.value })}
+                    placeholder="请输入研究方向"
+                  />
+                </div>
+
+                <div>
+                  <ImageButton
+                    label="头像"
+                    value={formData.avatar}
+                    onChange={(v) => setFormData({ ...formData, avatar: v })}
+                    type="experts"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={saveExpert}
+                  disabled={saving}
+                  className="px-4 py-2 text-sm bg-[#1A3C8A] text-white rounded hover:bg-[#15306e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {saving ? "保存中..." : "保存"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ─── Main Admin Page ─────────────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -2284,6 +2686,8 @@ export default function AdminPage() {
         return <ConsultationsEditor />;
       case "users":
         return <UsersEditor />;
+      case "experts":
+        return <ExpertsEditor />;
       default:
         return null;
     }
@@ -2407,7 +2811,7 @@ export default function AdminPage() {
               <h2 className="text-xl font-bold text-gray-900">
                 {NAV_ITEMS.find((n) => n.key === activeSection)?.label}
               </h2>
-              {activeSection !== "cases" && activeSection !== "users" && (
+              {activeSection !== "cases" && activeSection !== "users" && activeSection !== "experts" && (
                 <button
                   onClick={handleSave}
                   disabled={saving || loading}
