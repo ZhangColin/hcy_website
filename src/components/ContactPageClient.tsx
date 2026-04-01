@@ -300,6 +300,7 @@ export default function ContactPageClient({ contactData, siteData }: { contactDa
                 lng={siteData.mapLng}
                 lat={siteData.mapLat}
                 address={siteData.address}
+                companyName={siteData.companyName || "海创源科技中心"}
                 className="min-h-[320px]"
               />
             ) : (

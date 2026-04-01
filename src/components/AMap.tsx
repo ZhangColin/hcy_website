@@ -7,23 +7,39 @@ interface AMapProps {
   lng: string;
   lat: string;
   address?: string;
+  companyName?: string;
   className?: string;
 }
 
-export function AMap({ lng, lat, address, className = "" }: AMapProps) {
+export function AMap({ lng, lat, address, companyName = "海创源科技中心", className = "" }: AMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
 
   useEffect(() => {
+    // 添加自定义样式，去除标签背景框
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .amap-marker-label {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #333 !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.9), -1px -1px 2px rgba(255,255,255,0.9) !important;
+        padding: 4px 8px !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     // 动态加载高德地图脚本
     const loadScript = () => {
       if (window.AMap) return; // 已加载
 
       const script = document.createElement("script");
-      // 使用环境变量中的高德地图 key 和 jscode
+      // 使用环境变量中的高德地图 key
       const amapKey = process.env.NEXT_PUBLIC_AMAP_KEY || "";
-      const amapJsCode = process.env.NEXT_PUBLIC_AMAP_JS_CODE || "";
-      script.src = `https://webapi.amap.com/maps?v=2.0&key=${amapKey}&jscode=${amapJsCode}`;
+      script.src = `https://webapi.amap.com/maps?v=2.0&key=${amapKey}`;
       script.onerror = () => {
         console.error("高德地图加载失败，请检查 API Key 是否配置正确");
       };
@@ -41,10 +57,15 @@ export function AMap({ lng, lat, address, className = "" }: AMapProps) {
         viewMode: "3D",
       });
 
-      // 添加标记
+      // 添加标记，带标签
       const marker = new window.AMap.Marker({
         position: [parseFloat(lng), parseFloat(lat)],
         title: address || "公司地址",
+        label: {
+          content: companyName,
+          direction: "top",
+          offset: new window.AMap.Pixel(0, 5),
+        },
       });
 
       map.add(marker);
@@ -58,8 +79,12 @@ export function AMap({ lng, lat, address, className = "" }: AMapProps) {
 
     return () => {
       clearTimeout(timer);
+      // 清理样式
+      if (style.parentNode) {
+        style.parentNode.removeChild(style);
+      }
     };
-  }, [lng, lat, address]);
+  }, [lng, lat, address, companyName]);
 
   return (
     <div
