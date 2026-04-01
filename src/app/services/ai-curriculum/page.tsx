@@ -492,12 +492,10 @@ export default function AICurriculumPage() {
             {/* STD-1 */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
               <div className="bg-gray-100 h-56 flex items-center justify-center">
-                <div className="text-center text-gray-400">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span className="text-sm">产品图片占位</span>
-                </div>
+                <img
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/hero/20260401-33692ee9-2a99-43f7-9056-8a89e5716d57.png`}
+                          className="w-full h-full object-cover"
+                        />
               </div>
               <div className="p-8">
                 <div className="inline-block bg-[#1565C0]/10 text-[#1565C0] text-xs font-bold px-3 py-1 rounded-full mb-3">
@@ -508,7 +506,7 @@ export default function AICurriculumPage() {
                 <div className="space-y-2 text-sm text-gray-500">
                   <div className="flex justify-between">
                     <span>处理器</span>
-                    <span className="text-gray-700">英特尔酷睿 i5-12400</span>
+                    <span className="text-gray-700">英特尔酷睿 i7-12400</span>
                   </div>
                   <div className="flex justify-between">
                     <span>内存</span>
@@ -536,12 +534,10 @@ export default function AICurriculumPage() {
             {/* SMU-1/SMU-2 */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
               <div className="bg-gradient-to-br from-[#1A3C8A]/5 to-[#D4A843]/5 h-56 flex items-center justify-center">
-                <div className="text-center text-gray-400">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                  </svg>
-                  <span className="text-sm">产品图片占位</span>
-                </div>
+                <img
+                          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/hero/20260401-6ebaa752-bdd8-4609-b8f4-c99bbab0558d.png`}
+                          className="w-full h-full object-cover"
+                        />
               </div>
               <div className="p-8">
                 <div className="inline-block bg-[#D4A843]/10 text-[#D4A843] text-xs font-bold px-3 py-1 rounded-full mb-3">
@@ -552,7 +548,7 @@ export default function AICurriculumPage() {
                 <div className="space-y-2 text-sm text-gray-500">
                   <div className="flex justify-between">
                     <span>处理器</span>
-                    <span className="text-gray-700">英特尔酷睿 i5-12400</span>
+                    <span className="text-gray-700">U7 265K</span>
                   </div>
                   <div className="flex justify-between">
                     <span>内存</span>
