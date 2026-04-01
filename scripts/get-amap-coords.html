@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高德地图坐标拾取工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1A3C8A;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #1A3C8A;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2B6CB0;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .coord-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1A3C8A;
+            margin: 10px 0;
+        }
+        .copy-btn {
+            margin-left: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>高德地图坐标拾取工具</h1>
+
+    <div class="note">
+        <strong>使用说明：</strong>
+        <ol>
+            <li>在下方输入框中输入完整地址（例如：北京市海淀区融汇国际大厦）</li>
+            <li>点击"搜索地址"按钮</li>
+            <li>地图会显示该位置，并在下方显示精确的经纬度坐标（6位小数）</li>
+            <li>点击"复制"按钮，将坐标粘贴到管理后台的地图配置中</li>
+        </ol>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="address" placeholder="请输入地址，例如：北京市海淀区融汇国际大厦" value="北京市海淀区融汇国际大厦">
+        <button onclick="searchAddress()">搜索地址</button>
+    </div>
+
+    <div class="result" id="result">
+        <div class="coord-display" id="coords"></div>
+        <div id="formatted-address"></div>
+    </div>
+
+    <div id="map"></div>
+
+    <script type="text/javascript">
+        let map = null;
+        let marker = null;
+        let geocoder = null;
+
+        function initMap() {
+            // 创建地图实例
+            map = new AMap.Map('map', {
+                zoom: 15,
+                center: [116.397428, 39.90923], // 默认中心：北京
+                viewMode: '3D'
+            });
+
+            // 初始化地理编码服务
+            AMap.plugin('AMap.Geocoder', function() {
+                geocoder = new AMap.Geocoder();
+            });
+        }
+
+        function searchAddress() {
+            const address = document.getElementById('address').value;
+            if (!address) {
+                alert('请输入地址');
+                return;
+            }
+
+            if (!geocoder) {
+                alert('地图服务未加载完成，请稍后再试');
+                return;
+            }
+
+            // 使用地理编码获取坐标
+            geocoder.getLocation(address, function(status, result) {
+                if (status === 'complete' && result.geocodes.length) {
+                    const location = result.geocodes[0].location;
+                    const lng = location.lng.toFixed(6);
+                    const lat = location.lat.toFixed(6);
+                    const formattedAddress = result.geocodes[0].formattedAddress;
+
+                    // 显示结果
+                    document.getElementById('coords').innerHTML =
+                        `经度：<span id="lng">${lng}</span> <button class="copy-btn" onclick="copyToClipboard('${lng}')">复制经度</button><br>` +
+                        `纬度：<span id="lat">${lat}</span> <button class="copy-btn" onclick="copyToClipboard('${lat}')">复制纬度</button><br>` +
+                        `<button class="copy-btn" onclick="copyBoth('${lng}','${lat}')">复制完整坐标</button>`;
+                    document.getElementById('formatted-address').textContent = formattedAddress;
+                    document.getElementById('result').classList.add('show');
+
+                    // 更新地图中心点和标记
+                    map.setCenter([lng, lat]);
+                    map.setZoom(16);
+
+                    if (marker) {
+                        marker.setMap(null);
+                    }
+
+                    marker = new AMap.Marker({
+                        position: [lng, lat],
+                        title: formattedAddress
+                    });
+                    marker.setMap(map);
+                } else {
+                    alert('未找到该地址，请检查地址是否正确');
+                }
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('已复制：' + text);
+            }, function(err) {
+                // 降级方案
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                alert('已复制：' + text);
+            });
+        }
+
+        function copyBoth(lng, lat) {
+            const coords = `${lng}, ${lat}`;
+            copyToClipboard(coords);
+        }
+
+        // 加载高德地图脚本
+        const script = document.createElement('script');
+        script.src = 'https://webapi.amap.com/maps?v=2.0&key=6baee14cf2ccc1fe1a096a4475c85c27';
+        script.onload = initMap;
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
