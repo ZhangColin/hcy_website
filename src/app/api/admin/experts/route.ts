@@ -9,10 +9,18 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || "";
     const experts = await prisma.expert.findMany({
       orderBy: { order: "asc" },
     });
-    return NextResponse.json(experts);
+
+    // 为头像添加 CDN 前缀
+    const expertsWithUrls = experts.map((expert) => ({
+      ...expert,
+      avatar: expert.avatar ? `${imageBaseUrl}${expert.avatar}` : null,
+    }));
+
+    return NextResponse.json(expertsWithUrls);
   } catch (error) {
     console.error("[API Error] GET /admin/experts:", error);
     return NextResponse.json({ error: "获取专家列表失败" }, { status: 500 });

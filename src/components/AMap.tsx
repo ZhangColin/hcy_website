@@ -20,8 +20,13 @@ export function AMap({ lng, lat, address, className = "" }: AMapProps) {
       if (window.AMap) return; // 已加载
 
       const script = document.createElement("script");
-      // 使用高德地图 WebJS API，这里使用测试 key
-      script.src = "https://webapi.amap.com/maps?v=2.0&key=YOUR_AMAP_KEY";
+      // 使用环境变量中的高德地图 key 和 jscode
+      const amapKey = process.env.NEXT_PUBLIC_AMAP_KEY || "";
+      const amapJsCode = process.env.NEXT_PUBLIC_AMAP_JS_CODE || "";
+      script.src = `https://webapi.amap.com/maps?v=2.0&key=${amapKey}&jscode=${amapJsCode}`;
+      script.onerror = () => {
+        console.error("高德地图加载失败，请检查 API Key 是否配置正确");
+      };
       script.onload = initMap;
       document.head.appendChild(script);
     };

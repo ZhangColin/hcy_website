@@ -42,6 +42,12 @@ interface SchoolCase {
   schoolLogo?: string | null;
 }
 
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
+
 interface Competition {
   title: string;
   level: string;
@@ -108,6 +114,15 @@ export default function CasesPage() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [buttons, setButtons] = useState<{ cta: Button[] }>({ cta: [] });
+
+  // Fetch buttons data
+  useEffect(() => {
+    fetch('/api/buttons/cases')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ cta: [] }));
+  }, []);
 
   // Fetch data from API on mount
   useEffect(() => {
@@ -513,21 +528,25 @@ export default function CasesPage() {
                 无论您是学校、教育机构还是政企单位，海创元都能为您提供专业的AI教育解决方案
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-[#D4A843] hover:bg-[#c49a3a] text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                >
-                  联系我们
-                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/about"
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl transition-all duration-300"
-                >
-                  了解更多
-                </Link>
+                {buttons.cta?.map((btn, i) => (
+                  <Link
+                    key={i}
+                    href={btn.href}
+                    target={btn.openNewTab ? '_blank' : undefined}
+                    rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                    className={i === 0
+                      ? "inline-flex items-center justify-center px-8 py-4 bg-[#D4A843] hover:bg-[#c49a3a] text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                      : "inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl transition-all duration-300"
+                    }
+                  >
+                    {btn.label}
+                    {i === 0 && (
+                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    )}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

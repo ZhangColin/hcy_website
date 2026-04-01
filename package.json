@@ -14,7 +14,8 @@
     "prisma:seed": "prisma db seed",
     "prisma:check": "sh scripts/check-migrations.sh",
     "migrate:data": "tsx scripts/migrate-data.ts",
-    "migrate:old-news": "tsx scripts/migrate-news-from-old-db.ts"
+    "migrate:old-news": "tsx scripts/migrate-news-from-old-db.ts",
+    "generate:news-sql": "tsx scripts/generate-news-sql.ts"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.6",

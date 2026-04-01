@@ -608,7 +608,7 @@ function CompetitionForm({
   );
 }
 
-function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
+function CasesEditor({ data, setData, showToast }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void; showToast: (message: string, type: "success" | "error") => void }) {
   const schools = (data.schoolCases as Record<string, unknown>[]) ?? [];
   const competitions = (data.competitionHonors as Record<string, string>[]) ?? [];
   const [saving, setSaving] = useState(false);
@@ -628,14 +628,14 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
       });
       if (res.ok) {
         setData(updatedData);
-        alert("保存成功");
+        showToast("保存成功", "success");
       } else {
         const errorData = await res.json().catch(() => ({ error: "未知错误" }));
-        alert(`保存失败: ${errorData.error || "未知错误"}`);
+        showToast(`保存失败: ${errorData.error || "未知错误"}`, "error");
       }
     } catch (err) {
       console.error("保存异常:", err);
-      alert("保存失败，请检查网络");
+      showToast("保存失败，请检查网络", "error");
     } finally {
       setSaving(false);
     }
@@ -676,7 +676,7 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
   // Save school
   const saveSchool = async () => {
     if (!schoolFormData.name || !schoolFormData.region) {
-      alert("请填写学校名称和地区");
+      showToast("请填写学校名称和地区", "error");
       return;
     }
     let updated;
@@ -712,7 +712,7 @@ function CasesEditor({ data, setData }: { data: Record<string, unknown>; setData
   // Save competition
   const saveCompetition = async () => {
     if (!competitionFormData.title || !competitionFormData.level || !competitionFormData.year || !competitionFormData.achievements) {
-      alert("请填写所有必填项");
+      showToast("请填写所有必填项", "error");
       return;
     }
     let updated;
@@ -1201,7 +1201,7 @@ interface ConsultationsListResponse {
   limit: number;
 }
 
-function ConsultationsEditor() {
+function ConsultationsEditor({ showToast }: { showToast: (message: string, type: "success" | "error") => void }) {
   const [items, setItems] = useState<ConsultationItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -1748,7 +1748,7 @@ function ConsultationsEditor() {
 
 // ─── Users Editor ────────────────────────────────────────────────────────────
 
-function UsersEditor() {
+function UsersEditor({ showToast }: { showToast: (message: string, type: "success" | "error") => void }) {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -1810,7 +1810,7 @@ function UsersEditor() {
   // 保存用户
   const saveUser = async () => {
     if (!formData.username || (editingUser ? false : !formData.password)) {
-      alert("请填写必填项");
+      showToast("请填写必填项", "error");
       return;
     }
 
@@ -1849,10 +1849,10 @@ function UsersEditor() {
         loadUsers();
       } else {
         const error = await res.json().catch(() => ({ error: "未知错误" }));
-        alert(`操作失败: ${error.error}`);
+        showToast(`操作失败: ${error.error}`, "error");
       }
     } catch {
-      alert("操作失败，请检查网络");
+      showToast("操作失败，请检查网络", "error");
     }
   };
 
@@ -1872,10 +1872,10 @@ function UsersEditor() {
         loadUsers();
       } else {
         const error = await res.json().catch(() => ({ error: "未知错误" }));
-        alert(`删除失败: ${error.error}`);
+        showToast(`删除失败: ${error.error}`, "error");
       }
     } catch {
-      alert("删除失败，请检查网络");
+      showToast("删除失败，请检查网络", "error");
     }
   };
 
@@ -1889,11 +1889,11 @@ function UsersEditor() {
   // 重置密码
   const resetPassword = async () => {
     if (!passwordForm.password || !passwordForm.confirmPassword) {
-      alert("请填写密码和确认密码");
+      showToast("请填写密码和确认密码", "error");
       return;
     }
     if (passwordForm.password !== passwordForm.confirmPassword) {
-      alert("两次输入的密码不一致");
+      showToast("两次输入的密码不一致", "error");
       return;
     }
 
@@ -1909,13 +1909,13 @@ function UsersEditor() {
 
       if (res.ok) {
         setPasswordModalOpen(false);
-        alert("密码已重置");
+        showToast("密码已重置", "success");
       } else {
         const error = await res.json().catch(() => ({ error: "未知错误" }));
-        alert(`重置失败: ${error.error}`);
+        showToast(`重置失败: ${error.error}`, "error");
       }
     } catch {
-      alert("重置失败，请检查网络");
+      showToast("重置失败，请检查网络", "error");
     }
   };
 
@@ -2145,7 +2145,7 @@ interface Expert {
   order: number;
 }
 
-function ExpertsEditor() {
+function ExpertsEditor({ showToast }: { showToast: (message: string, type: "success" | "error") => void }) {
   const [experts, setExperts] = useState<Expert[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -2204,7 +2204,7 @@ function ExpertsEditor() {
   // 保存专家
   const saveExpert = async () => {
     if (!formData.name || !formData.title || !formData.org || !formData.focus) {
-      alert("请填写所有必填项");
+      showToast("请填写所有必填项", "error");
       return;
     }
 
@@ -2240,10 +2240,10 @@ function ExpertsEditor() {
         loadExperts();
       } else {
         const error = await res.json().catch(() => ({ error: "未知错误" }));
-        alert(`操作失败: ${error.error}`);
+        showToast(`操作失败: ${error.error}`, "error");
       }
     } catch {
-      alert("操作失败，请检查网络");
+      showToast("操作失败，请检查网络", "error");
     } finally {
       setSaving(false);
     }
@@ -2264,10 +2264,10 @@ function ExpertsEditor() {
       if (res.ok) {
         loadExperts();
       } else {
-        alert("删除失败");
+        showToast("删除失败", "error");
       }
     } catch {
-      alert("删除失败，请检查网络");
+      showToast("删除失败，请检查网络", "error");
     }
   };
 
@@ -2300,7 +2300,7 @@ function ExpertsEditor() {
       ]);
       loadExperts();
     } catch {
-      alert("排序失败");
+      showToast("排序失败", "error");
     }
   };
 
@@ -2333,7 +2333,7 @@ function ExpertsEditor() {
       ]);
       loadExperts();
     } catch {
-      alert("排序失败");
+      showToast("排序失败", "error");
     }
   };
 
@@ -2558,7 +2558,11 @@ interface ButtonGroup {
   }[];
 }
 
-function ButtonsEditor() {
+interface ButtonsEditorProps {
+  showToast: (message: string, type: "success" | "error") => void;
+}
+
+function ButtonsEditor({ showToast }: ButtonsEditorProps) {
   const [groups, setGroups] = useState<ButtonGroup[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -2595,8 +2599,19 @@ function ButtonsEditor() {
           position.buttons.push(btn);
         }
 
-        // 对每个位置的按钮按 order 排序
+        // 定义位置显示顺序：hero 在上，cta 在下
+        const positionOrder: Record<string, number> = { hero: 0, cta: 1 };
+
+        // 对每个位置的按钮按 order 排序，并按 positionKey 顺序排列 positions
         for (const group of Object.values(grouped)) {
+          // 先对 positions 按 hero -> cta 排序
+          group.positions.sort((a, b) => {
+            const orderA = positionOrder[a.key] ?? 999;
+            const orderB = positionOrder[b.key] ?? 999;
+            return orderA - orderB;
+          });
+
+          // 再对每个位置内的按钮按 order 排序
           for (const pos of group.positions) {
             pos.buttons.sort((a, b) => a.order - b.order);
           }
@@ -2605,15 +2620,15 @@ function ButtonsEditor() {
         setGroups(Object.values(grouped));
       } else {
         const errorData = await res.json().catch(() => ({ error: "未知错误" }));
-        alert(`加载失败: ${errorData.error || "未知错误"}`);
+        showToast(`加载失败: ${errorData.error || "未知错误"}`, "error");
       }
     } catch {
       console.error("Failed to load buttons");
-      alert("加载失败，请检查网络连接");
+      showToast("加载失败，请检查网络连接", "error");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => {
     loadButtons();
@@ -2647,14 +2662,14 @@ function ButtonsEditor() {
       });
 
       if (res.ok) {
-        alert("保存成功");
+        showToast("保存成功", "success");
         loadButtons();
       } else {
         const errorData = await res.json().catch(() => ({ error: "未知错误" }));
-        alert(`保存失败: ${errorData.error || "未知错误"}`);
+        showToast(`保存失败: ${errorData.error || "未知错误"}`, "error");
       }
     } catch {
-      alert("保存失败，请检查网络");
+      showToast("保存失败，请检查网络", "error");
     } finally {
       setSaving(false);
     }
@@ -2686,7 +2701,7 @@ function ButtonsEditor() {
           disabled={saving}
           className="bg-[#1A3C8A] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#15306e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
         >
-          {saving ? "保存中..." : "保存全部"}
+          {saving ? "保存中..." : "保存"}
         </button>
       </div>
 
@@ -2878,6 +2893,7 @@ export default function AdminPage() {
     const props = {
       data: sectionData,
       setData: setSectionData,
+      showToast,
     };
 
     switch (activeSection) {
@@ -2898,13 +2914,13 @@ export default function AdminPage() {
       case "join":
         return <JoinEditor {...props} />;
       case "consultations":
-        return <ConsultationsEditor />;
+        return <ConsultationsEditor showToast={showToast} />;
       case "users":
-        return <UsersEditor />;
+        return <UsersEditor showToast={showToast} />;
       case "experts":
-        return <ExpertsEditor />;
+        return <ExpertsEditor showToast={showToast} />;
       case "buttons":
-        return <ButtonsEditor />;
+        return <ButtonsEditor showToast={showToast} />;
       default:
         return null;
     }
@@ -3028,7 +3044,7 @@ export default function AdminPage() {
               <h2 className="text-xl font-bold text-gray-900">
                 {NAV_ITEMS.find((n) => n.key === activeSection)?.label}
               </h2>
-              {activeSection !== "cases" && activeSection !== "users" && activeSection !== "experts" && (
+              {activeSection !== "cases" && activeSection !== "users" && activeSection !== "experts" && activeSection !== "buttons" && (
                 <button
                   onClick={handleSave}
                   disabled={saving || loading}

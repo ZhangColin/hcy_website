@@ -1,6 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const platforms = [
   {
@@ -71,6 +78,15 @@ const advantages = [
 ];
 
 export default function SmartServicesPage() {
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/smart-services')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
@@ -114,12 +130,20 @@ export default function SmartServicesPage() {
               数智平台工坊 + 卓识战略智库
             </p>
             <div className="flex flex-wrap gap-4">
-              <a href="#cta" className="inline-flex items-center px-8 py-3 bg-[#D4A843] hover:bg-[#c49a38] text-white font-semibold rounded-lg transition-colors shadow-lg">
-                预约咨询
-              </a>
-              <a href="#platforms" className="inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20">
-                了解平台方案
-              </a>
+              {buttons.hero?.map((btn, i) => (
+                <a
+                  key={i}
+                  href={btn.href}
+                  target={btn.openNewTab ? '_blank' : undefined}
+                  rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                  className={i === 0
+                    ? "inline-flex items-center px-8 py-3 bg-[#D4A843] hover:bg-[#c49a38] text-white font-semibold rounded-lg transition-colors shadow-lg"
+                    : "inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20"
+                  }
+                >
+                  {btn.label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -245,12 +269,24 @@ export default function SmartServicesPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">开启数智化转型之旅</h2>
           <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto">无论是平台部署还是战略咨询，我们为您提供专业的解决方案</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-10 py-4 bg-[#1A3C8A] hover:bg-[#0f2557] text-white font-bold rounded-lg text-lg transition-colors shadow-lg">
-              预约咨询
-            </button>
-            <button className="px-10 py-4 bg-white hover:bg-gray-50 text-[#1A3C8A] font-bold rounded-lg text-lg transition-colors border-2 border-[#1A3C8A]">
-              申请平台演示
-            </button>
+            {buttons.cta?.map((btn, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (btn.openNewTab) {
+                    window.open(btn.href, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = btn.href;
+                  }
+                }}
+                className={i === 0
+                  ? "px-10 py-4 bg-[#1A3C8A] hover:bg-[#0f2557] text-white font-bold rounded-lg text-lg transition-colors shadow-lg"
+                  : "px-10 py-4 bg-white hover:bg-gray-50 text-[#1A3C8A] font-bold rounded-lg text-lg transition-colors border-2 border-[#1A3C8A]"
+                }
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>

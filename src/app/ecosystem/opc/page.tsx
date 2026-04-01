@@ -1,6 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const orderTypes = [
   {
@@ -125,6 +132,15 @@ const barriers = [
 ];
 
 export default function OPCPage() {
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/opc')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
@@ -168,12 +184,20 @@ export default function OPCPage() {
               以真实订单激活超级个体网络
             </p>
             <div className="flex flex-wrap gap-4">
-              <a href="#cta" className="inline-flex items-center px-8 py-3 bg-[#D4A843] hover:bg-[#c49a38] text-white font-semibold rounded-lg transition-colors shadow-lg">
-                立即报名
-              </a>
-              <a href="#training" className="inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20">
-                了解养成计划
-              </a>
+              {buttons.hero?.map((btn, i) => (
+                <a
+                  key={i}
+                  href={btn.href}
+                  target={btn.openNewTab ? '_blank' : undefined}
+                  rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                  className={i === 0
+                    ? "inline-flex items-center px-8 py-3 bg-[#D4A843] hover:bg-[#c49a38] text-white font-semibold rounded-lg transition-colors shadow-lg"
+                    : "inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20"
+                  }
+                >
+                  {btn.label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -358,12 +382,24 @@ export default function OPCPage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">加入OPC生态，开启超级个体之路</h2>
           <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">系统化培养+真实订单驱动，让AI技能转化为可持续收入</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-10 py-4 bg-[#D4A843] hover:bg-[#c49a38] text-white font-bold rounded-lg text-lg transition-colors shadow-lg">
-              立即报名OPC养成计划
-            </button>
-            <button className="px-10 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-lg text-lg transition-colors border border-white/25 backdrop-blur-sm">
-              了解接单机会
-            </button>
+            {buttons.cta?.map((btn, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (btn.openNewTab) {
+                    window.open(btn.href, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = btn.href;
+                  }
+                }}
+                className={i === 0
+                  ? "px-10 py-4 bg-[#D4A843] hover:bg-[#c49a38] text-white font-bold rounded-lg text-lg transition-colors shadow-lg"
+                  : "px-10 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-lg text-lg transition-colors border border-white/25 backdrop-blur-sm"
+                }
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>

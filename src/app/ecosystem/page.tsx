@@ -1,4 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const services = [
 
@@ -33,6 +42,15 @@ const services = [
 ];
 
 export default function EcosystemPage() {
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/ecosystem')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
+
   return (
     <main>
       {/* Breadcrumb */}
@@ -57,9 +75,24 @@ export default function EcosystemPage() {
       <section className="text-white py-20" style={{ background: "linear-gradient(135deg, #004D40 0%, #00796B 100%)" }}>
         <div className="max-w-[1200px] mx-auto px-6">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">产融生态矩阵</h1>
-          <p className="text-xl text-green-100 max-w-2xl">
+          <p className="text-xl text-green-100 max-w-2xl mb-8">
             以政企AI赋能培训、OPC生态、智创专项服务、不良资产盘活四大业务线，构建产业融合生态，实现规模化交付。
           </p>
+          {buttons.hero && buttons.hero.length > 0 && (
+            <div className="flex flex-wrap gap-4">
+              {buttons.hero.map((btn, i) => (
+                <a
+                  key={i}
+                  href={btn.href}
+                  target={btn.openNewTab ? '_blank' : undefined}
+                  rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                  className="inline-flex items-center px-6 py-3 bg-[#D4A843] text-white font-medium rounded-lg hover:bg-[#c49a3a] transition-colors"
+                >
+                  {btn.label}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

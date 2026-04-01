@@ -1,6 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const modules = [
   {
@@ -99,6 +106,15 @@ const cases = [
 ];
 
 export default function EnterpriseTrainingPage() {
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/enterprise-training')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
@@ -142,12 +158,20 @@ export default function EnterpriseTrainingPage() {
               AI赋能千行百业 · 数智人才实战锻造
             </p>
             <div className="flex flex-wrap gap-4">
-              <a href="#cta" className="inline-flex items-center px-8 py-3 bg-[#D4A843] hover:bg-[#c49a38] text-white font-semibold rounded-lg transition-colors shadow-lg">
-                定制培训方案
-              </a>
-              <a href="#courses" className="inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20">
-                了解课程体系
-              </a>
+              {buttons.hero?.map((btn, i) => (
+                <a
+                  key={i}
+                  href={btn.href}
+                  target={btn.openNewTab ? '_blank' : undefined}
+                  rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                  className={i === 0
+                    ? "inline-flex items-center px-8 py-3 bg-[#D4A843] hover:bg-[#c49a38] text-white font-semibold rounded-lg transition-colors shadow-lg"
+                    : "inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20"
+                  }
+                >
+                  {btn.label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -264,12 +288,24 @@ export default function EnterpriseTrainingPage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">开启AI赋能培训之旅</h2>
           <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">根据您的行业特点与团队需求，定制专属AI培训方案</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-10 py-4 bg-[#D4A843] hover:bg-[#c49a38] text-white font-bold rounded-lg text-lg transition-colors shadow-lg">
-              定制企业培训方案
-            </button>
-            <button className="px-10 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-lg text-lg transition-colors border border-white/25 backdrop-blur-sm">
-              咨询合作
-            </button>
+            {buttons.cta?.map((btn, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (btn.openNewTab) {
+                    window.open(btn.href, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = btn.href;
+                  }
+                }}
+                className={i === 0
+                  ? "px-10 py-4 bg-[#D4A843] hover:bg-[#c49a38] text-white font-bold rounded-lg text-lg transition-colors shadow-lg"
+                  : "px-10 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-lg text-lg transition-colors border border-white/25 backdrop-blur-sm"
+                }
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>

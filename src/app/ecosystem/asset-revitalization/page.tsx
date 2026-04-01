@@ -1,6 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+
+interface Button {
+  label: string;
+  href: string;
+  openNewTab?: boolean;
+}
 
 const triangleNodes = [
   {
@@ -115,6 +122,15 @@ const aiCapabilities = [
 ];
 
 export default function AssetRevitalizationPage() {
+  const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
+
+  useEffect(() => {
+    fetch('/api/buttons/asset-revitalization')
+      .then(res => res.json())
+      .then(setButtons)
+      .catch(() => setButtons({ hero: [], cta: [] }));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumb */}
@@ -158,12 +174,20 @@ export default function AssetRevitalizationPage() {
               三角稳定架构驱动，AI轻资产运营赋能，让沉睡资产焕发新生
             </p>
             <div className="flex flex-wrap gap-4">
-              <a href="#cta" className="inline-flex items-center px-8 py-3 bg-white hover:bg-gray-100 text-[#8B6914] font-semibold rounded-lg transition-colors shadow-lg">
-                洽谈合作
-              </a>
-              <a href="#triangle" className="inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20">
-                了解架构模式
-              </a>
+              {buttons.hero?.map((btn, i) => (
+                <a
+                  key={i}
+                  href={btn.href}
+                  target={btn.openNewTab ? '_blank' : undefined}
+                  rel={btn.openNewTab ? 'noopener noreferrer' : undefined}
+                  className={i === 0
+                    ? "inline-flex items-center px-8 py-3 bg-white hover:bg-gray-100 text-[#8B6914] font-semibold rounded-lg transition-colors shadow-lg"
+                    : "inline-flex items-center px-8 py-3 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-lg transition-colors backdrop-blur-sm border border-white/20"
+                  }
+                >
+                  {btn.label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -392,12 +416,24 @@ export default function AssetRevitalizationPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">让沉睡资产焕发新生</h2>
           <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto">三角稳定架构 + AI轻资产运营，为您提供专业的不良资产盘活解决方案</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-10 py-4 bg-[#00796B] hover:bg-[#004d40] text-white font-bold rounded-lg text-lg transition-colors shadow-lg">
-              洽谈合作
-            </button>
-            <button className="px-10 py-4 bg-white hover:bg-gray-50 text-[#00796B] font-bold rounded-lg text-lg transition-colors border-2 border-[#00796B]">
-              获取盘活方案
-            </button>
+            {buttons.cta?.map((btn, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (btn.openNewTab) {
+                    window.open(btn.href, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = btn.href;
+                  }
+                }}
+                className={i === 0
+                  ? "px-10 py-4 bg-[#00796B] hover:bg-[#004d40] text-white font-bold rounded-lg text-lg transition-colors shadow-lg"
+                  : "px-10 py-4 bg-white hover:bg-gray-50 text-[#00796B] font-bold rounded-lg text-lg transition-colors border-2 border-[#00796B]"
+                }
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>

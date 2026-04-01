@@ -1,4 +1,5 @@
 import { NewsEditorClient } from '@/components/NewsEditorClient';
+import { ToastProvider } from '@/components/Toast';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -18,23 +19,25 @@ export default async function EditNewsPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <NewsEditorClient
-        article={{
-          id: article.id,
-          title: article.title,
-          slug: article.slug,
-          excerpt: article.excerpt,
-          content: article.content,
-          category: article.category,
-          date: article.date.toISOString().slice(0, 10),
-          image: article.image || undefined,
-          featured: article.featured,
-          showOnHomepage: article.showOnHomepage,
-          published: article.published,
-          views: article.views,
-        }}
-      />
-    </div>
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-100 p-6">
+        <NewsEditorClient
+          article={{
+            id: article.id,
+            title: article.title,
+            slug: article.slug,
+            excerpt: article.excerpt,
+            content: article.content,
+            category: article.category,
+            date: article.date.toISOString().slice(0, 10),
+            image: article.image || undefined,
+            featured: article.featured,
+            showOnHomepage: article.showOnHomepage,
+            published: article.published,
+            views: article.views,
+          }}
+        />
+      </div>
+    </ToastProvider>
   );
 }

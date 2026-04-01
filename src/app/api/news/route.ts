@@ -16,6 +16,23 @@ export async function GET(request: NextRequest) {
       where,
       orderBy: [{ featured: 'desc' }, { date: 'desc' }],
       take: limit,
+      // 列表页面不需要 content 字段，避免序列化大量数据
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        category: true,
+        date: true,
+        image: true,
+        featured: true,
+        showOnHomepage: true,
+        published: true,
+        views: true,
+        createdAt: true,
+        updatedAt: true,
+        // content: false,  // 排除 content 字段
+      }
     });
 
     return NextResponse.json({ articles });

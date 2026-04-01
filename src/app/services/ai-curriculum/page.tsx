@@ -638,7 +638,7 @@ export default function AICurriculumPage() {
               >
                 {school.schoolLogo && (
                   <img
-                    src={school.schoolLogo}
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${school.schoolLogo}`}
                     alt={school.name}
                     className="w-12 h-12 object-contain mb-2"
                   />

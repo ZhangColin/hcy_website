@@ -14,6 +14,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
+    const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || "";
 
     // 验证专家是否存在
     const existing = await prisma.expert.findUnique({
@@ -37,7 +38,13 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(expert);
+    // 为头像添加 CDN 前缀
+    const expertWithUrl = {
+      ...expert,
+      avatar: expert.avatar ? `${imageBaseUrl}${expert.avatar}` : null,
+    };
+
+    return NextResponse.json(expertWithUrl);
   } catch (error) {
     console.error("[API Error] PUT /admin/experts/[id]:", error);
     return NextResponse.json({ error: "更新专家失败" }, { status: 500 });

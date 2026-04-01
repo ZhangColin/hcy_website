@@ -95,6 +95,80 @@ INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positio
 ('btn_020_services_cta_2', 'services', '智教服务集群', 'cta', '底部行动号召区域', '联系我们', '/contact', FALSE, 1);
 
 -- =====================================================
+-- 初始化数据 - 产融生态矩阵首页
+-- =====================================================
+
+-- Hero 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_021_ecosystem_hero_1', 'ecosystem', '产融生态矩阵', 'hero', '顶部横幅区域', '了解OPC生态', '/ecosystem/opc', FALSE, 0),
+('btn_022_ecosystem_hero_2', 'ecosystem', '产融生态矩阵', 'hero', '顶部横幅区域', '了解生态产品联盟', '/services/ecosystem-alliance', FALSE, 1);
+
+-- =====================================================
+-- 初始化数据 - 政企AI赋能培训
+-- =====================================================
+
+-- Hero 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_023_enterprise_training_hero_1', 'enterprise-training', '政企AI赋能培训', 'hero', '顶部横幅区域', '定制培训方案', '#cta', FALSE, 0),
+('btn_024_enterprise_training_hero_2', 'enterprise-training', '政企AI赋能培训', 'hero', '顶部横幅区域', '了解课程体系', '#courses', FALSE, 1);
+
+-- CTA 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_025_enterprise_training_cta_1', 'enterprise-training', '政企AI赋能培训', 'cta', '底部行动号召区域', '定制企业培训方案', '#cta', FALSE, 0),
+('btn_026_enterprise_training_cta_2', 'enterprise-training', '政企AI赋能培训', 'cta', '底部行动号召区域', '咨询合作', '/contact', FALSE, 1);
+
+-- =====================================================
+-- 初始化数据 - OPC生态
+-- =====================================================
+
+-- Hero 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_027_opc_hero_1', 'opc', 'OPC生态', 'hero', '顶部横幅区域', '立即报名', '#cta', FALSE, 0),
+('btn_028_opc_hero_2', 'opc', 'OPC生态', 'hero', '顶部横幅区域', '了解养成计划', '#training', FALSE, 1);
+
+-- CTA 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_029_opc_cta_1', 'opc', 'OPC生态', 'cta', '底部行动号召区域', '立即报名OPC养成计划', '#cta', FALSE, 0),
+('btn_030_opc_cta_2', 'opc', 'OPC生态', 'cta', '底部行动号召区域', '了解接单机会', '#training', FALSE, 1);
+
+-- =====================================================
+-- 初始化数据 - 智创专项服务
+-- =====================================================
+
+-- Hero 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_031_smart_services_hero_1', 'smart-services', '智创专项服务', 'hero', '顶部横幅区域', '预约咨询', '#cta', FALSE, 0),
+('btn_032_smart_services_hero_2', 'smart-services', '智创专项服务', 'hero', '顶部横幅区域', '了解平台方案', '#platforms', FALSE, 1);
+
+-- CTA 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_033_smart_services_cta_1', 'smart-services', '智创专项服务', 'cta', '底部行动号召区域', '预约咨询', '#cta', FALSE, 0),
+('btn_034_smart_services_cta_2', 'smart-services', '智创专项服务', 'cta', '底部行动号召区域', '申请平台演示', '#cta', FALSE, 1);
+
+-- =====================================================
+-- 初始化数据 - 不良资产盘活
+-- =====================================================
+
+-- Hero 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_035_asset_revitalization_hero_1', 'asset-revitalization', '不良资产盘活', 'hero', '顶部横幅区域', '洽谈合作', '#cta', FALSE, 0),
+('btn_036_asset_revitalization_hero_2', 'asset-revitalization', '不良资产盘活', 'hero', '顶部横幅区域', '了解架构模式', '#triangle', FALSE, 1);
+
+-- CTA 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_037_asset_revitalization_cta_1', 'asset-revitalization', '不良资产盘活', 'cta', '底部行动号召区域', '洽谈合作', '#cta', FALSE, 0),
+('btn_038_asset_revitalization_cta_2', 'asset-revitalization', '不良资产盘活', 'cta', '底部行动号召区域', '获取盘活方案', '#cta', FALSE, 1);
+
+-- =====================================================
+-- 初始化数据 - 案例与成果页面
+-- =====================================================
+
+-- CTA 区域按钮
+INSERT INTO "page_buttons" ("id", "pageKey", "pageName", "positionKey", "positionName", "label", "href", "openNewTab", "order") VALUES
+('btn_040_cases_cta_1', 'cases', '案例与成果', 'cta', '底部行动号召区域', '联系我们', '/contact', FALSE, 0),
+('btn_041_cases_cta_2', 'cases', '案例与成果', 'cta', '底部行动号召区域', '了解更多', '/about', FALSE, 1);
+
+-- =====================================================
 -- 查询验证
 -- =====================================================
 
