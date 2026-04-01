@@ -145,9 +145,13 @@ export default function FooterInner({ site, friendlyLinks, socialLinks }: Footer
     {
       title: t("header.news"),
       links: [
-        { label: t("news.categories.company"), href: "/news?category=company" },
-        { label: t("news.categories.industry"), href: "/news?category=industry" },
-        { label: t("news.categories.media"), href: "/news?category=media" },
+        { label: t("news.categories.important-release"), href: "/news?category=important-release" },
+        { label: t("news.categories.activity"), href: "/news?category=activity" },
+        { label: t("news.categories.media-attention"), href: "/news?category=media-attention" },
+        { label: t("news.categories.research-style"), href: "/news?category=research-style" },
+        { label: t("news.categories.honors"), href: "/news?category=honors" },
+        { label: t("news.categories.company-dynamics"), href: "/news?category=company-dynamics" },
+        { label: t("news.categories.policy-direction"), href: "/news?category=policy-direction" },
       ],
     },
   ];

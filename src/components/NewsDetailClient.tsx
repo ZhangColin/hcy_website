@@ -16,9 +16,13 @@ interface NewsArticle {
 }
 
 const categoryLabels: Record<string, string> = {
-  company: '公司新闻',
-  industry: '行业资讯',
-  media: '媒体报道',
+  'important-release': '重要发布',
+  'activity': '活动纪程',
+  'media-attention': '媒体关注',
+  'research-style': '研学风采',
+  'honors': '荣誉奖项',
+  'company-dynamics': '公司动态',
+  'policy-direction': '政策导向',
 };
 
 const categoryColors: Record<string, string> = {

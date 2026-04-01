@@ -16,9 +16,13 @@ type NewsArticle = {
 };
 
 const categoryLabels: Record<string, string> = {
-  company: 'company',
-  industry: 'industry',
-  media: 'media',
+  'important-release': 'important-release',
+  'activity': 'activity',
+  'media-attention': 'media-attention',
+  'research-style': 'research-style',
+  'honors': 'honors',
+  'company-dynamics': 'company-dynamics',
+  'policy-direction': 'policy-direction',
 };
 
 export function NewsListClient() {
@@ -92,9 +96,13 @@ export function NewsListClient() {
             onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
           >
             <option value="">全部分类</option>
-            <option value="company">公司新闻</option>
-            <option value="industry">行业资讯</option>
-            <option value="media">媒体报道</option>
+            <option value="important-release">重要发布</option>
+            <option value="activity">活动纪程</option>
+            <option value="media-attention">媒体关注</option>
+            <option value="research-style">研学风采</option>
+            <option value="honors">荣誉奖项</option>
+            <option value="company-dynamics">公司动态</option>
+            <option value="policy-direction">政策导向</option>
           </select>
           <select
             className="border border-gray-300 rounded-md px-3 py-2 text-sm"

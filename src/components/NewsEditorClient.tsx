@@ -24,9 +24,13 @@ interface NewsArticle {
 }
 
 const categoryOptions = [
-  { value: 'company', label: '公司新闻' },
-  { value: 'industry', label: '行业资讯' },
-  { value: 'media', label: '媒体报道' },
+  { value: 'important-release', label: '重要发布' },
+  { value: 'activity', label: '活动纪程' },
+  { value: 'media-attention', label: '媒体关注' },
+  { value: 'research-style', label: '研学风采' },
+  { value: 'honors', label: '荣誉奖项' },
+  { value: 'company-dynamics', label: '公司动态' },
+  { value: 'policy-direction', label: '政策导向' },
 ];
 
 interface NewsEditorClientProps {
@@ -42,7 +46,7 @@ export function NewsEditorClient({ article }: NewsEditorClientProps) {
       slug: '',
       excerpt: '',
       content: '',
-      category: 'company',
+      category: 'important-release',
       date: new Date().toISOString().slice(0, 10),
       featured: false,
       showOnHomepage: true,

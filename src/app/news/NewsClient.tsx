@@ -21,16 +21,20 @@ function useScrollReveal() {
 }
 
 /* ───────── types ───────── */
-type CategoryKey = "company" | "industry" | "media";
-type CategoryLabel = "全部" | "公司新闻" | "行业资讯" | "媒体报道";
+type CategoryKey = "important-release" | "activity" | "media-attention" | "research-style" | "honors" | "company-dynamics" | "policy-direction";
+type CategoryLabel = "全部" | "重要发布" | "活动纪程" | "媒体关注" | "研学风采" | "荣誉奖项" | "公司动态" | "政策导向";
 
 const categoryKeyToLabel: Record<CategoryKey, Exclude<CategoryLabel, "全部">> = {
-  company: "公司新闻",
-  industry: "行业资讯",
-  media: "媒体报道",
+  "important-release": "重要发布",
+  "activity": "活动纪程",
+  "media-attention": "媒体关注",
+  "research-style": "研学风采",
+  "honors": "荣誉奖项",
+  "company-dynamics": "公司动态",
+  "policy-direction": "政策导向",
 };
 
-const categoryLabels: CategoryLabel[] = ["全部", "公司新闻", "行业资讯", "媒体报道"];
+const categoryLabels: CategoryLabel[] = ["全部", "重要发布", "活动纪程", "媒体关注", "研学风采", "荣誉奖项", "公司动态", "政策导向"];
 
 export interface NewsArticle {
   id: string;
@@ -45,9 +49,13 @@ export interface NewsArticle {
 }
 
 const categoryColors: Record<Exclude<CategoryLabel, "全部">, string> = {
-  公司新闻: "bg-[#1A3C8A] text-white",
-  行业资讯: "bg-[#2B6CB0] text-white",
-  媒体报道: "bg-[#D4A843] text-white",
+  "重要发布": "bg-[#D4A843] text-white",
+  "活动纪程": "bg-[#1A3C8A] text-white",
+  "媒体关注": "bg-[#2B6CB0] text-white",
+  "研学风采": "bg-[#38A169] text-white",
+  "荣誉奖项": "bg-[#E53E3E] text-white",
+  "公司动态": "bg-[#718096] text-white",
+  "政策导向": "bg-[#805AD5] text-white",
 };
 
 /* ───────── client component ───────── */
