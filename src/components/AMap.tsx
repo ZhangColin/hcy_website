@@ -63,6 +63,10 @@ export function AMap({ lng, lat, address, companyName = "海创源科技中心",
       console.log("[AMap] initMap 被调用");
       console.log("[AMap] mapRef.current:", mapRef.current ? "存在" : "不存在");
       console.log("[AMap] window.AMap:", typeof window.AMap);
+      console.log("[AMap] 传入的坐标值 - lng:", lng, "lat:", lat);
+      console.log("[AMap] 解析后的坐标 - 经度:", parseFloat(lng), "纬度:", parseFloat(lat));
+      console.log("[AMap] 地图中心点将设置为:", `[${parseFloat(lng)}, ${parseFloat(lat)}]`);
+      console.log("[AMap] 地址:", address);
 
       if (!mapRef.current || !window.AMap) {
         console.error("[AMap] 初始化失败：", !mapRef.current ? "mapRef 不存在" : "window.AMap 不存在");
@@ -75,6 +79,8 @@ export function AMap({ lng, lat, address, companyName = "海创源科技中心",
         center: [parseFloat(lng), parseFloat(lat)],
         viewMode: "3D",
       });
+
+      console.log("[AMap] 地图实例已创建，中心点:", map.getCenter());
 
       // 添加标记，带标签
       const marker = new window.AMap.Marker({
