@@ -34,21 +34,40 @@ export function AMap({ lng, lat, address, companyName = "海创源科技中心",
 
     // 动态加载高德地图脚本
     const loadScript = () => {
-      if (window.AMap) return; // 已加载
+      if (window.AMap) {
+        console.log("[AMap] 脚本已加载，直接初始化地图");
+        initMap();
+        return;
+      }
 
       const script = document.createElement("script");
       // 使用环境变量中的高德地图 key
       const amapKey = process.env.NEXT_PUBLIC_AMAP_KEY || "";
+      console.log("[AMap] 开始加载高德地图脚本，API Key:", amapKey ? "已配置" : "未配置");
+      console.log("[AMap] 完整 API Key:", amapKey);
       script.src = `https://webapi.amap.com/maps?v=2.0&key=${amapKey}`;
       script.onerror = () => {
-        console.error("高德地图加载失败，请检查 API Key 是否配置正确");
+        console.error("[AMap] 高德地图加载失败，请检查 API Key 是否配置正确");
       };
-      script.onload = initMap;
+      script.onload = () => {
+        console.log("[AMap] 高德地图脚本加载成功");
+        setTimeout(() => {
+          console.log("[AMap] window.AMap 可用:", typeof window.AMap);
+          initMap();
+        }, 100);
+      };
       document.head.appendChild(script);
     };
 
     const initMap = () => {
-      if (!mapRef.current || !window.AMap) return;
+      console.log("[AMap] initMap 被调用");
+      console.log("[AMap] mapRef.current:", mapRef.current ? "存在" : "不存在");
+      console.log("[AMap] window.AMap:", typeof window.AMap);
+
+      if (!mapRef.current || !window.AMap) {
+        console.error("[AMap] 初始化失败：", !mapRef.current ? "mapRef 不存在" : "window.AMap 不存在");
+        return;
+      }
 
       // 创建地图实例
       const map = new window.AMap.Map(mapRef.current, {
