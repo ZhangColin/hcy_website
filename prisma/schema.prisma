@@ -27,24 +27,30 @@ model HomeContent {
 }
 
 model NewsArticle {
-  id            String   @id @default(cuid())
-  slug          String   @unique           // 新增: URL 友好标识
-  title         String
-  excerpt       String
-  content       String
-  category      String
-  date          DateTime
-  image         String?
-  featured      Boolean  @default(false)   // 新增: 是否置顶
-  showOnHomepage Boolean @default(true)    // 新增: 是否首页显示
-  published     Boolean  @default(true)    // 修改: 默认值改为 true
-  views         Int      @default(0)       // 新增: 浏览量
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id             String   @id @default(cuid())
+  title          String
+  excerpt        String
+  content        String
+  category       String
+  date           DateTime
+  image          String?
+  published      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  featured       Boolean  @default(false)
+  showOnHomepage Boolean  @default(true)
+  slug           String   @unique
+  views          Int      @default(0)
+
+  // SEO 字段
+  seoTitle        String?   // 自定义 SEO 标题
+  seoDescription  String?   // 自定义 SEO 描述
+  seoKeywords     String?   // 自定义 SEO 关键词
+  ogImage         String?   // Open Graph 分享图片
 
   @@index([date, published])
-  @@index([featured, date])                // 新增索引
-  @@index([showOnHomepage])                // 新增索引
+  @@index([featured, date])
+  @@index([showOnHomepage])
 }
 
 model AboutContent {
@@ -62,19 +68,25 @@ model SchoolCase {
   id          String   @id @default(cuid())
   name        String
   region      String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  abbr        String   @default("")
+  color       String   @default("from-[#1A3C8A] to-[#2B6CB0]")
+  coverImage  String?
   /// JSON array of grade levels, e.g., ["小学", "初中", "高中"]
   grade       String   @default("[]")
-  abbr        String   @default("")
   /// Partnership description text
   partnership String   @default("")
   /// Results/achievements description text
   results     String   @default("")
-  color       String   @default("from-[#1A3C8A] to-[#2B6CB0]")
-  coverImage  String?
   schoolLogo  String?
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  // SEO 字段
+  slug            String?   @unique  // URL 友好的标识符
+  seoTitle        String?   // 自定义 SEO 标题
+  seoDescription  String?   // 自定义 SEO 描述
+  featuredImage   String?   // 特色图片（用于分享）
 
   @@index([order])
 }
@@ -84,12 +96,12 @@ model CompetitionHonor {
   title        String
   level        String
   year         String
-  /// Achievement description text
-  achievements String   @default("")
-  image        String?
   order        Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  /// Achievement description text
+  achievements String   @default("")
+  image        String?
 
   @@index([order])
 }
@@ -130,12 +142,20 @@ model SiteConfig {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   email            String?
-  hrEmail          String?
   mapLat           String?
   mapLng           String?
   phone            String?
   wechatOfficialQr String?
   wechatServiceQr  String?
+  hrEmail          String?
+
+  // SEO 配置
+  googleAnalyticsId   String?   // Google Analytics ID
+  baiduAnalyticsId    String?   // 百度统计 ID
+  googleVerifyCode    String?   // Google Search Console 验证码
+  baiduVerifyCode     String?   // 百度站长工具验证码
+  defaultOgImage      String?   // 默认分享图片
+  twitterHandle       String?   // Twitter 账号
 }
 
 model ContactSubmission {
@@ -169,16 +189,16 @@ model Expert {
 
 model PageButton {
   id           String   @id @default(cuid())
-  pageKey      String   // 页面标识，如 "ai-curriculum"
-  pageName     String   // 页面中文名称，如 "AI课程入校"
-  positionKey  String   // 位置标识，如 "hero", "cta"
-  positionName String   // 位置中文名称，如 "顶部横幅区域"
-  label        String   // 按钮文字
-  href         String   // 跳转链接
-  openNewTab   Boolean  @default(false)  // 是否新窗口打开
-  order        Int      @default(0)      // 显示顺序
+  pageKey      String
+  pageName     String
+  positionKey  String
+  positionName String
+  label        String
+  href         String
+  openNewTab   Boolean  @default(false)
+  order        Int      @default(0)
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  updatedAt    DateTime @default(now()) @updatedAt
 
   @@unique([pageKey, positionKey, order])
   @@index([pageKey, positionKey])
