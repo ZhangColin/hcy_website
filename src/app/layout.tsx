@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { Analytics } from "@/components/Analytics";
 
 export const metadata: Metadata = {
   title: '海创元AI教育 - AI教育全链赋能生态运营商 | 海淀国投集团',
@@ -66,6 +67,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   );
