@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import CasesClient from './CasesClient';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: '学校案例 - 海创元AI教育',
   description: '海创元AI教育合作院校案例展示，涵盖小学、初中、高中全学段，服务北京、上海、浙江等地区130+所学校。',

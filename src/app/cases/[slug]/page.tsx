@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { generateCaseMeta } from '@/lib/seo-utils';
+
+export const dynamic = 'force-dynamic';
 import { JsonLd } from '@/components/seo/JsonLd';
 import Link from 'next/link';
 import Image from 'next/image';

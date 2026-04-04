@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { NewsDetailClient } from '@/components/NewsDetailClient';
+
+export const dynamic = 'force-dynamic';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumb } from '@/components/seo/Breadcrumb';
 import { RelatedNews } from '@/components/RelatedContent';
