@@ -44,22 +44,6 @@ export function RelatedNews({ currentSlug, category, limit = 3 }: RelatedNewsPro
 
     fetchRelatedNews();
   }, [currentSlug, category, limit]);
-    where: {
-      published: true,
-      slug: { not: currentSlug },
-      ...(category && { category }),
-    },
-    select: {
-      slug: true,
-      title: true,
-      excerpt: true,
-      image: true,
-      date: true,
-      category: true,
-    },
-    orderBy: { date: 'desc' },
-    take: limit,
-  });
 
   if (isLoading || relatedNews.length === 0) return null;
 
