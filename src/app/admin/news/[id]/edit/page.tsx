@@ -35,6 +35,10 @@ export default async function EditNewsPage({
             showOnHomepage: article.showOnHomepage,
             published: article.published,
             views: article.views,
+            seoTitle: article.seoTitle || undefined,
+            seoDescription: article.seoDescription || undefined,
+            seoKeywords: article.seoKeywords || undefined,
+            ogImage: article.ogImage || undefined,
           }}
         />
       </div>

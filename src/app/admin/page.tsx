@@ -538,6 +538,53 @@ function SchoolCaseForm({
         onChange={(v) => onChange("schoolLogo", v)}
         type="cases/logo"
       />
+
+      {/* SEO 设置 */}
+      <div className="border-t border-gray-200 pt-4">
+        <h4 className="text-sm font-semibold text-gray-800 mb-3">SEO 设置</h4>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">URL 标识 (Slug)</label>
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+              value={(item.slug as string) || ""}
+              onChange={(e) => onChange("slug", e.target.value)}
+              placeholder="如: beijing-zhongxue"
+            />
+            <p className="text-gray-400 text-xs mt-1">用于详情页 URL，如: /cases/{(item.slug as string) || "beijing-zhongxue"}</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">SEO 标题</label>
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A]"
+              value={(item.seoTitle as string) || ""}
+              onChange={(e) => onChange("seoTitle", e.target.value)}
+              placeholder="留空则使用学校名称"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">SEO 描述</label>
+            <textarea
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A3C8A] min-h-[80px]"
+              value={(item.seoDescription as string) || ""}
+              onChange={(e) => onChange("seoDescription", e.target.value)}
+              placeholder="留空则使用合作内容"
+            />
+          </div>
+
+          <ImageButton
+            label="特色图片 (用于分享)"
+            value={(item.featuredImage as string) || ""}
+            onChange={(v) => onChange("featuredImage", v)}
+            type="cases"
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -1045,6 +1092,45 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
               </div>
             </div>
           )}
+        />
+      </SectionCard>
+
+      <SectionCard title="SEO 设置">
+        <FieldEditor
+          label="Google Analytics ID"
+          value={(data.googleAnalyticsId as string) ?? ""}
+          onChange={(v) => setData({ ...data, googleAnalyticsId: v })}
+          placeholder="如：G-XXXXXXXXXX"
+        />
+        <FieldEditor
+          label="百度统计 ID"
+          value={(data.baiduAnalyticsId as string) ?? ""}
+          onChange={(v) => setData({ ...data, baiduAnalyticsId: v })}
+          placeholder="如：xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        />
+        <FieldEditor
+          label="Google Search Console 验证码"
+          value={(data.googleVerifyCode as string) ?? ""}
+          onChange={(v) => setData({ ...data, googleVerifyCode: v })}
+          placeholder="Google 站点验证码"
+        />
+        <FieldEditor
+          label="百度站长工具验证码"
+          value={(data.baiduVerifyCode as string) ?? ""}
+          onChange={(v) => setData({ ...data, baiduVerifyCode: v })}
+          placeholder="百度站点验证码"
+        />
+        <ImageButton
+          label="默认分享图片"
+          value={(data.defaultOgImage as string) || ""}
+          onChange={(v) => setData({ ...data, defaultOgImage: v })}
+          type="og"
+        />
+        <FieldEditor
+          label="Twitter 账号"
+          value={(data.twitterHandle as string) ?? ""}
+          onChange={(v) => setData({ ...data, twitterHandle: v })}
+          placeholder="如：@yourcompany"
         />
       </SectionCard>
     </>

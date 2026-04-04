@@ -21,6 +21,11 @@ interface NewsArticle {
   showOnHomepage: boolean;
   published: boolean;
   views?: number;
+  // SEO 字段
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  ogImage?: string;
 }
 
 const categoryOptions = [
@@ -51,6 +56,10 @@ export function NewsEditorClient({ article }: NewsEditorClientProps) {
       featured: false,
       showOnHomepage: true,
       published: false,  // 默认未发布
+      seoTitle: '',
+      seoDescription: '',
+      seoKeywords: '',
+      ogImage: '',
     }
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -306,6 +315,68 @@ export function NewsEditorClient({ article }: NewsEditorClientProps) {
             placeholder="请输入正文内容..."
           />
           {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+        </div>
+
+        {/* SEO 设置 */}
+        <div className="border-t border-gray-200 pt-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">SEO 设置</h3>
+
+          <div className="space-y-4">
+            {/* SEO 标题 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                SEO 标题
+              </label>
+              <input
+                type="text"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                value={formData.seoTitle || ''}
+                onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
+                placeholder="留空则使用文章标题"
+              />
+              <p className="text-gray-400 text-xs mt-1">自定义标题，用于搜索引擎和社交媒体分享</p>
+            </div>
+
+            {/* SEO 描述 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                SEO 描述
+              </label>
+              <textarea
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm min-h-[80px]"
+                value={formData.seoDescription || ''}
+                onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
+                placeholder="留空则使用摘要"
+              />
+              <p className="text-gray-400 text-xs mt-1">自定义描述，建议 150 字符以内</p>
+            </div>
+
+            {/* SEO 关键词 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                SEO 关键词
+              </label>
+              <input
+                type="text"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                value={formData.seoKeywords || ''}
+                onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
+                placeholder="用逗号分隔，如：AI教育,人工智能,师资培训"
+              />
+              <p className="text-gray-400 text-xs mt-1">用于搜索引擎的关键词标签</p>
+            </div>
+
+            {/* Open Graph 图片 */}
+            <div>
+              <ImageButton
+                label="Open Graph 分享图片"
+                value={formData.ogImage || ''}
+                onChange={(value) => setFormData({ ...formData, ogImage: value })}
+                type="news"
+              />
+              <p className="text-gray-400 text-xs mt-1">用于社交媒体分享的图片，留空则使用封面图片</p>
+            </div>
+          </div>
         </div>
 
         {/* 浏览量（只读） */}

@@ -70,6 +70,11 @@ export async function POST(request: NextRequest) {
         coverImage: body.coverImage || null,
         schoolLogo: body.schoolLogo || null,
         order: (maxOrder?.order ?? 0) + 1,
+        // SEO 字段
+        slug: body.slug || null,
+        seoTitle: body.seoTitle || null,
+        seoDescription: body.seoDescription || null,
+        featuredImage: body.featuredImage || null,
       },
     });
 

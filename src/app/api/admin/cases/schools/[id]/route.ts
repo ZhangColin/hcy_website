@@ -22,6 +22,11 @@ const ALLOWED_FIELDS = [
   "coverImage",
   "schoolLogo",
   "order",
+  // SEO 字段
+  "slug",
+  "seoTitle",
+  "seoDescription",
+  "featuredImage",
 ] as const;
 
 function extractAllowedFields(

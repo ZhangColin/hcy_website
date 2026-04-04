@@ -50,6 +50,11 @@ export async function PUT(
         featured: body.featured,
         showOnHomepage: body.showOnHomepage,
         published: body.published,
+        // SEO 字段
+        seoTitle: body.seoTitle || null,
+        seoDescription: body.seoDescription || null,
+        seoKeywords: body.seoKeywords || null,
+        ogImage: body.ogImage || null,
       },
     });
 

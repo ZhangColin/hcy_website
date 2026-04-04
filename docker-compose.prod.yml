@@ -1,8 +1,6 @@
 # 生产环境 Docker Compose 配置
 # 使用方法: docker-compose -f docker-compose.prod.yml up -d
 
-version: '3.8'
-
 services:
   app:
     build:
@@ -22,7 +20,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-haichuangyuan2026}
-      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_SITE_URL=https://www.aieducenter.com
       - NEXT_PUBLIC_IMAGE_BASE_URL=${NEXT_PUBLIC_IMAGE_BASE_URL:-https://image.website.aieducenter.com}
       - NEXT_PUBLIC_AMAP_KEY=${NEXT_PUBLIC_AMAP_KEY}
       - COS_SECRET_ID=${COS_SECRET_ID}

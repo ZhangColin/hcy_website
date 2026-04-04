@@ -93,6 +93,11 @@ export async function POST(request: NextRequest) {
         showOnHomepage: body.showOnHomepage !== false,
         published: body.published !== false,
         views: 0,
+        // SEO 字段
+        seoTitle: body.seoTitle || null,
+        seoDescription: body.seoDescription || null,
+        seoKeywords: body.seoKeywords || null,
+        ogImage: body.ogImage || null,
       },
     });
 
