@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import { useState, useEffect } from "react";
@@ -139,7 +138,7 @@ const showcaseProjects = [
   },
 ];
 
-function AIResearchStudyClient() {
+export default function AIResearchStudyClient() {
   const [activeTab, setActiveTab] = useState("school");
   const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
 

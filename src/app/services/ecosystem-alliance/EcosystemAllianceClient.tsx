@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -132,7 +131,7 @@ const valueProps = [
 ];
 
 /* ───────── page ───────── */
-function EcosystemAllianceClient() {
+export default function EcosystemAllianceClient() {
   const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
 
   useEffect(() => {
