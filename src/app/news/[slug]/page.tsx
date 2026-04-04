@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { NewsDetailClient } from '@/components/NewsDetailClient';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 export const revalidate = 3600; // 每小时重新生成
 
@@ -76,11 +77,18 @@ export default async function NewsDetailPage({
     description: article.excerpt,
   };
 
+  const breadcrumbItems = [
+    { name: '首页', href: '/' },
+    { name: '新闻资讯', href: '/news' },
+    { name: article.title, href: `/news/${article.slug}` },
+  ];
+
   return (
     <>
       <JsonLd type="Article" data={jsonLdData} />
       <div className="min-h-screen bg-[#F5F7FA] py-12">
         <div className="px-4 sm:px-6 lg:px-8">
+          <Breadcrumb items={breadcrumbItems} />
           <NewsDetailClient
             article={{
               id: article.id,
