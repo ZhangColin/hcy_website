@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { generateCaseMeta } from '@/lib/seo-utils';
 import { JsonLd } from '@/components/seo/JsonLd';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const revalidate = 86400; // 每天重新生成
 
@@ -94,21 +95,23 @@ export default async function CaseDetailPage({
             </h1>
 
             {caseItem.schoolLogo && (
-              <div className="mb-6">
-                <img
+              <div className="mb-6 relative h-16 w-32">
+                <Image
                   src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${caseItem.schoolLogo}`}
                   alt={`${caseItem.name} logo`}
-                  className="h-16 object-contain"
+                  fill
+                  className="object-contain"
                 />
               </div>
             )}
 
             {(caseItem.coverImage || caseItem.featuredImage) && (
-              <div className="mb-6 rounded-xl overflow-hidden">
-                <img
+              <div className="mb-6 rounded-xl overflow-hidden relative h-64 w-full">
+                <Image
                   src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${caseItem.featuredImage || caseItem.coverImage}`}
                   alt={caseItem.name}
-                  className="w-full h-64 object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
             )}
