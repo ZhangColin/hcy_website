@@ -26,6 +26,9 @@ ENV NEXT_PUBLIC_AMAP_KEY=${NEXT_PUBLIC_AMAP_KEY}
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# 应用数据库迁移（需要 DATABASE_URL 环境变量）
+RUN npx prisma migrate deploy
+
 # 生成 Prisma Client（需要 DATABASE_URL 环境变量）
 RUN npx prisma generate
 
