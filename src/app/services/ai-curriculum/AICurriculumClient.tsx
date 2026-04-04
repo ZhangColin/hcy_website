@@ -1,21 +1,7 @@
-import { Metadata } from 'next';
-import AICurriculumClient from './AICurriculumClient';
+"use client";
 
-export const metadata: Metadata = {
-  title: 'AI课程入校 - 海创元AI教育',
-  description: '1+N综合解决方案，覆盖小/初/高全学段，5年课堂实践打磨，累计服务130+所院校。',
-  keywords: 'AI课程入校,人工智能课程,AI教学体系,中小学AI教育',
-  openGraph: {
-    title: 'AI课程入校 - 海创元AI教育',
-    description: '1+N综合解决方案，覆盖全学段',
-  },
-};
-
-export const revalidate = 86400; // 每天重新生成
-
-export default function AICurriculumPage() {
-  return <AICurriculumClient />;
-}
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface SchoolCase {
   id: string;
@@ -105,7 +91,7 @@ const gradeData = [
   },
 ];
 
-export default function AICurriculumPage() {
+export default function AICurriculumClient() {
   const [openModule, setOpenModule] = useState<string | null>("N1");
   const [schoolCases, setSchoolCases] = useState<SchoolCase[]>([]);
   const [buttons, setButtons] = useState<{ hero: Button[]; cta: Button[] }>({ hero: [], cta: [] });
@@ -346,10 +332,6 @@ export default function AICurriculumPage() {
             <div className="flex gap-4 min-w-max md:min-w-0 md:grid md:grid-cols-5">
               {gradeData.map((item, idx) => (
                 <div key={item.grade} className="flex flex-col items-center w-56 md:w-auto">
-                  {/* Arrow connector */}
-                  {idx > 0 && (
-                    <div className="hidden md:block absolute -left-4 top-1/2 w-4 h-0.5 bg-gray-300" />
-                  )}
                   <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 h-full w-full">
                     <div
                       className="inline-block text-xs font-bold text-white px-3 py-1 rounded-full mb-4"
@@ -360,27 +342,9 @@ export default function AICurriculumPage() {
                     <h4 className="font-bold text-gray-900 mb-2">{item.grade}</h4>
                     <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
                   </div>
-                  {idx < gradeData.length - 1 && (
-                    <div className="md:hidden flex items-center justify-center my-2">
-                      <svg className="w-6 h-6 text-gray-400 rotate-90 md:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
-          </div>
-          {/* Desktop arrow row */}
-          <div className="hidden md:flex items-center justify-center gap-2 mt-4">
-            {gradeData.map((item, idx) => (
-              <div key={item.grade + "-arrow"} className="flex items-center">
-                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }} />
-                {idx < gradeData.length - 1 && (
-                  <div className="w-24 lg:w-32 h-0.5 bg-gray-300" />
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -467,27 +431,6 @@ export default function AICurriculumPage() {
                   </li>
                 </ul>
               </div>
-            </div>
-          </div>
-          {/* Flow arrows */}
-          <div className="hidden md:flex items-center justify-center mt-8 gap-4">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="w-3 h-3 bg-[#1565C0] rounded-full" />
-              课前准备
-            </div>
-            <svg className="w-8 h-4 text-gray-400" fill="none" viewBox="0 0 32 16">
-              <path d="M0 8h28m0 0l-6-6m6 6l-6 6" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="w-3 h-3 bg-[#D4A843] rounded-full" />
-              课中互动
-            </div>
-            <svg className="w-8 h-4 text-gray-400" fill="none" viewBox="0 0 32 16">
-              <path d="M0 8h28m0 0l-6-6m6 6l-6 6" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="w-3 h-3 bg-green-600 rounded-full" />
-              课后管理
             </div>
           </div>
         </div>
