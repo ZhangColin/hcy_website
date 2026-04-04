@@ -1,6 +1,8 @@
 import { loadData } from "@/lib/data";
 import HomePageContent from "@/components/HomePageContent";
 
+export const revalidate = 1800; // 每30分钟重新生成
+
 // Force dynamic rendering - this page fetches data from the database at request time
 export const dynamic = 'force-dynamic';
 
