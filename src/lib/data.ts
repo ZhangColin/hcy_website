@@ -16,6 +16,7 @@ export async function loadHome() {
 // 新闻
 export async function loadNews() {
   const articles = await prisma.newsArticle.findMany({
+    where: { published: true },
     orderBy: { date: 'desc' },
     // 列表页面不需要 content 字段，避免序列化大量数据
     select: {

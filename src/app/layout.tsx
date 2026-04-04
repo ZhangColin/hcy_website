@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   icons: {
     icon: '/logo-light-32.png',
   },
+  verification: {
+    google: process.env.GOOGLE_VERIFY_CODE,
+    baidu: process.env.BAIDU_VERIFY_CODE,
+  },
   openGraph: {
     siteName: '海创元AI教育',
     locale: 'zh_CN',
