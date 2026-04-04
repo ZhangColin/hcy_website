@@ -1,6 +1,9 @@
 # 多阶段构建 - 依赖安装
 FROM node:20-alpine AS deps
-WORKDIR /app
+WORKDIR //app
+
+# 设置 npm 镜像（中国大陆加速）
+RUN npm config set registry https://registry.npmmirror.com
 
 COPY package.json package-lock.json ./
 RUN npm ci
