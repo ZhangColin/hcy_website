@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: process.env.GOOGLE_VERIFY_CODE,
-    baidu: process.env.BAIDU_VERIFY_CODE,
   },
   openGraph: {
     siteName: '海创元AI教育',
@@ -26,6 +25,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+  },
+  other: {
+    'baidu-site-verification': process.env.BAIDU_VERIFY_CODE,
   },
 };
 
