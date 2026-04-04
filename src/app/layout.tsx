@@ -15,9 +15,6 @@ export const metadata: Metadata = {
   icons: {
     icon: '/logo-light-32.png',
   },
-  verification: {
-    google: process.env.GOOGLE_VERIFY_CODE,
-  },
   openGraph: {
     siteName: '海创元AI教育',
     locale: 'zh_CN',
@@ -25,9 +22,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-  },
-  other: {
-    'baidu-site-verification': process.env.BAIDU_VERIFY_CODE,
   },
 };
 
