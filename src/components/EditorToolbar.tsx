@@ -1,7 +1,7 @@
 "use client";
 
 import { type Editor } from '@tiptap/react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { parseVideoUrl } from './video/VideoParser';
 import type { ParsedVideo } from './video/VideoParser';
 
@@ -40,6 +40,7 @@ function ToolbarButton({
   title,
   children,
   variant,
+  ...rest
 }: {
   active?: boolean;
   disabled?: boolean;
@@ -47,6 +48,8 @@ function ToolbarButton({
   title: string;
   children: React.ReactNode;
   variant?: 'default' | 'danger';
+  'aria-expanded'?: boolean;
+  'aria-haspopup'?: boolean | 'listbox' | 'menu' | 'dialog' | 'grid' | 'tree';
 }) {
   return (
     <button
@@ -60,7 +63,9 @@ function ToolbarButton({
             : 'hover:bg-gray-100 text-gray-700'
       } ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
       title={title}
+      aria-label={title}
       type="button"
+      {...rest}
     >
       {children}
     </button>
@@ -74,11 +79,18 @@ function Divider() {
 function useClickOutside(ref: React.RefObject<HTMLElement | null>, open: boolean, onClose: () => void) {
   useEffect(() => {
     if (!open) return;
-    const handler = (e: MouseEvent) => {
+    const clickHandler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('mousedown', clickHandler);
+    document.addEventListener('keydown', keyHandler);
+    return () => {
+      document.removeEventListener('mousedown', clickHandler);
+      document.removeEventListener('keydown', keyHandler);
+    };
   }, [ref, open, onClose]);
 }
 
@@ -91,7 +103,7 @@ function FontSizeDropdown({ editor }: { editor: Editor }) {
 
   return (
     <div className="relative" ref={ref}>
-      <ToolbarButton onClick={() => setOpen(!open)} title="字号">
+      <ToolbarButton onClick={() => setOpen(!open)} title="字号" aria-expanded={open} aria-haspopup="listbox">
         <span className="min-w-[3em] inline-block text-center">
           {currentSize ? currentSize.replace('px', '') : '字号'}
         </span>
@@ -142,7 +154,7 @@ function ColorPicker({
 
   return (
     <div className="relative" ref={ref}>
-      <ToolbarButton onClick={() => setOpen(!open)} title={title}>
+      <ToolbarButton onClick={() => setOpen(!open)} title={title} aria-expanded={open} aria-haspopup="listbox">
         {children}
       </ToolbarButton>
       {open && (
@@ -159,7 +171,9 @@ function ColorPicker({
                   }
                   setOpen(false);
                 }}
-                className="w-6 h-6 rounded border border-gray-300 hover:scale-110 transition-transform"
+                className={`w-6 h-6 rounded hover:scale-110 transition-transform ${
+                  color === '#ffffff' ? 'border-2 border-gray-400' : 'border border-gray-300'
+                }`}
                 style={{ backgroundColor: color }}
                 title={color}
               />
