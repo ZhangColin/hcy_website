@@ -1,4 +1,4 @@
-import { loadData } from "@/lib/data";
+import { loadData, loadHomepageNews } from "@/lib/data";
 import HomePageContent from "@/components/HomePageContent";
 
 export const revalidate = 1800; // 每30分钟重新生成
@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
    ═══════════════════════════════════════════════════════════ */
 export default async function Home() {
   const homeData = await loadData("home");
-  const newsData = await loadData("news");
+  const newsItems = await loadHomepageNews();
 
   // Normalize heroSlides data - ensure required fields exist
   const heroSlides = homeData.heroSlides.map((slide: any) => ({
@@ -36,7 +36,6 @@ export default async function Home() {
   }
   const highlights = homeData.highlights;
   const partners = homeData.partners;
-  const newsItems = newsData.articles.slice(0, 3);
 
   return (
     <HomePageContent
@@ -44,7 +43,7 @@ export default async function Home() {
       dataStrip={dataStrip}
       highlights={highlights}
       partners={partners}
-      newsItems={newsItems}
+      newsItems={newsItems.map(item => ({ ...item, image: item.image ?? undefined }))}
     />
   );
 }
