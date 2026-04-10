@@ -6,10 +6,18 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import TextAlign from '@tiptap/extension-text-align';
+import { TextStyle, FontSize } from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import Highlight from '@tiptap/extension-highlight';
+import Superscript from '@tiptap/extension-superscript';
+import Subscript from '@tiptap/extension-subscript';
+import { TableKit } from '@tiptap/extension-table';
 import { useState, useCallback, useEffect } from 'react';
 import { VideoExtension } from './extensions/VideoExtension';
 import { parseVideoUrl, type ParsedVideo, type VideoSize } from './video/VideoParser';
 import { VideoInsertDialog } from './video/VideoInsertDialog';
+import { EditorToolbar } from './EditorToolbar';
 
 interface TiptapEditorProps {
   content: string;
@@ -36,6 +44,7 @@ export function TiptapEditor({
         heading: { levels: [1, 2, 3] },
         bulletList: { keepMarks: true, keepAttributes: false },
         orderedList: { keepMarks: true, keepAttributes: false },
+        link: false,
       }),
       Image.configure({
         HTMLAttributes: {
@@ -51,6 +60,18 @@ export function TiptapEditor({
       Placeholder.configure({
         placeholder,
       }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      TextStyle,
+      FontSize,
+      Color,
+      Highlight.configure({
+        multicolor: true,
+      }),
+      Superscript,
+      Subscript,
+      TableKit,
       VideoExtension,
     ],
     content,
@@ -147,122 +168,22 @@ export function TiptapEditor({
     input.click();
   };
 
-  const MenuBar = () => (
-    <div className="border-b border-gray-200 p-2 flex flex-wrap gap-1 sticky top-0 bg-white z-10">
-      <button
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('bold') ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="粗体"
-      >
-        <strong>B</strong>
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('italic') ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="斜体"
-      >
-        <em>I</em>
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('heading', { level: 1 }) ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="标题1"
-      >
-        H1
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('heading', { level: 2 }) ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="标题2"
-      >
-        H2
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('heading', { level: 3 }) ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="标题3"
-      >
-        H3
-      </button>
-      <div className="w-px bg-gray-300 mx-1" />
-      <button
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('bulletList') ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="无序列表"
-      >
-        • 列表
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('orderedList') ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="有序列表"
-      >
-        1. 列表
-      </button>
-      <div className="w-px bg-gray-300 mx-1" />
-      <button
-        onClick={() => {
-          const url = prompt('请输入链接地址:');
-          if (url) editor.chain().focus().setLink({ href: url }).run();
-        }}
-        className={`px-2 py-1 rounded text-sm ${editor.isActive('link') ? 'bg-[#1A3C8A] text-white' : 'hover:bg-gray-100'}`}
-        title="链接"
-      >
-        🔗
-      </button>
-      <button
-        onClick={handleImageUpload}
-        className="px-2 py-1 rounded text-sm hover:bg-gray-100"
-        title="插入图片"
-      >
-        🖼️
-      </button>
-      <button
-        onClick={() => {
-          const url = prompt('请输入视频链接:');
-          if (url) {
-            const parsed = parseVideoUrl(url);
-            if (parsed) {
-              handleInsertVideo(parsed);
-            } else {
-              alert('不支持的视频平台或链接格式无效');
-            }
-          }
-        }}
-        className="px-2 py-1 rounded text-sm hover:bg-gray-100"
-        title="插入视频"
-      >
-        📹
-      </button>
-      <div className="w-px bg-gray-300 mx-1" />
-      <button
-        onClick={() => editor.chain().focus().undo().run()}
-        className="px-2 py-1 rounded text-sm hover:bg-gray-100"
-        title="撤销"
-        disabled={!editor.can().undo()}
-      >
-        ↶
-      </button>
-      <button
-        onClick={() => editor.chain().focus().redo().run()}
-        className="px-2 py-1 rounded text-sm hover:bg-gray-100"
-        title="重做"
-        disabled={!editor.can().redo()}
-      >
-        ↷
-      </button>
-    </div>
-  );
-
   return (
-    <div className="border border-gray-300 rounded-md overflow-hidden">
-      {editable && <MenuBar />}
-      <EditorContent
-        editor={editor}
-        className="p-4 min-h-[300px] focus:outline-none"
-      />
+    <div className="border border-gray-300 rounded-md">
+      {editable && (
+        <EditorToolbar
+          editor={editor}
+          onImageUpload={handleImageUpload}
+          onVideoInsert={handleInsertVideo}
+        />
+      )}
+      <div className="max-h-[600px] overflow-y-auto">
+        <EditorContent
+          editor={editor}
+          className="p-4 min-h-[300px] focus:outline-none"
+        />
+      </div>
 
-      {/* 视频插入对话框 */}
       {videoDialog.isOpen && videoDialog.parsedVideo && (
         <VideoInsertDialog
           parsedVideo={videoDialog.parsedVideo}
@@ -272,9 +193,10 @@ export function TiptapEditor({
       )}
 
       <style jsx global>{`
-        /* Tiptap Editor Styles */
         .ProseMirror {
           outline: none;
+          font-size: 16px;
+          line-height: 1.6;
         }
 
         .ProseMirror p.is-editor-empty:first-child::before {
@@ -283,12 +205,6 @@ export function TiptapEditor({
           color: #adb5bd;
           pointer-events: none;
           height: 0;
-        }
-
-        /* Typography styles for editor content */
-        .ProseMirror {
-          font-size: 16px;
-          line-height: 1.6;
         }
 
         .ProseMirror h1 {
@@ -344,6 +260,14 @@ export function TiptapEditor({
           font-style: italic;
         }
 
+        .ProseMirror u {
+          text-decoration: underline;
+        }
+
+        .ProseMirror s {
+          text-decoration: line-through;
+        }
+
         .ProseMirror a {
           color: #1A3C8A;
           text-decoration: underline;
@@ -391,7 +315,53 @@ export function TiptapEditor({
           color: inherit;
         }
 
-        /* 视频节点样式 */
+        .ProseMirror table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 1em 0;
+          overflow: hidden;
+        }
+
+        .ProseMirror th,
+        .ProseMirror td {
+          border: 1px solid #d1d5db;
+          padding: 0.5em;
+          min-width: 80px;
+          vertical-align: top;
+          box-sizing: border-box;
+          position: relative;
+        }
+
+        .ProseMirror th {
+          background: #f3f4f6;
+          font-weight: 600;
+          text-align: left;
+        }
+
+        .ProseMirror .selectedCell {
+          background: #dbeafe;
+        }
+
+        .ProseMirror .tableWrapper {
+          overflow-x: auto;
+        }
+
+        .ProseMirror .column-resize-handle {
+          position: absolute;
+          right: -2px;
+          top: 0;
+          bottom: -2px;
+          width: 4px;
+          background-color: #adf;
+          pointer-events: none;
+        }
+
+        .ProseMirror mark {
+          background-color: #fef08a;
+          padding: 0.1em 0.2em;
+          border-radius: 2px;
+        }
+
         .ProseMirror .video-node-wrapper {
           margin: 1em 0;
         }
