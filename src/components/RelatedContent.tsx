@@ -4,6 +4,16 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+const categoryLabels: Record<string, string> = {
+  'important-release': '重要发布',
+  'activity': '活动纪程',
+  'media-attention': '媒体关注',
+  'research-style': '研学风采',
+  'honors': '荣誉奖项',
+  'company-dynamics': '公司动态',
+  'policy-direction': '政策导向',
+};
+
 interface RelatedNewsProps {
   currentSlug: string;
   category?: string;
@@ -47,6 +57,8 @@ export function RelatedNews({ currentSlug, category, limit = 3 }: RelatedNewsPro
 
   if (isLoading || relatedNews.length === 0) return null;
 
+  const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || '';
+
   return (
     <div className="mt-12 pt-8 border-t border-gray-200">
       <h3 className="text-xl font-bold mb-6">相关阅读</h3>
@@ -56,7 +68,7 @@ export function RelatedNews({ currentSlug, category, limit = 3 }: RelatedNewsPro
             {news.image && (
               <div className="relative w-full h-48">
                 <Image
-                  src={news.image}
+                  src={`${imageBaseUrl}${news.image}`}
                   alt={news.title}
                   fill
                   className="object-cover rounded-lg"
@@ -64,7 +76,7 @@ export function RelatedNews({ currentSlug, category, limit = 3 }: RelatedNewsPro
               </div>
             )}
             <div className="p-4">
-              <span className="text-sm text-blue-600">{news.category}</span>
+              <span className="text-sm text-blue-600">{categoryLabels[news.category] || news.category}</span>
               <h4 className="font-semibold mt-2 group-hover:text-blue-600">{news.title}</h4>
               <p className="text-sm text-gray-600 mt-2 line-clamp-2">{news.excerpt}</p>
             </div>
