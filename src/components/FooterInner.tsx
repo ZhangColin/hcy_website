@@ -79,6 +79,12 @@ interface FriendlyLink {
   logo?: string;
 }
 
+interface ProductSeriesItem {
+  name: string;
+  href: string;
+  logo?: string;
+}
+
 interface SocialLink {
   platform: string;
   url: string;
@@ -100,9 +106,10 @@ interface FooterInnerProps {
   site: SiteData;
   friendlyLinks: FriendlyLink[];
   socialLinks: SocialLink[];
+  productSeries: ProductSeriesItem[];
 }
 
-export default function FooterInner({ site, friendlyLinks, socialLinks }: FooterInnerProps) {
+export default function FooterInner({ site, friendlyLinks, socialLinks, productSeries }: FooterInnerProps) {
   const { t } = useTranslation();
 
   // Generate sitemap columns dynamically based on translations
@@ -201,6 +208,49 @@ export default function FooterInner({ site, friendlyLinks, socialLinks }: Footer
             </div>
           ))}
         </div>
+
+        {/* Product Series */}
+        {productSeries.length > 0 && (
+          <div className="mt-10 border-t border-white/10 pt-8">
+            <div className="text-center mb-5">
+              <h3 className="text-base font-semibold text-white tracking-wider">
+                {t("footer.productSeries")}
+              </h3>
+              <div className="mx-auto mt-2 h-0.5 w-9 rounded bg-[#D4A843]/60" />
+            </div>
+            <div className="flex flex-wrap justify-center gap-3">
+              {productSeries.map((item) => {
+                const logoUrl = item.logo
+                  ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${item.logo}`
+                  : undefined;
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.06] px-4 py-2.5 transition-colors hover:border-white/20 hover:bg-white/[0.1]"
+                  >
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={item.name}
+                        className="h-7 w-7 rounded object-contain"
+                      />
+                    ) : (
+                      <span className="flex h-7 w-7 items-center justify-center rounded bg-white/10 text-xs font-bold text-white/70">
+                        {item.name[0]}
+                      </span>
+                    )}
+                    <span className="text-sm font-medium text-white/80">
+                      {item.name}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Friendly Links */}
         <div className="mt-10 flex flex-wrap items-center gap-x-1 border-t border-white/10 pt-6 text-sm text-white/50">

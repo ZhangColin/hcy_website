@@ -17,6 +17,7 @@ export default async function Footer() {
       copyright: "北京海创元人工智能教育科技有限公司",
       friendlyLinks: [],
       socialLinks: [],
+      productSeries: [],
       wechatOfficialQr: null,
       wechatServiceQr: null,
     };
@@ -27,6 +28,13 @@ export default async function Footer() {
     friendlyLinks = site.friendlyLinks as Array<{ label: string; href: string }>;
   } else {
     friendlyLinks = [];
+  }
+
+  let productSeries: Array<{ name: string; href: string; logo?: string }>;
+  if (Array.isArray(site.productSeries)) {
+    productSeries = site.productSeries as Array<{ name: string; href: string; logo?: string }>;
+  } else {
+    productSeries = [];
   }
 
   // Handle both old object format { weibo: "", douyin: "" } and new array format [{ platform: "weibo", url: "" }]
@@ -43,5 +51,5 @@ export default async function Footer() {
     socialLinks = [];
   }
 
-  return <FooterInner site={site} friendlyLinks={friendlyLinks} socialLinks={socialLinks} />;
+  return <FooterInner site={site} friendlyLinks={friendlyLinks} socialLinks={socialLinks} productSeries={productSeries} />;
 }
