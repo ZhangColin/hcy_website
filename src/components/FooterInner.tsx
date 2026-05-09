@@ -215,7 +215,7 @@ export default function FooterInner({ site, friendlyLinks, socialLinks }: Footer
               >
                 {link.logo && (
                   <img
-                    src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${link.logo}`}
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${link.logo}`}
                     alt={link.label}
                     className="h-5 w-auto object-contain"
                   />

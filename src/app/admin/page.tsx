@@ -1025,7 +1025,7 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
                 value={(item.logo as string) || ""}
                 onChange={(v) => update("logo", v)}
                 type="links"
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                accept="image/jpeg,image/png,image/webp"
               />
             </div>
           )}
