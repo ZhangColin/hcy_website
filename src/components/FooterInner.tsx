@@ -76,6 +76,7 @@ interface SitemapColumn {
 interface FriendlyLink {
   label: string;
   href: string;
+  logo?: string;
 }
 
 interface SocialLink {
@@ -210,8 +211,15 @@ export default function FooterInner({ site, friendlyLinks, socialLinks }: Footer
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-white"
+                className="flex items-center gap-1.5 transition-colors hover:text-white"
               >
+                {link.logo && (
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${link.logo}`}
+                    alt={link.label}
+                    className="h-5 w-auto object-contain"
+                  />
+                )}
                 {link.label}
               </a>
               {index < friendlyLinks.length - 1 && (
