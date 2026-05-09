@@ -68,3 +68,4 @@ temp/
 # data directory (migrated to database)
 /data/
 docs/superpowers/plans/
+.superpowers/

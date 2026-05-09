@@ -79,6 +79,12 @@ interface FriendlyLink {
   logo?: string;
 }
 
+interface ProductSeriesItem {
+  name: string;
+  href: string;
+  logo?: string;
+}
+
 interface SocialLink {
   platform: string;
   url: string;
@@ -100,9 +106,10 @@ interface FooterInnerProps {
   site: SiteData;
   friendlyLinks: FriendlyLink[];
   socialLinks: SocialLink[];
+  productSeries: ProductSeriesItem[];
 }
 
-export default function FooterInner({ site, friendlyLinks, socialLinks }: FooterInnerProps) {
+export default function FooterInner({ site, friendlyLinks, socialLinks, productSeries }: FooterInnerProps) {
   const { t } = useTranslation();
 
   // Generate sitemap columns dynamically based on translations
@@ -201,6 +208,49 @@ export default function FooterInner({ site, friendlyLinks, socialLinks }: Footer
             </div>
           ))}
         </div>
+
+        {/* Product Series */}
+        {productSeries.length > 0 && (
+          <div className="mt-10 border-t border-white/10 pt-8">
+            <div className="text-center mb-6">
+              <h3 className="text-base font-semibold text-white tracking-wider">
+                {t("footer.productSeries")}
+              </h3>
+              <div className="mx-auto mt-2.5 h-0.5 w-10 rounded bg-[#D4A843]/60" />
+            </div>
+            <div className="flex flex-wrap justify-center gap-4">
+              {productSeries.map((item, idx) => {
+                const logoUrl = item.logo
+                  ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${item.logo}`
+                  : undefined;
+                return (
+                  <a
+                    key={item.name + '-' + idx}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-7 py-5 min-w-[140px] transition-all duration-300 hover:border-[#D4A843]/30 hover:bg-[#D4A843]/[0.08] hover:shadow-[0_0_20px_rgba(212,168,67,0.1)]"
+                  >
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={item.name}
+                        className="h-12 w-12 rounded-[10px] object-contain"
+                      />
+                    ) : (
+                      <span className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-white/[0.08] text-xl font-bold text-white/60 transition-all duration-300 group-hover:bg-[#D4A843]/[0.15] group-hover:text-[#D4A843]/90">
+                        {item.name[0]}
+                      </span>
+                    )}
+                    <span className="text-sm font-semibold text-white/85 transition-colors duration-300 group-hover:text-white/95">
+                      {item.name}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Friendly Links */}
         <div className="mt-10 flex flex-wrap items-center gap-x-1 border-t border-white/10 pt-6 text-sm text-white/50">

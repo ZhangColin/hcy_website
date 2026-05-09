@@ -12,7 +12,7 @@ const FIELD_WHITELISTS = {
   competitionHonor: ["title", "level", "year", "achievements", "image", "order"],
   contact: ["address", "contacts"],
   jobPosition: ["title", "department", "location", "type", "description", "requirements", "active", "order"],
-  site: ["companyName", "shortName", "address", "phone", "email", "hrEmail", "mapLng", "mapLat", "icp", "copyright", "friendlyLinks", "socialLinks", "wechatOfficialQr", "wechatServiceQr"],
+  site: ["companyName", "shortName", "address", "phone", "email", "hrEmail", "mapLng", "mapLat", "icp", "copyright", "friendlyLinks", "productSeries", "socialLinks", "wechatOfficialQr", "wechatServiceQr"],
 } as const;
 
 // 提取允许的字段

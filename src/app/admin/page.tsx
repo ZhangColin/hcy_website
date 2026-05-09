@@ -979,6 +979,7 @@ function ContactEditor({ data, setData }: { data: Record<string, unknown>; setDa
 function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData: (d: Record<string, unknown>) => void }) {
   const links = (data.friendlyLinks as Record<string, string>[]) ?? [];
   const socialLinks = (data.socialLinks as SocialLink[]) ?? [];
+  const productSeries = (data.productSeries as Record<string, string>[]) ?? [];
 
   return (
     <>
@@ -1025,6 +1026,28 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
                 value={(item.logo as string) || ""}
                 onChange={(v) => update("logo", v)}
                 type="links"
+                accept="image/jpeg,image/png,image/webp"
+              />
+            </div>
+          )}
+        />
+      </SectionCard>
+
+      <SectionCard title="海创元系列产品">
+        <ListEditor
+          title="系列产品列表"
+          items={productSeries}
+          onChange={(v) => setData({ ...data, productSeries: v })}
+          createItem={() => ({ name: "", href: "", logo: "" })}
+          renderItem={(item, _i, update) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <FieldEditor label="产品名称" value={item.name} onChange={(v) => update("name", v)} />
+              <FieldEditor label="链接" value={item.href} onChange={(v) => update("href", v)} />
+              <ImageButton
+                label="Logo"
+                value={(item.logo as string) || ""}
+                onChange={(v) => update("logo", v)}
+                type="products"
                 accept="image/jpeg,image/png,image/webp"
               />
             </div>
