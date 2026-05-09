@@ -219,13 +219,13 @@ export default function FooterInner({ site, friendlyLinks, socialLinks, productS
               <div className="mx-auto mt-2 h-0.5 w-9 rounded bg-[#D4A843]/60" />
             </div>
             <div className="flex flex-wrap justify-center gap-3">
-              {productSeries.map((item) => {
+              {productSeries.map((item, idx) => {
                 const logoUrl = item.logo
                   ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${item.logo}`
                   : undefined;
                 return (
                   <a
-                    key={item.name}
+                    key={item.name + '-' + idx}
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
