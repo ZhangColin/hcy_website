@@ -63,7 +63,14 @@ echo ""
 
 # 停止旧容器
 echo -e "${YELLOW}停止旧容器...${NC}"
-docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
+docker-compose -f docker-compose.prod.yml down --remove-orphans 2>/dev/null || true
+
+# 确保端口 3000 已释放
+if lsof -i :3000 -t >/dev/null 2>&1; then
+  echo -e "${YELLOW}端口 3000 仍被占用，正在释放...${NC}"
+  lsof -i :3000 -t | xargs kill -9 2>/dev/null || true
+  sleep 1
+fi
 
 # 构建镜像（总是重新构建，使用 docker-compose）
 echo -e "${YELLOW}构建镜像...${NC}"
