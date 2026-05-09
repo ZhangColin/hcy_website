@@ -1015,11 +1015,18 @@ function SiteEditor({ data, setData }: { data: Record<string, unknown>; setData:
           title="链接列表"
           items={links}
           onChange={(v) => setData({ ...data, friendlyLinks: v })}
-          createItem={() => ({ label: "", href: "" })}
+          createItem={() => ({ label: "", href: "", logo: "" })}
           renderItem={(item, _i, update) => (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <FieldEditor label="名称" value={item.label} onChange={(v) => update("label", v)} />
               <FieldEditor label="链接" value={item.href} onChange={(v) => update("href", v)} />
+              <ImageButton
+                label="Logo"
+                value={(item.logo as string) || ""}
+                onChange={(v) => update("logo", v)}
+                type="links"
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              />
             </div>
           )}
         />
