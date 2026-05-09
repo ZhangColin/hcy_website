@@ -212,13 +212,13 @@ export default function FooterInner({ site, friendlyLinks, socialLinks, productS
         {/* Product Series */}
         {productSeries.length > 0 && (
           <div className="mt-10 border-t border-white/10 pt-8">
-            <div className="text-center mb-5">
+            <div className="text-center mb-6">
               <h3 className="text-base font-semibold text-white tracking-wider">
                 {t("footer.productSeries")}
               </h3>
-              <div className="mx-auto mt-2 h-0.5 w-9 rounded bg-[#D4A843]/60" />
+              <div className="mx-auto mt-2.5 h-0.5 w-10 rounded bg-[#D4A843]/60" />
             </div>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-4">
               {productSeries.map((item, idx) => {
                 const logoUrl = item.logo
                   ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ''}${item.logo}`
@@ -229,20 +229,20 @@ export default function FooterInner({ site, friendlyLinks, socialLinks, productS
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.06] px-4 py-2.5 transition-colors hover:border-white/20 hover:bg-white/[0.1]"
+                    className="group flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-7 py-5 min-w-[140px] transition-all duration-300 hover:border-[#D4A843]/30 hover:bg-[#D4A843]/[0.08] hover:shadow-[0_0_20px_rgba(212,168,67,0.1)]"
                   >
                     {logoUrl ? (
                       <img
                         src={logoUrl}
                         alt={item.name}
-                        className="h-7 w-7 rounded object-contain"
+                        className="h-12 w-12 rounded-[10px] object-contain"
                       />
                     ) : (
-                      <span className="flex h-7 w-7 items-center justify-center rounded bg-white/10 text-xs font-bold text-white/70">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-white/[0.08] text-xl font-bold text-white/60 transition-all duration-300 group-hover:bg-[#D4A843]/[0.15] group-hover:text-[#D4A843]/90">
                         {item.name[0]}
                       </span>
                     )}
-                    <span className="text-sm font-medium text-white/80">
+                    <span className="text-sm font-semibold text-white/85 transition-colors duration-300 group-hover:text-white/95">
                       {item.name}
                     </span>
                   </a>
