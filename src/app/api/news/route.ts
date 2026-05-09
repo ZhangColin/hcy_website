@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     const articles = await prisma.newsArticle.findMany({
       where,
-      orderBy: [{ featured: 'desc' }, { date: 'desc' }],
+      orderBy: [{ date: 'desc' }],
       take: limit,
       // 列表页面不需要 content 字段，避免序列化大量数据
       select: {

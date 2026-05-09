@@ -13,6 +13,7 @@ type NewsArticle = {
   date: string;
   published: boolean;
   featured: boolean;
+  showOnHomepage: boolean;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -151,6 +152,7 @@ export function NewsListClient() {
                 <tr key={article.id} className="hover:bg-gray-50">
                   <td className="py-3 px-4">
                     {article.featured && <span className="text-[#D4A843] mr-1">[置顶]</span>}
+                    {article.showOnHomepage && <span className="text-[#1A3C8A] mr-1">[首页]</span>}
                     {article.title}
                   </td>
                   <td className="py-3 px-4">{new Date(article.date).toLocaleDateString('zh-CN')}</td>

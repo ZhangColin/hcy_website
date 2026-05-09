@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "tailwindcss/theme" theme(typography);
+@plugin "@tailwindcss/typography";
 
 @theme inline {
   --color-brand-blue: #1A3C8A;
@@ -103,4 +103,13 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #2B6CB0;
+}
+
+/* News article content styles */
+.prose p:empty {
+  min-height: 1em;
+}
+
+.prose p:empty::before {
+  content: '\00a0';
 }

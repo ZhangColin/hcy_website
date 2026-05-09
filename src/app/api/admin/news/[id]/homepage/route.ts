@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
@@ -17,6 +18,8 @@ export async function PATCH(
       data: { showOnHomepage: body.showOnHomepage },
     });
 
+    revalidatePath('/news');
+    revalidatePath('/');
     return NextResponse.json({ success: true, data: article });
   } catch (error) {
     console.error('[API Error] PATCH /admin/news/[id]/homepage:', error);

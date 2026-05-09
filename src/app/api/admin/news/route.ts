@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
     const [items, total] = await Promise.all([
       prisma.newsArticle.findMany({
         where,
-        orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
+        orderBy: [{ featured: 'desc' }, { date: 'desc' }],
         skip: (page - 1) * limit,
         take: limit,
         // 列表页面不需要 content 字段，避免序列化大量数据
@@ -101,6 +102,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    revalidatePath('/news');
+    revalidatePath('/');
     return NextResponse.json({ success: true, data: article });
   } catch (error: any) {
     console.error('[API Error] POST /admin/news:', error);

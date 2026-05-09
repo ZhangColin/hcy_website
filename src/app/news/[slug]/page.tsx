@@ -5,7 +5,6 @@ import { NewsDetailClient } from '@/components/NewsDetailClient';
 export const dynamic = 'force-dynamic';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumb } from '@/components/seo/Breadcrumb';
-import { RelatedNews } from '@/components/RelatedContent';
 
 export const revalidate = 3600; // 每小时重新生成
 
@@ -105,7 +104,6 @@ export default async function NewsDetailPage({
               views: article.views,
             }}
           />
-          <RelatedNews currentSlug={article.slug} category={article.category} />
         </div>
       </div>
     </>

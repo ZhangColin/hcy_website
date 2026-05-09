@@ -140,3 +140,6 @@ else
   echo "  docker-compose -f docker-compose.prod.yml logs"
   exit 1
 fi
+
+# 步骤 8：清理悬空镜像
+docker image prune -f >/dev/null 2>&1 || true

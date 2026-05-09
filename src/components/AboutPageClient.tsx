@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 /* ───────── types ───────── */
 interface AboutData {
@@ -22,30 +23,6 @@ interface AboutData {
     strategic: Array<{ name: string; logo?: string }>;
     ecosystem: Array<{ name: string; logo?: string }>;
   };
-}
-
-/* ───────── animation hook ───────── */
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  return { ref, visible };
 }
 
 /* ───────── static data ───────── */
@@ -143,7 +120,7 @@ function TimelineItem({
   return (
     <div
       ref={ref}
-      className={`relative md:flex md:items-center md:mb-12 transition-all duration-700 delay-100 ${
+      className={`relative md:flex md:items-center md:mb-12 transition-all duration-700 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >
@@ -215,6 +192,22 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
     title: v,
     desc: valueDescs[v] || "",
   }));
+
+  // DIAGNOSTIC: Log data on mount
+  useEffect(() => {
+    console.log('=== AboutPageClient DIAGNOSTIC ===');
+    console.log('Timeline data:', data.timeline);
+    console.log('Timeline length:', data.timeline?.length);
+    console.log('Timeline items:', data.timeline?.map((t, i) => `${i}: ${t.year} - ${t.title}`));
+    console.log('=====================================');
+  }, [data]);
+
+  // DIAGNOSTIC: Log before rendering timeline section
+  useEffect(() => {
+    console.log('=== About to render timeline section ===');
+    console.log('Timeline exists:', !!data.timeline);
+    console.log('Timeline length:', data.timeline?.length);
+  }, [data.timeline]);
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] text-gray-800">
@@ -330,7 +323,7 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
       </Section>
 
       {/* ====== Development Timeline ====== */}
-      <Section className="py-20 md:py-28" id="timeline">
+      <section className="py-20 md:py-28" id="timeline">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-3xl font-bold text-center text-[#1A3C8A] mb-4">{t("about.timeline")}</h2>
           <p className="text-center text-gray-500 mb-16 max-w-xl mx-auto">
@@ -342,16 +335,22 @@ export default function AboutPageClient({ data }: { data: AboutData }) {
             <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#1A3C8A]/20 -translate-x-1/2 hidden md:block" />
 
             <div className="space-y-12 md:space-y-0">
-              {data.timeline.map((m, i) => {
-                const isLeft = i % 2 === 0;
-                return (
-                  <TimelineItem key={i} milestone={m} isLeft={isLeft} index={i} total={data.timeline.length} />
-                );
-              })}
+              {data.timeline && data.timeline.length > 0 ? (
+                data.timeline.map((m, i) => {
+                  const isLeft = i % 2 === 0;
+                  return (
+                    <TimelineItem key={i} milestone={m} isLeft={isLeft} index={i} total={data.timeline.length} />
+                  );
+                })
+              ) : (
+                <div className="text-center text-gray-500 py-12">
+                  No timeline data available
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </Section>
+      </section>
 
       {/* ====== Honors ====== */}
       <Section className="py-20 md:py-28 bg-white" id="honors">

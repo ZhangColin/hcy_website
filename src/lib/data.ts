@@ -47,6 +47,28 @@ export async function loadNews() {
   }
 }
 
+// 首页新闻（仅显示勾选首页显示的，最多3条）
+export async function loadHomepageNews() {
+  const articles = await prisma.newsArticle.findMany({
+    where: { published: true, showOnHomepage: true },
+    orderBy: { date: 'desc' },
+    take: 3,
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      excerpt: true,
+      category: true,
+      date: true,
+      image: true,
+    }
+  })
+  return articles.map(a => ({
+    ...a,
+    date: a.date.toISOString(),
+  }))
+}
+
 // 关于我们
 export async function loadAbout() {
   const [aboutData, homeData] = await Promise.all([

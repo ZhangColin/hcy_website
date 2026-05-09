@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
@@ -58,6 +59,8 @@ export async function PUT(
       },
     });
 
+    revalidatePath('/news');
+    revalidatePath('/');
     return NextResponse.json({ success: true, data: article });
   } catch (error: any) {
     console.error('[API Error] PUT /admin/news/[id]:', error);
@@ -81,6 +84,8 @@ export async function DELETE(
       where: { id: (await params).id },
     });
 
+    revalidatePath('/news');
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[API Error] DELETE /admin/news/[id]:', error);
